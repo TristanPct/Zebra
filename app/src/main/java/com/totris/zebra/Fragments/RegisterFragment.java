@@ -21,8 +21,8 @@ import butterknife.OnClick;
  */
 public class RegisterFragment extends Fragment {
 
-    @BindView(R.id.nameInput)
-    EditText nameInput;
+    @BindView(R.id.usernameInput)
+    EditText usernameInput;
 
     @BindView(R.id.mailInput)
     EditText mailInput;
@@ -46,7 +46,7 @@ public class RegisterFragment extends Fragment {
         try {
             listener = (RegisterListener) context;
         } catch (ClassCastException e) {
-            throw new ClassCastException(context.toString() + " must implement OnRegisterListener");
+            throw new ClassCastException(context.toString() + " must implement RegisterListener");
         }
     }
 
@@ -61,20 +61,20 @@ public class RegisterFragment extends Fragment {
     }
 
     protected boolean validate() {
-        String name = nameInput.getText().toString();
-        boolean nameIsValid = !name.matches("");
+        String username = usernameInput.getText().toString();
+        boolean usernameIsValid = !username.matches("");
 
         String mail = mailInput.getText().toString();
         boolean mailIsValid = mail.matches(getString(R.string.pattern_email));
 
         String password = passwordInput.getText().toString();
-        boolean passwordIsValid = !password.matches(getString(R.string.pattern_password));
+        boolean passwordIsValid = password.matches(getString(R.string.pattern_password));
 
         String passwordConfirmation = passwordConfirmationInput.getText().toString();
         boolean passwordConfirmationIsValid = passwordConfirmation.matches(password);
 
-        if (!nameIsValid) {
-            nameInput.setError(getString(R.string.error_required));
+        if (!usernameIsValid) {
+            usernameInput.setError(getString(R.string.error_required));
         }
 
         if (!mailIsValid) {
@@ -89,30 +89,30 @@ public class RegisterFragment extends Fragment {
             passwordConfirmationInput.setError(getString(R.string.error_password_confirmation));
         }
 
-        return nameIsValid && mailIsValid && passwordIsValid && passwordConfirmationIsValid;
+        return usernameIsValid && mailIsValid && passwordIsValid && passwordConfirmationIsValid;
     }
 
     @OnClick(R.id.registerButton)
     public void onRegisterButtonClick() {
         if (listener == null || !validate()) return;
 
-        String name = nameInput.getText().toString();
+        String username = usernameInput.getText().toString();
         String mail = mailInput.getText().toString();
         String password = passwordInput.getText().toString();
 
-        listener.onRegisterClick(name, mail, password);
+        listener.onRegister(username, mail, password);
     }
 
     @OnClick(R.id.gotoLoginButton)
     public void onGotoLoginButtonClick() {
         if (listener == null) return;
 
-        listener.onGotoLoginClick();
+        listener.onGotoLogin();
     }
 
     public interface RegisterListener {
-        void onRegisterClick(String name, String mail, String password);
-        void onGotoLoginClick();
+        void onRegister(String username, String mail, String password);
+        void onGotoLogin();
     }
 
 }
