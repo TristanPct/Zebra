@@ -1,7 +1,9 @@
-package com.totris.zebra;
+package com.totris.zebra.Activities;
 
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+
+import com.totris.zebra.R;
 
 public class MainActivity extends AppCompatActivity {
 
