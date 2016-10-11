@@ -71,7 +71,7 @@ public class Authentication {
                 });
     }
 
-    public void register(String mail, String password) {
+    public void register(String username, String mail, String password) {
         auth.createUserWithEmailAndPassword(mail, password)
                 .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
                     @Override
