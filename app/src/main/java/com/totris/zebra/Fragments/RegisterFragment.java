@@ -8,6 +8,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
+import android.widget.TextView;
 
 import com.totris.zebra.R;
 
@@ -19,7 +20,7 @@ import butterknife.OnClick;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class RegisterFragment extends Fragment {
+public class RegisterFragment extends Fragment implements WithErrorView {
 
     @BindView(R.id.usernameInput)
     EditText usernameInput;
@@ -32,6 +33,9 @@ public class RegisterFragment extends Fragment {
 
     @BindView(R.id.passwordConfirmationInput)
     EditText passwordConfirmationInput;
+
+    @BindView(R.id.errorText)
+    TextView errorText;
 
     private RegisterListener listener;
 
@@ -58,6 +62,10 @@ public class RegisterFragment extends Fragment {
         ButterKnife.bind(this, view);
 
         return view;
+    }
+
+    public void setError(String error) {
+        errorText.setText(error);
     }
 
     protected boolean validate() {
@@ -94,6 +102,8 @@ public class RegisterFragment extends Fragment {
 
     @OnClick(R.id.registerButton)
     public void onRegisterButtonClick() {
+        setError("");
+
         if (listener == null || !validate()) return;
 
         String username = usernameInput.getText().toString();

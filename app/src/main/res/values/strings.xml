@@ -4,6 +4,8 @@
     <string name="error_email">This e-mail is not valid</string>
     <string name="error_password">This password must contain at least 8 characters, 1 digit, 1 lowercase and 1 uppercase characters</string>
     <string name="error_password_confirmation">The confirmation does not match the password</string>
+    <string name="error_login">An error occurred during the authentication</string>
+    <string name="error_registration">An error occurred during the registration</string>
 
     <!-- MISC -->
     <!-- Pattern used to validate e-mails -->
@@ -21,4 +23,5 @@
     <string name="password_confirmation">Password confirmation</string>
     <string name="register">Register</string>
     <string name="goto_login">I already have an account</string>
+    <string name="send">Send</string>
 </resources>

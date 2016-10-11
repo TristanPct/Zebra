@@ -2,6 +2,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context="com.totris.zebra.Fragments.LoginFragment">
 
     <android.support.design.widget.TextInputLayout
@@ -10,7 +11,8 @@
         android:id="@+id/mailInputLayout"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
-        android:layout_marginBottom="20dp">
+        android:layout_marginBottom="20dp"
+        app:errorTextAppearance="@style/InputErrorText">
         <android.support.design.widget.TextInputEditText
             android:layout_width="match_parent"
             android:layout_height="match_parent"
@@ -29,7 +31,8 @@
         android:layout_below="@+id/mailInputLayout"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
-        android:layout_marginBottom="20dp">
+        android:layout_marginBottom="20dp"
+        app:errorTextAppearance="@style/InputErrorText">
         <android.support.design.widget.TextInputEditText
             android:hint="@string/password"
             android:layout_width="match_parent"
@@ -37,6 +40,15 @@
             android:inputType="textPassword"
             android:id="@+id/passwordInput" />
     </android.support.design.widget.TextInputLayout>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/errorText"
+        android:layout_above="@+id/loginButton"
+        android:layout_marginBottom="5dp"
+        android:textAlignment="center"
+        android:textColor="@color/colorErrorText"/>
 
     <Button
         android:text="@string/login"

@@ -8,6 +8,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
+import android.widget.TextView;
 
 import com.totris.zebra.R;
 
@@ -19,13 +20,16 @@ import butterknife.OnClick;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class LoginFragment extends Fragment {
+public class LoginFragment extends Fragment implements WithErrorView {
 
     @BindView(R.id.mailInput)
     EditText mailInput;
 
     @BindView(R.id.passwordInput)
     EditText passwordInput;
+
+    @BindView(R.id.errorText)
+    TextView errorText;
 
     private LoginListener listener;
 
@@ -54,6 +58,10 @@ public class LoginFragment extends Fragment {
         return view;
     }
 
+    public void setError(String error) {
+        errorText.setText(error);
+    }
+
     protected boolean validate() {
         String mail = mailInput.getText().toString();
         boolean mailIsValid = !mail.matches("");
@@ -74,6 +82,8 @@ public class LoginFragment extends Fragment {
 
     @OnClick(R.id.loginButton)
     public void onLoginButtonClick() {
+        setError("");
+
         if (listener == null || !validate()) return;
 
         String mail = mailInput.getText().toString();

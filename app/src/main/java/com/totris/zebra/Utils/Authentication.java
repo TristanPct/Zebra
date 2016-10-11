@@ -8,6 +8,7 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseAuthException;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.UserProfileChangeRequest;
 import com.totris.zebra.Models.User;
@@ -30,7 +31,7 @@ public class Authentication {
                 if (listener != null) {
                     FirebaseUser user = firebaseAuth.getCurrentUser();
                     if (user != null) {
-                        Log.d(TAG, "onAuthStateChanged:signed_in:" + user.getEmail());
+                        Log.d(TAG, "onAuthStateChanged:signed_in:" + user.getEmail() + ":" + user.getDisplayName());
                         listener.onUserSignedIn(user);
                     } else {
                         Log.d(TAG, "onAuthStateChanged:signed_out");
@@ -73,6 +74,9 @@ public class Authentication {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         Log.d(TAG, "signIn:onComplete:" + task.isSuccessful());
+                        if (!task.isSuccessful() && listener != null) {
+                            listener.onUserSignInFailed(((FirebaseAuthException) task.getException()).getMessage());
+                        }
                     }
                 });
     }
@@ -85,6 +89,8 @@ public class Authentication {
                         Log.d(TAG, "register:onComplete:" + task.isSuccessful());
                         if (task.isSuccessful()) {
                             getCurrentUser().updateUsername(username).commit();
+                        } else if (listener != null) {
+                            listener.onUserRegistrationFailed(((FirebaseAuthException) task.getException()).getMessage());
                         }
                     }
                 });
@@ -93,5 +99,7 @@ public class Authentication {
     public interface AuthenticationListener {
         void onUserSignedIn(FirebaseUser user);
         void onUserSignedOut();
+        void onUserSignInFailed(String message);
+        void onUserRegistrationFailed(String message);
     }
 }

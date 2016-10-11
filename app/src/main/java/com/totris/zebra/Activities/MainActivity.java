@@ -1,17 +1,21 @@
 package com.totris.zebra.Activities;
 
 import android.content.Intent;
+import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 
 import com.google.firebase.auth.FirebaseUser;
 import com.totris.zebra.Fragments.LoginFragment;
 import com.totris.zebra.Fragments.RegisterFragment;
+import com.totris.zebra.Fragments.WithErrorView;
 import com.totris.zebra.R;
 import com.totris.zebra.Utils.Authentication;
 
 public class MainActivity extends AppCompatActivity implements Authentication.AuthenticationListener, LoginFragment.LoginListener, RegisterFragment.RegisterListener {
     private Authentication auth;
+
+    private Fragment currentFragment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -21,10 +25,12 @@ public class MainActivity extends AppCompatActivity implements Authentication.Au
         auth = Authentication.getInstance();
         auth.setListener(this);
 
+        currentFragment = new LoginFragment();
+
         if (savedInstanceState == null) {
             getSupportFragmentManager()
                     .beginTransaction()
-                    .add(R.id.activity_main, new LoginFragment())
+                    .add(R.id.activity_main, currentFragment)
                     .commit();
         }
     }
@@ -53,15 +59,27 @@ public class MainActivity extends AppCompatActivity implements Authentication.Au
     }
 
     @Override
+    public void onUserSignInFailed(String message) {
+        ((WithErrorView)currentFragment).setError(message);
+    }
+
+    @Override
+    public void onUserRegistrationFailed(String message) {
+        ((WithErrorView)currentFragment).setError(message);
+    }
+
+    @Override
     public void onLogin(String mail, String password) {
         auth.signIn(mail, password);
     }
 
     @Override
     public void onGotoRegister() {
+        currentFragment = new RegisterFragment();
+
         getSupportFragmentManager()
                 .beginTransaction()
-                .replace(R.id.activity_main, new RegisterFragment())
+                .replace(R.id.activity_main, currentFragment)
                 .commit();
     }
 
@@ -72,9 +90,11 @@ public class MainActivity extends AppCompatActivity implements Authentication.Au
 
     @Override
     public void onGotoLogin() {
+        currentFragment = new LoginFragment();
+
         getSupportFragmentManager()
                 .beginTransaction()
-                .replace(R.id.activity_main, new LoginFragment())
+                .replace(R.id.activity_main, currentFragment)
                 .commit();
     }
 }
