@@ -1,4 +1,16 @@
 <resources>
     <string name="app_name">Zebra</string>
     <string name="your_message">Your message...</string>
+
+    <!-- INPUT ERRORS -->
+    <string name="error_required">Required</string>
+    <string name="error_email">This e-mail is not valid</string>
+    <string name="error_password">This password must contain at least 8 characters, 1 digit, 1 lowercase and 1 uppercase characters</string>
+    <string name="error_password_confirmation">The confirmation does not match the password</string>
+
+    <!-- MISC -->
+    <!-- Pattern used to validate e-mails -->
+    <string name="pattern_email">^[_A-Za-z0-9-\\+]+(\\.[_A-Za-z0-9-]+)*@[A-Za-z0-9-]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$</string>
+    <!-- Pattern used to validate passwords (at least 1 digit, 1 lowercase and 1 uppercase character and 8 characters) -->
+    <string name="pattern_password">^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z]).{8,}$</string>
 </resources>
