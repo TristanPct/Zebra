@@ -13,7 +13,8 @@ import com.google.firebase.auth.FirebaseUser;
 public class Authentication {
     private static final String TAG = "Authentication";
 
-    private Authentication instance;
+    private static Authentication instance;
+
     private AuthenticationListener listener;
 
     private FirebaseAuth auth;
@@ -40,7 +41,7 @@ public class Authentication {
         };
     }
 
-    public Authentication getInstance() {
+    public static Authentication getInstance() {
         if (instance == null) {
             instance = new Authentication();
         }
