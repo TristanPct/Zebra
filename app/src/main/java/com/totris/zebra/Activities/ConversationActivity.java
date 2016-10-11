@@ -28,7 +28,7 @@ public class ConversationActivity extends AppCompatActivity {
 
         List<Message> messages = new ArrayList<>();
 
-        for (int i = 0; i < 10000; i++) {
+        for (int i = 0; i < 100; i++) {
             messages.add(new Message("Content of message " + i, MessageType.TEXT, 0, 0));
         }
 
