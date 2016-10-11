@@ -6,6 +6,8 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.View;
+import android.widget.Button;
+import android.widget.TextView;
 
 import com.totris.zebra.Fragments.MessagesAdapter;
 import com.totris.zebra.Models.Message;
@@ -15,8 +17,17 @@ import com.totris.zebra.R;
 import java.util.ArrayList;
 import java.util.List;
 
+import butterknife.BindView;
+import butterknife.OnClick;
+
 public class ConversationActivity extends AppCompatActivity {
     static String TAG = "ConversationActivity";
+
+    @BindView(R.id.messageInput)
+    TextView messageInput;
+
+    @BindView(R.id.messageSubmit)
+    Button messageSubmit;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,5 +53,10 @@ public class ConversationActivity extends AppCompatActivity {
         });
 
         recyclerView.setAdapter(adapter);
+    }
+
+    @OnClick(R.id.messageSubmit)
+    public void submitMessage(Button button) {
+
     }
 }
