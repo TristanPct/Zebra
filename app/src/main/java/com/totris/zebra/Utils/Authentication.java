@@ -9,6 +9,8 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.auth.UserProfileChangeRequest;
+import com.totris.zebra.Models.User;
 
 public class Authentication {
     private static final String TAG = "Authentication";
@@ -49,6 +51,10 @@ public class Authentication {
         return instance;
     }
 
+    public User getCurrentUser() {
+        return User.from(auth.getCurrentUser());
+    }
+
     public void setListener(AuthenticationListener listener) {
         this.listener = listener;
     }
@@ -71,12 +77,15 @@ public class Authentication {
                 });
     }
 
-    public void register(String username, String mail, String password) {
+    public void register(final String username, String mail, String password) {
         auth.createUserWithEmailAndPassword(mail, password)
                 .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         Log.d(TAG, "register:onComplete:" + task.isSuccessful());
+                        if (task.isSuccessful()) {
+                            getCurrentUser().updateUsername(username).commit();
+                        }
                     }
                 });
     }
