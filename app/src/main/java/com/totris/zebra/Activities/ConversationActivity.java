@@ -13,7 +13,6 @@ import android.widget.TextView;
 
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.GenericTypeIndicator;
 import com.google.firebase.database.ValueEventListener;
 import com.totris.zebra.Fragments.MessagesAdapter;
 import com.totris.zebra.Models.Message;
@@ -33,6 +32,9 @@ public class ConversationActivity extends AppCompatActivity {
 
     private Database database;
 
+    @BindView(R.id.messagesList)
+    RecyclerView messagesListRecyclerView;
+
     @BindView(R.id.messageInput)
     TextView messageInput;
 
@@ -46,8 +48,7 @@ public class ConversationActivity extends AppCompatActivity {
 
         ButterKnife.bind(this);
 
-        RecyclerView recyclerView = (RecyclerView) findViewById(R.id.messagesList);
-        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+        messagesListRecyclerView.setLayoutManager(new LinearLayoutManager(this));
 
         List<Message> messages = new ArrayList<>();
 
@@ -92,7 +93,7 @@ public class ConversationActivity extends AppCompatActivity {
             }
         });
 
-        recyclerView.setAdapter(adapter);
+        messagesListRecyclerView.setAdapter(adapter);
     }
 
     @OnClick(R.id.messageSubmit)
@@ -106,6 +107,9 @@ public class ConversationActivity extends AppCompatActivity {
         }
 
         messageInput.setText("");
+
+        /*LinearLayoutManager recyclerViewLayoutManager = (LinearLayoutManager) messagesListRecyclerView.getLayoutManager();
+        recyclerViewLayoutManager.setStackFromEnd(true);*/
 
     }
 }
