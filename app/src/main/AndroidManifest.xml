@@ -9,7 +9,11 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity android:name=".Activities.MainActivity" />
-        <activity android:name=".Activities.ConversationActivity"></activity>
+        <activity android:name=".Activities.ConversationActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.RUN" />
+            </intent-filter>
+        </activity>
     </application>
 
 </manifest>
