@@ -4,7 +4,7 @@ import java.util.Date;
 
 public class Message {
     private String content;
-    private int type;
+    private MessageType type;
     private int senderId;
     private int groupId;
     private Date createdAt;
@@ -15,6 +15,21 @@ public class Message {
 
     }
 
+    public Message(String content, MessageType type, int senderId, int groupId, Date createdAt, Date sentAt, Date receiveAt) {
+        this();
+        setContent(content);
+        setType(type);
+        setSenderId(senderId);
+        setGroupId(groupId);
+        setCreatedAt(createdAt);
+        setSentAt(sentAt);
+        setReceiveAt(receiveAt);
+    }
+
+    public Message(String content, MessageType type, int senderId, int groupId) {
+        this(content, type, senderId, groupId, new Date(), null, null);
+    }
+
     public String getContent() {
         return content;
     }
@@ -23,11 +38,11 @@ public class Message {
         this.content = content;
     }
 
-    public int getType() {
+    public MessageType getType() {
         return type;
     }
 
-    public void setType(int type) {
+    public void setType(MessageType type) {
         this.type = type;
     }
 
