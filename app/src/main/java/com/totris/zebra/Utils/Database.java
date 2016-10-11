@@ -1,12 +1,21 @@
 package com.totris.zebra.Utils;
 
+import android.util.Log;
+
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
+import com.totris.zebra.Models.Message;
+import com.totris.zebra.Models.MessageType;
 
 /**
  * Created by thomaslecoeur on 11/10/2016.
  */
 public class Database {
+    private static String TAG = "Database";
+
     private static Database ourInstance = new Database();
 
     private static FirebaseDatabase database;
@@ -20,7 +29,12 @@ public class Database {
         database = FirebaseDatabase.getInstance();
     }
 
-    public void sendMessage() {
-
+    public void sendMessage(String content) {
+        getMessagesReference().push().setValue(new Message(content, MessageType.TEXT, 0, 0));
     }
+
+    public DatabaseReference getMessagesReference() {
+        return database.getReference("message");
+    }
+
 }

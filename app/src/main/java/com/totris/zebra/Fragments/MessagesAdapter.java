@@ -9,6 +9,7 @@ import android.widget.TextView;
 import com.totris.zebra.Models.Message;
 import com.totris.zebra.R;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.BindView;
@@ -23,7 +24,7 @@ public class MessagesAdapter extends RecyclerView.Adapter<MessagesAdapter.ViewHo
     private static MessageItemListener listener;
 
     public MessagesAdapter(List<Message> messages) {
-        this.messages = messages;
+        this.messages = new ArrayList<Message>(messages);
     }
 
     public void setOnMessageItemListener(MessageItemListener listenerArg) {
@@ -66,6 +67,26 @@ public class MessagesAdapter extends RecyclerView.Adapter<MessagesAdapter.ViewHo
                     }
                 }
             });
+        }
+    }
+
+    public void swap(List list){
+        if (messages != null) {
+            messages.clear();
+            messages.addAll(list);
+        }
+        else {
+            messages = list;
+        }
+        notifyDataSetChanged();
+    }
+
+    public void addMessage(Message message) {
+        if(messages != null) {
+            messages.add(message);
+        } else {
+            messages = new ArrayList<Message>();
+            messages.add(message);
         }
     }
 
