@@ -70,6 +70,10 @@ public class MessagesAdapter extends RecyclerView.Adapter<MessagesAdapter.ViewHo
         }
     }
 
+    public void clear() {
+        messages.clear();
+    }
+
     public void swap(List list){
         if (messages != null) {
             messages.clear();

@@ -1,11 +1,13 @@
 package com.totris.zebra.Activities;
 
+import android.content.Context;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.TextView;
 
@@ -61,19 +63,19 @@ public class ConversationActivity extends AppCompatActivity {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 Log.d(TAG, "onDataChange: new message");
-                // This method is called once with the initial value and again
-                // whenever data at this location is updated.
-                GenericTypeIndicator<List<Message>> t = new GenericTypeIndicator<List<Message>>() {
-                };
 
-                List messages = dataSnapshot.getValue(t);
+                adapter.clear();
 
-                if (messages == null) {
-                    Log.d(TAG, "onDataChange: No messages");
-                } else {
-                    Log.d(TAG, "The first message is: " + messages.get(0));
-                    adapter.swap(messages);
+                Log.e("Count " ,""+dataSnapshot.getChildrenCount());
+                for (DataSnapshot postSnapshot: dataSnapshot.getChildren()) { // TODO: only add not already fetched messages
+                    Message message = postSnapshot.getValue(Message.class);
+
+                    adapter.addMessage(message);
+
+                    Log.e("Get Data", message.getContent());
                 }
+
+                adapter.notifyDataSetChanged();
             }
 
             @Override
@@ -96,5 +98,14 @@ public class ConversationActivity extends AppCompatActivity {
     @OnClick(R.id.messageSubmit)
     public void submitMessage(Button button) {
         database.getMessagesReference().push().setValue(new Message(messageInput.getText().toString(), MessageType.TEXT, 0, 0));
+
+        View view = this.getCurrentFocus();
+        if (view != null) {
+            InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
+            imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
+        }
+
+        messageInput.setText("");
+
     }
 }
