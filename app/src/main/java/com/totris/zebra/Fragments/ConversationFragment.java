@@ -15,6 +15,7 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import com.squareup.otto.Subscribe;
+import com.totris.zebra.Events.MessageChildAddedEvent;
 import com.totris.zebra.Events.MessageDataChangeEvent;
 import com.totris.zebra.Fragments.MessagesAdapter;
 import com.totris.zebra.Models.Message;
@@ -93,17 +94,15 @@ public class ConversationFragment extends Fragment {
 
     @Subscribe
     public void onMessageDataChangeEvent(MessageDataChangeEvent event) {
-        Log.d(TAG, "onDataChange: new message");
-        List<Message> messages = event.getMessages();
-
-        adapter.clear();
-
-        for (Message message : messages) {
-            adapter.addMessage(message); // TODO: only add not already fetched messages
-        }
-
-        adapter.notifyDataSetChanged();
+        Log.d(TAG, "onDataChange: new message(s)");
+        adapter.setMessages(event.getMessages());
     }
+
+//    @Subscribe
+//    public void onMessageChildAddedEvent(MessageChildAddedEvent event) {
+//        Log.d(TAG, "onChildAdded: new message");
+//        adapter.addMessage(event.getMessage());
+//    }
 
     @OnClick(R.id.messageSubmit)
     public void onSubmitMessage(Button button) {
