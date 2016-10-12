@@ -69,7 +69,7 @@ public class ConversationActivity extends AppCompatActivity {
 
                 Log.e("Count " ,""+dataSnapshot.getChildrenCount());
                 for (DataSnapshot postSnapshot: dataSnapshot.getChildren()) { // TODO: only add not already fetched messages
-                    Message message = postSnapshot.getValue(Message.class);
+                    Message message = postSnapshot.getValue(Message.class); // TODO: add EncryptedMessage class
 
                     adapter.addMessage(message);
 
@@ -98,7 +98,7 @@ public class ConversationActivity extends AppCompatActivity {
 
     @OnClick(R.id.messageSubmit)
     public void submitMessage(Button button) {
-        database.getMessagesReference().push().setValue(new Message(messageInput.getText().toString(), MessageType.TEXT, 0, 0));
+        database.sendMessage(new Message(messageInput.getText().toString(), MessageType.TEXT, 0, 0));
 
         View view = this.getCurrentFocus();
         if (view != null) {

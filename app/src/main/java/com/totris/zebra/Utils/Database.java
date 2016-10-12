@@ -29,8 +29,8 @@ public class Database {
         database = FirebaseDatabase.getInstance();
     }
 
-    public void sendMessage(String content) {
-        getMessagesReference().push().setValue(new Message(content, MessageType.TEXT, 0, 0));
+    public void sendMessage(Message message) {
+        getMessagesReference().push().setValue(message);
     }
 
     public DatabaseReference getMessagesReference() {
