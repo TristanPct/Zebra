@@ -1,16 +1,19 @@
-package com.totris.zebra;
+package com.totris.zebra.Fragments;
 
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
 import com.futuremind.recyclerviewfastscroll.FastScroller;
+import com.totris.zebra.Fragments.ContactsAdapter;
 import com.totris.zebra.Models.User;
+import com.totris.zebra.R;
 
 import org.jdeferred.DoneCallback;
 import org.jdeferred.Promise;
@@ -25,7 +28,11 @@ import butterknife.ButterKnife;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class ContactListFragment extends Fragment {
+public class ContactListFragment extends Fragment implements ContactsAdapter.ContactItemListener {
+
+    private static String TAG = "ContactListFragment";
+
+    private ContactsAdapter adapter;
 
     @BindView(R.id.contactsList)
     RecyclerView contactsListRecyclerView;
@@ -56,7 +63,13 @@ public class ContactListFragment extends Fragment {
 
         Promise contactsPromise = User.getList();
 
-        final ContactsAdapter adapter = new ContactsAdapter(contacts);
+        adapter = new ContactsAdapter(contacts);
+
+        try {
+            adapter.setOnContactItemListener((ContactsAdapter.ContactItemListener) getActivity());
+        } catch (ClassCastException exception) {
+            throw new ClassCastException(getActivity().toString() + " must implement OnSubmitListener");
+        }
 
         contactsPromise.done(new DoneCallback() {
             @Override
@@ -81,4 +94,12 @@ public class ContactListFragment extends Fragment {
         return view;
     }
 
+    public void setAdapterListener(ContactsAdapter.ContactItemListener listener) {
+        adapter.setOnContactItemListener(listener);
+    }
+
+    @Override
+    public void onContactItemClick(int position, View v) {
+        Log.d(TAG, "onContactItemClick: clicked from fragment");
+    }
 }

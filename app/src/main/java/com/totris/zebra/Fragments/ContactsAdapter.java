@@ -1,4 +1,4 @@
-package com.totris.zebra;
+package com.totris.zebra.Fragments;
 
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -8,6 +8,7 @@ import android.widget.TextView;
 
 import com.futuremind.recyclerviewfastscroll.SectionTitleProvider;
 import com.totris.zebra.Models.User;
+import com.totris.zebra.R;
 
 import java.util.ArrayList;
 import java.util.List;

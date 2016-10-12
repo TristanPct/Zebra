@@ -26,7 +26,7 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-public class ContactActivity extends AppCompatActivity {
+public class ContactActivity extends AppCompatActivity implements ContactsAdapter.ContactItemListener {
     private static String TAG = "ContactActivity";
 
     @Override
@@ -35,9 +35,11 @@ public class ContactActivity extends AppCompatActivity {
         setContentView(R.layout.activity_contact);
 
         if(savedInstanceState == null) {
+            ContactListFragment contactsList = new ContactListFragment();
+
             getSupportFragmentManager()
                     .beginTransaction()
-                    .add(R.id.contactContent, new ContactListFragment())
+                    .add(R.id.contactContent, contactsList)
                     .commit();
         }
 
@@ -58,4 +60,8 @@ public class ContactActivity extends AppCompatActivity {
         });
     }
 
+    @Override
+    public void onContactItemClick(int position, View v) {
+        Log.d(TAG, "onContactItemClick: onContactItemClick from Activity");
+    }
 }
