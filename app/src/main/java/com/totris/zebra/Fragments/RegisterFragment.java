@@ -85,9 +85,11 @@ public class RegisterFragment extends Fragment implements WithErrorView {
                 errorText.setText("");
                 errorText.setVisibility(View.GONE);
                 break;
+            case "ERROR_EMAIL_ALREADY_IN_USE":
+                mailInput.setError(getString(R.string.error_taken_email));
+                break;
             default:
-//                errorText.setText(getString(R.string.error_registration));
-                errorText.setText(error);
+                errorText.setText(getString(R.string.error_registration));
                 errorText.setVisibility(View.VISIBLE);
         }
     }
