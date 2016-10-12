@@ -2,12 +2,27 @@ package com.totris.zebra.Models;
 
 
 import android.support.annotation.NonNull;
+import android.util.Log;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.UserProfileChangeRequest;
+import com.google.firebase.auth.api.model.StringList;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.ValueEventListener;
 import com.totris.zebra.Utils.Authentication;
+import com.totris.zebra.Utils.Database;
+
+import org.jdeferred.Deferred;
+import org.jdeferred.Promise;
+import org.jdeferred.impl.DeferredObject;
+
+import java.lang.reflect.Array;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * {@link User} model.
@@ -16,7 +31,12 @@ import com.totris.zebra.Utils.Authentication;
  * To update user data use update methods (can be chained) and then use {@link User#commit} to push modifications to the database.
  */
 public class User {
+    private static String TAG = "User";
+
     private FirebaseUser firebaseUser;
+    private static DatabaseReference dbRef = Database.getInstance().getReference("users");
+
+    private final Deferred deferred = new DeferredObject<>();
 
     private String username;
     private String mail;
@@ -26,8 +46,12 @@ public class User {
     private boolean isMailUpdated = false;
     private boolean isPasswordUpdated = false;
 
-    private User() {
+    public User() {
 
+    }
+
+    public User(String username) {
+        this.username = username;
     }
 
     public static User from(FirebaseUser firebaseUser) {
@@ -43,7 +67,7 @@ public class User {
     }
 
     public String getUsername() {
-        return firebaseUser.getDisplayName();
+        return username;
     }
 
     public User updateUsername(String username) {
@@ -53,7 +77,7 @@ public class User {
     }
 
     public String getMail() {
-        return firebaseUser.getEmail();
+        return mail;
     }
 
     public User updateMail(String mail) {
@@ -102,5 +126,37 @@ public class User {
                         }
                     });
         }
+
+        // update database linked model
+
+        if(isUsernameUpdated) {
+            dbRef.child(getUid()).setValue(this);
+        }
+    }
+
+    public static Promise getList() {
+        final DeferredObject deferred = new DeferredObject();
+
+        dbRef.addListenerForSingleValueEvent(new ValueEventListener() {
+            List<User> list = new ArrayList<User>();
+
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                for (DataSnapshot postSnapshot: dataSnapshot.getChildren()) {
+                    User user = postSnapshot.getValue(User.class);
+
+                    list.add(user);
+                }
+
+                deferred.resolve(list);
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                deferred.resolve(list);
+            }
+        });
+
+        return deferred.promise();
     }
 }

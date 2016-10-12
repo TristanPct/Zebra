@@ -5,6 +5,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.AttributeSet;
 import android.util.Log;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
@@ -108,7 +109,7 @@ public class ConversationActivity extends AppCompatActivity {
 
         messageInput.setText("");
 
-        /*LinearLayoutManager recyclerViewLayoutManager = (LinearLayoutManager) messagesListRecyclerView.getLayoutManager();
+        /*LinearLayoutManager recyclerViewLayoutManager = (LinearLayoutManager) contactsListRecyclerView.getLayoutManager();
         recyclerViewLayoutManager.setStackFromEnd(true);*/
 
     }

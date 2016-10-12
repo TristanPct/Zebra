@@ -33,6 +33,8 @@ public class Database {
         getMessagesReference().push().setValue(message);
     }
 
+    public DatabaseReference getReference(String ref) { return database.getReference(ref); }
+
     public DatabaseReference getMessagesReference() {
         return database.getReference("message");
     }

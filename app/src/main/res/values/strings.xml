@@ -24,4 +24,5 @@
     <string name="register">Register</string>
     <string name="goto_login">I already have an account</string>
     <string name="send">Send</string>
+    <string name="title_activity_contact">ContactActivity</string>
 </resources>

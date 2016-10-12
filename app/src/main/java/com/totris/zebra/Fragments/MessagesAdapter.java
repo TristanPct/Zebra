@@ -6,6 +6,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import com.futuremind.recyclerviewfastscroll.SectionTitleProvider;
 import com.totris.zebra.Models.Message;
 import com.totris.zebra.R;
 
@@ -19,7 +20,7 @@ import butterknife.ButterKnife;
  * Created by thomaslecoeur on 11/10/2016.
  */
 
-public class MessagesAdapter extends RecyclerView.Adapter<MessagesAdapter.ViewHolder> {
+public class MessagesAdapter extends RecyclerView.Adapter<MessagesAdapter.ViewHolder> implements SectionTitleProvider {
     private List<Message> messages;
     private static MessageItemListener listener;
 
@@ -45,6 +46,10 @@ public class MessagesAdapter extends RecyclerView.Adapter<MessagesAdapter.ViewHo
         holder.title.setText(message.getContent());
     }
 
+    public Message getItem(int position) {
+        return messages.get(position);
+    }
+
     @Override
     public int getItemCount() {
         return messages.size();
@@ -68,6 +73,12 @@ public class MessagesAdapter extends RecyclerView.Adapter<MessagesAdapter.ViewHo
                 }
             });
         }
+    }
+
+    @Override
+    public String getSectionTitle(int position) {
+        //this String will be shown in a bubble for specified position
+        return getItem(position).getContent().substring(0, 1);
     }
 
     public void clear() {
