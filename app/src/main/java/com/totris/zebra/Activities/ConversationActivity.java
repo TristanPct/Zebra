@@ -15,12 +15,15 @@ import android.widget.TextView;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.ValueEventListener;
+import com.squareup.otto.Subscribe;
+import com.totris.zebra.Events.MessageDataChangeEvent;
 import com.totris.zebra.Fragments.MessagesAdapter;
 import com.totris.zebra.Models.EncryptedMessage;
 import com.totris.zebra.Models.Message;
 import com.totris.zebra.Models.MessageType;
 import com.totris.zebra.R;
 import com.totris.zebra.Utils.Database;
+import com.totris.zebra.Utils.EventBus;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -32,7 +35,7 @@ import butterknife.OnClick;
 public class ConversationActivity extends AppCompatActivity {
     static String TAG = "ConversationActivity";
 
-    private Database database;
+    private MessagesAdapter adapter;
 
     @BindView(R.id.messagesList) //TODO: bind all those stuff in a fragment
     RecyclerView messagesListRecyclerView;
@@ -56,36 +59,7 @@ public class ConversationActivity extends AppCompatActivity {
 
         messages.add(new Message("Loading messages...", MessageType.TEXT, 0, 0));
 
-        final MessagesAdapter adapter = new MessagesAdapter(messages);
-
-        database = Database.getInstance();
-
-        database.getMessagesReference().addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                Log.d(TAG, "onDataChange: new message");
-
-                adapter.clear();
-
-                Log.e("Count " ,""+dataSnapshot.getChildrenCount());
-                for (DataSnapshot postSnapshot: dataSnapshot.getChildren()) { // TODO: only add not already fetched messages
-                    EncryptedMessage encryptedMessage = postSnapshot.getValue(EncryptedMessage.class); // TODO: add EncryptedMessage class
-                    Message message = encryptedMessage.decrypt("TEMP PASSPHRASE"); // TODO: use a real passphrase
-
-                    adapter.addMessage(message);
-
-                    Log.e("Get Data", message.getContent());
-                }
-
-                adapter.notifyDataSetChanged();
-            }
-
-            @Override
-            public void onCancelled(DatabaseError error) {
-                // Failed to read value
-                Log.w(TAG, "Failed to read value.", error.toException());
-            }
-        });
+        adapter = new MessagesAdapter(messages);
 
         adapter.setOnMessageItemListener(new MessagesAdapter.MessageItemListener() {
             @Override
@@ -97,9 +71,36 @@ public class ConversationActivity extends AppCompatActivity {
         messagesListRecyclerView.setAdapter(adapter);
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        EventBus.register(this);
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        EventBus.unregister(this);
+    }
+
+    @Subscribe
+    public void onMessageDataChangeEvent(MessageDataChangeEvent event) {
+        Log.d(TAG, "onDataChange: new message");
+        List<Message> messages = event.getMessages();
+
+        adapter.clear();
+
+        for (Message message : messages) {
+            adapter.addMessage(message); // TODO: only add not already fetched messages
+        }
+
+        adapter.notifyDataSetChanged();
+    }
+
     @OnClick(R.id.messageSubmit)
     public void submitMessage(Button button) {
-        String message = messageInput.getText().toString();
+        Message message = new Message(messageInput.getText().toString(), MessageType.TEXT, 0, 0);
+        message.send();
 
         View view = this.getCurrentFocus();
         if (view != null) {
@@ -112,6 +113,5 @@ public class ConversationActivity extends AppCompatActivity {
         /*LinearLayoutManager recyclerViewLayoutManager = (LinearLayoutManager) contactsListRecyclerView.getLayoutManager();
         recyclerViewLayoutManager.setStackFromEnd(true);*/
 
-        database.sendMessage(new Message(message, MessageType.TEXT, 0, 0).encrypt("TEMP PASSPHRASE"));
     }
 }
