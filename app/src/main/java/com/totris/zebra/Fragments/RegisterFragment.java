@@ -86,15 +86,15 @@ public class RegisterFragment extends Fragment implements WithErrorView {
         }
 
         if (!mailIsValid) {
-            mailInput.setError(getString(R.string.error_email));
+            mailInput.setError(getString(R.string.error_invalid_email));
         }
 
         if (!passwordIsValid) {
-            passwordInput.setError(getString(R.string.error_password));
+            passwordInput.setError(getString(R.string.error_invalid_password));
         }
 
         if (!passwordConfirmationIsValid) {
-            passwordConfirmationInput.setError(getString(R.string.error_password_confirmation));
+            passwordConfirmationInput.setError(getString(R.string.error_invalid_password_confirmation));
         }
 
         return usernameIsValid && mailIsValid && passwordIsValid && passwordConfirmationIsValid;

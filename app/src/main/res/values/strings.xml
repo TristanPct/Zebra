@@ -1,9 +1,12 @@
 <resources>
     <!-- INPUT ERRORS -->
     <string name="error_required">Required</string>
-    <string name="error_email">This e-mail is not valid</string>
-    <string name="error_password">This password must contain at least 8 characters, 1 digit, 1 lowercase and 1 uppercase characters</string>
-    <string name="error_password_confirmation">The confirmation does not match the password</string>
+    <string name="error_invalid_email">This e-mail is not valid</string>
+    <string name="error_invalid_password">This password must contain at least 8 characters, 1 digit, 1 lowercase and 1 uppercase characters</string>
+    <string name="error_invalid_password_confirmation">The confirmation does not match the password</string>
+    <string name="error_wrong_login">Wrong e-mail or password</string>
+    <string name="error_wrong_email">This e-mail does not exist</string>
+    <string name="error_wrong_password">This password is incorrect</string>
     <string name="error_login">An error occurred during the authentication</string>
     <string name="error_registration">An error occurred during the registration</string>
 
