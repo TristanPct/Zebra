@@ -59,7 +59,9 @@ public class ContactActivity extends AppCompatActivity implements ContactsAdapte
         users.add(User.getCurrent());
         users.add(user);
 
-        Group group = new Group(users);
-        group.persist();
+        Group group = Group.getCommonGroup(users);
+
+//        Group group = new Group(users);
+//        group.persist();
     }
 }

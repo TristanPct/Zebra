@@ -43,6 +43,8 @@ public class User {
     private String password;
     private String uid;
 
+    public List<String> groupsIds;
+
     private boolean isUsernameUpdated = false;
     private boolean isMailUpdated = false;
     private boolean isPasswordUpdated = false;
@@ -147,6 +149,10 @@ public class User {
         }
     }
 
+    public void persist() {
+        dbRef.child(getUid()).setValue(this);
+    }
+
     public static Promise getList() {
         final DeferredObject deferred = new DeferredObject();
 
@@ -171,5 +177,24 @@ public class User {
         });
 
         return deferred.promise();
+    }
+
+    public List<String> getGroupsIds() {
+        if(groupsIds != null) {
+            return groupsIds;
+        } else {
+            return new ArrayList<String>();
+        }
+    }
+
+    public void setGroupsIds(List<String> groupsIds) {
+        this.groupsIds = groupsIds;
+    }
+
+    public void registerGroup(Group group) {
+        if(groupsIds == null) {
+            groupsIds = new ArrayList<>();
+        }
+        groupsIds.add(group.uid);
     }
 }
