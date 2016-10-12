@@ -113,11 +113,11 @@ public class ConversationFragment extends Fragment {
             imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
         }
 
-        messageInput.setText("");
-
         if (listener != null) {
             listener.onSubmitMessage(messageInput.getText().toString());
         }
+
+        messageInput.setText("");
     }
 
     public interface ConversationListener {
