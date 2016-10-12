@@ -10,7 +10,12 @@ import android.view.View;
 
 import com.totris.zebra.Fragments.ContactListFragment;
 import com.totris.zebra.Fragments.ContactsAdapter;
+import com.totris.zebra.Models.Group;
+import com.totris.zebra.Models.User;
 import com.totris.zebra.R;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class ContactActivity extends AppCompatActivity implements ContactsAdapter.ContactItemListener {
     private static String TAG = "ContactActivity";
@@ -47,7 +52,14 @@ public class ContactActivity extends AppCompatActivity implements ContactsAdapte
     }
 
     @Override
-    public void onContactItemClick(int position, View v) {
+    public void onContactItemClick(User user) {
         Log.d(TAG, "onContactItemClick: onContactItemClick from Activity");
+
+        List<User> users = new ArrayList<>();
+        users.add(User.getCurrent());
+        users.add(user);
+
+        Group group = new Group(users);
+        group.persist();
     }
 }

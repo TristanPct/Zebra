@@ -41,6 +41,7 @@ public class User {
     private String username;
     private String mail;
     private String password;
+    private String uid;
 
     private boolean isUsernameUpdated = false;
     private boolean isMailUpdated = false;
@@ -62,8 +63,20 @@ public class User {
         return user;
     }
 
+    public static User getCurrent() {
+        return Authentication.getInstance().getCurrentUser();
+    }
+
+    public void setUid(String uid) {
+        this.uid = uid;
+    }
+
     public String getUid() {
-        return firebaseUser.getUid();
+        if(firebaseUser != null) {
+            return firebaseUser.getUid();
+        } else {
+            return uid;
+        }
     }
 
     public String getUsername() {
