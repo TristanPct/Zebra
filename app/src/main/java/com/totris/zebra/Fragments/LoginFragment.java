@@ -142,9 +142,10 @@ public class LoginFragment extends Fragment implements WithErrorView {
         }
 
         setError("");
-        toggleProgress(true);
 
         if (listener == null || !validate()) return;
+
+        toggleProgress(true);
 
         String mail = mailInput.getText().toString();
         String password = passwordInput.getText().toString();

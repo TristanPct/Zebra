@@ -1,12 +1,16 @@
 package com.totris.zebra.Fragments;
 
 
+import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
@@ -22,20 +26,29 @@ import butterknife.OnClick;
  */
 public class RegisterFragment extends Fragment implements WithErrorView {
 
-    @BindView(R.id.usernameInput)
+    @BindView(R.id.register_progress)
+    View progressView;
+
+    @BindView(R.id.register_form)
+    View registerForm;
+
+    @BindView(R.id.username_input)
     EditText usernameInput;
 
-    @BindView(R.id.mailInput)
+    @BindView(R.id.mail_input)
     EditText mailInput;
 
-    @BindView(R.id.passwordInput)
+    @BindView(R.id.password_input)
     EditText passwordInput;
 
-    @BindView(R.id.passwordConfirmationInput)
+    @BindView(R.id.password_confirmation_input)
     EditText passwordConfirmationInput;
 
-    @BindView(R.id.errorText)
+    @BindView(R.id.error_text)
     TextView errorText;
+
+    @BindView(R.id.register_button)
+    Button registerButton;
 
     private RegisterListener listener;
 
@@ -65,7 +78,42 @@ public class RegisterFragment extends Fragment implements WithErrorView {
     }
 
     public void setError(String error) {
-        errorText.setText(error);
+        toggleProgress(false);
+
+        switch (error) {
+            case "":
+                errorText.setText("");
+                errorText.setVisibility(View.GONE);
+                break;
+            default:
+//                errorText.setText(getString(R.string.error_registration));
+                errorText.setText(error);
+                errorText.setVisibility(View.VISIBLE);
+        }
+    }
+
+    private void toggleProgress(final boolean show) {
+        if (progressView.getVisibility() == View.VISIBLE && show) return;
+
+        int shortAnimTime = getResources().getInteger(android.R.integer.config_shortAnimTime);
+
+        registerForm.setVisibility(show ? View.GONE : View.VISIBLE);
+        registerForm.animate().setDuration(shortAnimTime).alpha(
+                show ? 0 : 1).setListener(new AnimatorListenerAdapter() {
+            @Override
+            public void onAnimationEnd(Animator animation) {
+                registerForm.setVisibility(show ? View.GONE : View.VISIBLE);
+            }
+        });
+
+        progressView.setVisibility(show ? View.VISIBLE : View.GONE);
+        progressView.animate().setDuration(shortAnimTime).alpha(
+                show ? 1 : 0).setListener(new AnimatorListenerAdapter() {
+            @Override
+            public void onAnimationEnd(Animator animation) {
+                progressView.setVisibility(show ? View.VISIBLE : View.GONE);
+            }
+        });
     }
 
     protected boolean validate() {
@@ -100,11 +148,19 @@ public class RegisterFragment extends Fragment implements WithErrorView {
         return usernameIsValid && mailIsValid && passwordIsValid && passwordConfirmationIsValid;
     }
 
-    @OnClick(R.id.registerButton)
+    @OnClick(R.id.register_button)
     public void onRegisterButtonClick() {
+        View view = getActivity().getCurrentFocus();
+        if (view != null) {
+            InputMethodManager imm = (InputMethodManager)getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+            imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
+        }
+
         setError("");
 
         if (listener == null || !validate()) return;
+
+        toggleProgress(true);
 
         String username = usernameInput.getText().toString();
         String mail = mailInput.getText().toString();
@@ -113,7 +169,7 @@ public class RegisterFragment extends Fragment implements WithErrorView {
         listener.onRegister(username, mail, password);
     }
 
-    @OnClick(R.id.gotoLoginButton)
+    @OnClick(R.id.goto_login_button)
     public void onGotoLoginButtonClick() {
         if (listener == null) return;
 
