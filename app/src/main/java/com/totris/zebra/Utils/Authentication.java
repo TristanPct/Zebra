@@ -75,7 +75,7 @@ public class Authentication {
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         Log.d(TAG, "signIn:onComplete:" + task.isSuccessful());
                         if (!task.isSuccessful() && listener != null) {
-                            listener.onUserSignInFailed(((FirebaseAuthException) task.getException()).getMessage());
+                            listener.onUserSignInFailed(((FirebaseAuthException) task.getException()).getErrorCode());
                         }
                     }
                 });
@@ -90,7 +90,7 @@ public class Authentication {
                         if (task.isSuccessful()) {
                             getCurrentUser().updateUsername(username).commit();
                         } else if (listener != null) {
-                            listener.onUserRegistrationFailed(((FirebaseAuthException) task.getException()).getMessage());
+                            listener.onUserRegistrationFailed(((FirebaseAuthException) task.getException()).getErrorCode());
                         }
                     }
                 });

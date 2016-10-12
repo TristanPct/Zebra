@@ -59,13 +59,13 @@ public class MainActivity extends AppCompatActivity implements Authentication.Au
     }
 
     @Override
-    public void onUserSignInFailed(String message) {
-        ((WithErrorView)currentFragment).setError(message);
+    public void onUserSignInFailed(String error) {
+        ((WithErrorView)currentFragment).setError(error);
     }
 
     @Override
-    public void onUserRegistrationFailed(String message) {
-        ((WithErrorView)currentFragment).setError(message);
+    public void onUserRegistrationFailed(String error) {
+        ((WithErrorView)currentFragment).setError(error);
     }
 
     @Override
