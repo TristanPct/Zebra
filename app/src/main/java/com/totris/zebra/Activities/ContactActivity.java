@@ -11,6 +11,7 @@ import android.util.Log;
 import android.view.View;
 
 import com.futuremind.recyclerviewfastscroll.FastScroller;
+import com.totris.zebra.ContactListFragment;
 import com.totris.zebra.ContactsAdapter;
 import com.totris.zebra.Models.Message;
 import com.totris.zebra.Models.User;
@@ -28,46 +29,17 @@ import butterknife.ButterKnife;
 public class ContactActivity extends AppCompatActivity {
     private static String TAG = "ContactActivity";
 
-    @BindView(R.id.contactsList)
-    RecyclerView contactsListRecyclerView;
-
-    @BindView(R.id.fastScroller)
-    FastScroller fastScroller;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_contact);
 
-        ButterKnife.bind(this);
-
-        /**
-         * Setup RecyclerView
-         */
-
-        contactsListRecyclerView.setLayoutManager(new LinearLayoutManager(this));
-
-        List<User> contacts = new ArrayList<>();
-
-        Promise contactsPromise = User.getList();
-
-        final ContactsAdapter adapter = new ContactsAdapter(contacts);
-
-        contactsPromise.done(new DoneCallback() {
-            @Override
-            public void onDone(Object result) {
-                adapter.clear();
-
-                for (User user : (List<User>) result) {
-                    adapter.addContact(user);
-                }
-
-                adapter.notifyDataSetChanged();
-            }
-        });
-
-        contactsListRecyclerView.setAdapter(adapter);
-        fastScroller.setRecyclerView(contactsListRecyclerView);
+        if(savedInstanceState == null) {
+            getSupportFragmentManager()
+                    .beginTransaction()
+                    .add(R.id.contactContent, new ContactListFragment())
+                    .commit();
+        }
 
         /**
          * Setup UI
@@ -84,8 +56,6 @@ public class ContactActivity extends AppCompatActivity {
                         .setAction("Action", null).show();
             }
         });
-
-        fastScroller.setRecyclerView(contactsListRecyclerView);
     }
 
 }
