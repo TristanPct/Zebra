@@ -34,7 +34,7 @@ public class ConversationActivity extends AppCompatActivity {
 
     private Database database;
 
-    @BindView(R.id.messagesList)
+    @BindView(R.id.messagesList) //TODO: bind all those stuff in a fragment
     RecyclerView messagesListRecyclerView;
 
     @BindView(R.id.messageInput)
@@ -54,9 +54,7 @@ public class ConversationActivity extends AppCompatActivity {
 
         List<Message> messages = new ArrayList<>();
 
-        for (int i = 0; i < 2; i++) {
-            messages.add(new Message("Content of message " + i, MessageType.TEXT, 0, 0));
-        }
+        messages.add(new Message("Loading messages...", MessageType.TEXT, 0, 0));
 
         final MessagesAdapter adapter = new MessagesAdapter(messages);
 
@@ -101,7 +99,7 @@ public class ConversationActivity extends AppCompatActivity {
 
     @OnClick(R.id.messageSubmit)
     public void submitMessage(Button button) {
-        database.sendMessage(new Message(messageInput.getText().toString(), MessageType.TEXT, 0, 0).encrypt("TEMP PASSPHRASE"));
+        String message = messageInput.getText().toString();
 
         View view = this.getCurrentFocus();
         if (view != null) {
@@ -114,5 +112,6 @@ public class ConversationActivity extends AppCompatActivity {
         /*LinearLayoutManager recyclerViewLayoutManager = (LinearLayoutManager) contactsListRecyclerView.getLayoutManager();
         recyclerViewLayoutManager.setStackFromEnd(true);*/
 
+        database.sendMessage(new Message(message, MessageType.TEXT, 0, 0).encrypt("TEMP PASSPHRASE"));
     }
 }
