@@ -1,8 +1,11 @@
 package com.totris.zebra.Models;
 
+import com.totris.zebra.Utils.AesCrypto;
+
+import java.io.Serializable;
 import java.util.Date;
 
-public class Message {
+public class Message implements Serializable {
     private String content;
     private MessageType type;
     private int senderId;
@@ -28,6 +31,14 @@ public class Message {
 
     public Message(String content, MessageType type, int senderId, int groupId) {
         this(content, type, senderId, groupId, new Date(), null, null);
+    }
+
+    public EncryptedMessage encrypt(String passphrase) {
+        return new EncryptedMessage(AesCrypto.encrypt(this, passphrase));
+    }
+
+    public static Message decrypt(String message, String passphrase, String salt) {
+        return AesCrypto.decrypt(message, passphrase, salt, Message.class);
     }
 
     public String getContent() {

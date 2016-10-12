@@ -7,6 +7,7 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.totris.zebra.Models.EncryptedMessage;
 import com.totris.zebra.Models.Message;
 import com.totris.zebra.Models.MessageType;
 
@@ -33,10 +34,14 @@ public class Database {
         getMessagesReference().push().setValue(message);
     }
 
+    public void sendMessage(EncryptedMessage message) {
+        getMessagesReference().push().setValue(message);
+    }
+
     public DatabaseReference getReference(String ref) { return database.getReference(ref); }
 
     public DatabaseReference getMessagesReference() {
-        return database.getReference("message");
+        return database.getReference("messages");
     }
 
 }

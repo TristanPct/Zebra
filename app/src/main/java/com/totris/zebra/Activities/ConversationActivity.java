@@ -16,6 +16,7 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.ValueEventListener;
 import com.totris.zebra.Fragments.MessagesAdapter;
+import com.totris.zebra.Models.EncryptedMessage;
 import com.totris.zebra.Models.Message;
 import com.totris.zebra.Models.MessageType;
 import com.totris.zebra.R;
@@ -70,7 +71,8 @@ public class ConversationActivity extends AppCompatActivity {
 
                 Log.e("Count " ,""+dataSnapshot.getChildrenCount());
                 for (DataSnapshot postSnapshot: dataSnapshot.getChildren()) { // TODO: only add not already fetched messages
-                    Message message = postSnapshot.getValue(Message.class); // TODO: add EncryptedMessage class
+                    EncryptedMessage encryptedMessage = postSnapshot.getValue(EncryptedMessage.class); // TODO: add EncryptedMessage class
+                    Message message = encryptedMessage.decrypt("TEMP PASSPHRASE"); // TODO: use a real passphrase
 
                     adapter.addMessage(message);
 
@@ -99,7 +101,7 @@ public class ConversationActivity extends AppCompatActivity {
 
     @OnClick(R.id.messageSubmit)
     public void submitMessage(Button button) {
-        database.sendMessage(new Message(messageInput.getText().toString(), MessageType.TEXT, 0, 0));
+        database.sendMessage(new Message(messageInput.getText().toString(), MessageType.TEXT, 0, 0).encrypt("TEMP PASSPHRASE"));
 
         View view = this.getCurrentFocus();
         if (view != null) {
