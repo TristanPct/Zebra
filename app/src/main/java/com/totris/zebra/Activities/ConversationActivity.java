@@ -54,6 +54,6 @@ public class ConversationActivity extends AppCompatActivity implements Conversat
     @Override
     public void onSubmitMessage(String message) {
         Log.d(TAG, "onSubmitMessage: " + message);
-        group.sendMessage(new Message(message, MessageType.TEXT, 0, 0));
+        group.sendMessage(new Message(message, MessageType.TEXT));
     }
 }

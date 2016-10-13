@@ -10,6 +10,7 @@ import android.widget.TextView;
 
 import com.futuremind.recyclerviewfastscroll.SectionTitleProvider;
 import com.totris.zebra.Models.Message;
+import com.totris.zebra.Models.User;
 import com.totris.zebra.R;
 
 import java.util.ArrayList;
@@ -43,7 +44,10 @@ public class MessagesAdapter extends RecyclerView.Adapter<MessagesAdapter.ViewHo
         Message message = messages.get(position);
 
         holder.content.setText(message.getContent());
-//        holder.container.setGravity(Gravity.END); // TODO: change gravity according to the message author
+
+        if(User.getCurrent().getUid().equals(message.getSenderId())) {
+            holder.container.setGravity(Gravity.END);
+        }
     }
 
     public Message getItem(int position) {

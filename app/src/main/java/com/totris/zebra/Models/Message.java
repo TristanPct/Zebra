@@ -21,8 +21,7 @@ public class Message implements Serializable {
 
     private String content;
     private MessageType type;
-    private int senderId;
-    private int groupId;
+    private String senderId;
     private Date createdAt;
     private Date sentAt;
     private Date receiveAt;
@@ -31,19 +30,18 @@ public class Message implements Serializable {
 
     }
 
-    public Message(String content, MessageType type, int senderId, int groupId, Date createdAt, Date sentAt, Date receiveAt) {
+    public Message(String content, MessageType type, String senderId, Date createdAt, Date sentAt, Date receiveAt) {
         this();
         setContent(content);
         setType(type);
         setSenderId(senderId);
-        setGroupId(groupId);
         setCreatedAt(createdAt);
         setSentAt(sentAt);
         setReceiveAt(receiveAt);
     }
 
-    public Message(String content, MessageType type, int senderId, int groupId) {
-        this(content, type, senderId, groupId, new Date(), null, null);
+    public Message(String content, MessageType type) {
+        this(content, type, User.getCurrent().getUid(), new Date(), null, null);
     }
 
     public static void initialize() {
@@ -66,20 +64,12 @@ public class Message implements Serializable {
         this.type = type;
     }
 
-    public int getSenderId() {
+    public String getSenderId() {
         return senderId;
     }
 
-    public void setSenderId(int senderId) {
+    public void setSenderId(String senderId) {
         this.senderId = senderId;
-    }
-
-    public int getGroupId() {
-        return groupId;
-    }
-
-    public void setGroupId(int groupId) {
-        this.groupId = groupId;
     }
 
     public Date getCreatedAt() {

@@ -13,7 +13,7 @@
     <TextView
         android:id="@+id/messageContent"
         android:padding="@dimen/activity_horizontal_margin"
-        android:background="@color/colorPrimary"
+        android:background="@drawable/message_item_bg"
         android:textColor="@color/colorPrimaryContrast"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"/>
