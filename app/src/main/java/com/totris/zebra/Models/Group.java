@@ -1,8 +1,11 @@
 package com.totris.zebra.Models;
 
 
+import android.support.annotation.NonNull;
 import android.util.Log;
 
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -119,8 +122,10 @@ public class Group implements Serializable {
         }
     }
 
-    public void sendMessage(Message message) {
-        dbRef.child(uid).child("messages").push().setValue(message.encrypt("TEMP PASSPHRASE"));
+    public void sendMessage(final Message message) {
+        final DatabaseReference tmpRef = dbRef.child(uid).child("messages").push();
+
+        tmpRef.setValue(message.encrypt("TEMP PASSPHRASE"));
     }
 
     GroupUser getGroupUser() { //TODO: update all concerned users of the group
@@ -143,7 +148,10 @@ public class Group implements Serializable {
 
             @Override
             public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+                EncryptedMessage encryptedMessage = dataSnapshot.getValue(EncryptedMessage.class);
+                Message message = encryptedMessage.decrypt("TEMP PASSPHRASE"); // TODO: use a real passphrase
 
+                Log.d(TAG, "onChildChanged: " + message.getSentAt());
             }
 
             @Override

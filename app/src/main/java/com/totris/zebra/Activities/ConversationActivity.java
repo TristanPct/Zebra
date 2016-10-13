@@ -12,10 +12,12 @@ import com.totris.zebra.Models.MessageType;
 import com.totris.zebra.R;
 import com.totris.zebra.Utils.EventBus;
 
+import java.util.Date;
+
 public class ConversationActivity extends AppCompatActivity implements ConversationFragment.ConversationListener {
     static String TAG = "ConversationActivity";
     private Group group;
-    private Fragment currentFragment;
+    private ConversationFragment currentFragment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,6 +56,13 @@ public class ConversationActivity extends AppCompatActivity implements Conversat
     @Override
     public void onSubmitMessage(String message) {
         Log.d(TAG, "onSubmitMessage: " + message);
-        group.sendMessage(new Message(message, MessageType.TEXT));
+
+        Message messageObj = new Message(message, MessageType.TEXT);
+
+        //currentFragment.addMessage(messageObj);
+
+        messageObj.setCreatedAt(new Date());
+
+        group.sendMessage(messageObj);
     }
 }

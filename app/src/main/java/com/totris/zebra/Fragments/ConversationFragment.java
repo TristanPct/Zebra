@@ -22,6 +22,7 @@ import com.totris.zebra.Fragments.MessagesAdapter;
 import com.totris.zebra.Models.Group;
 import com.totris.zebra.Models.Message;
 import com.totris.zebra.Models.MessageType;
+import com.totris.zebra.Models.User;
 import com.totris.zebra.R;
 import com.totris.zebra.Utils.EventBus;
 
@@ -108,10 +109,17 @@ public class ConversationFragment extends Fragment {
         adapter.setMessages(event.getMessages());
     }*/
 
+    public void addMessage(Message message) {
+        //if(!User.getCurrent().getUid().equals(message.getSenderId()) || message.getCreatedAt() == null) {
+            adapter.addMessage(message);
+        //}
+    }
+
     @Subscribe
     public void onMessageChildAddedEvent(MessageChildAddedEvent event) {
         Log.d(TAG, "onChildAdded: new message");
-        adapter.addMessage(event.getMessage());
+
+        addMessage(event.getMessage());
     }
 
     @OnClick(R.id.messageSubmit)

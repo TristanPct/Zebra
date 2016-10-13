@@ -41,11 +41,7 @@ public class Message implements Serializable {
     }
 
     public Message(String content, MessageType type) {
-        this(content, type, User.getCurrent().getUid(), new Date(), null, null);
-    }
-
-    public static void initialize() {
-        addValueEventListener();
+        this(content, type, User.getCurrent().getUid(), null, null, null);
     }
 
     public String getContent() {
@@ -102,27 +98,6 @@ public class Message implements Serializable {
 
     public static Message decrypt(String message, String passphrase, String salt) {
         return AesCrypto.decrypt(message, passphrase, salt, Message.class);
-    }
-
-    private static void addValueEventListener() {
-        dbRef.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                List<Message> messages = new ArrayList<>();
-
-                for (DataSnapshot postSnapshot : dataSnapshot.getChildren()) {
-                    EncryptedMessage encryptedMessage = postSnapshot.getValue(EncryptedMessage.class);
-                    messages.add(encryptedMessage.decrypt("TEMP PASSPHRASE")); // TODO: use a real passphrase
-                }
-
-                EventBus.post(new MessageDataChangeEvent(messages));
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-
-            }
-        });
     }
 
 }
