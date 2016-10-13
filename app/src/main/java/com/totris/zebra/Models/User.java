@@ -34,6 +34,7 @@ public class User {
     private static String TAG = "User";
 
     private FirebaseUser firebaseUser;
+    private static User currentUser = Authentication.getInstance().getCurrentUser();
     private static DatabaseReference dbRef = Database.getInstance().getReference("users");
 
     private final Deferred deferred = new DeferredObject<>();
@@ -66,7 +67,7 @@ public class User {
     }
 
     public static User getCurrent() {
-        return Authentication.getInstance().getCurrentUser();
+        return currentUser;
     }
 
     public void setUid(String uid) {
@@ -92,7 +93,11 @@ public class User {
     }
 
     public String getMail() {
-        return mail;
+        if(firebaseUser != null) {
+            return firebaseUser.getEmail();
+        } else {
+            return mail;
+        }
     }
 
     public User updateMail(String mail) {

@@ -14,21 +14,29 @@ import org.jdeferred.Promise;
 import org.jdeferred.impl.DeferredObject;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 public class Group {
     private static String TAG = "Group";
 
     private List<Message> messages;
+    public Date createdAt;
     public String uid;
     private boolean isExisting;
     private static DatabaseReference dbRef = Database.getInstance().getReference("groups");
 
+    public Group() {
+        createdAt = new Date();
+    }
+
     public Group(List<User> users) {
+        this();
         messages = new ArrayList<Message>();
     }
 
     public Group(String uidVar) {
+        this();
         uid = uidVar;
     }
 
@@ -48,12 +56,15 @@ public class Group {
         List<String> commonGroupId = new ArrayList<String>(users.get(0).getGroupsIds());
         commonGroupId.retainAll(users.get(1).getGroupsIds());
 
+        Log.d(TAG, "getCommonGroup: " + commonGroupId.size());
+
         Group group;
 
         if (commonGroupId.size() == 1) {
             group = new Group(commonGroupId.get(0));
         } else {
             group = new Group(users);
+            group.persist();
 
             for(User u : users) {
                 u.registerGroup(group);
@@ -61,7 +72,6 @@ public class Group {
             }
         }
 
-        group.persist();
         //group.initListener();
 
         return group;
