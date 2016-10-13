@@ -43,8 +43,8 @@ public class ContactsAdapter extends RecyclerView.Adapter<ContactsAdapter.ViewHo
     public void onBindViewHolder(ViewHolder holder, int position) {
         User user = users.get(position);
 
-//        holder.username.setText(user.getUsername());
-        holder.username.setText(user.getMail());
+        holder.username.setText(user.getUsername());
+        holder.mail.setText(user.getMail());
     }
 
     public User getItem(int position) {
@@ -59,6 +59,9 @@ public class ContactsAdapter extends RecyclerView.Adapter<ContactsAdapter.ViewHo
     public static class ViewHolder extends RecyclerView.ViewHolder {
         @BindView(R.id.contactUsername)
         TextView username;
+
+        @BindView(R.id.contactMail)
+        TextView mail;
 
         public ViewHolder(View itemView) {
             super(itemView);

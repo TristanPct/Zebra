@@ -4,4 +4,6 @@
     <dimen name="activity_vertical_margin">16dp</dimen>
     <dimen name="activity_vertical_margin_half">8dp</dimen>
     <dimen name="fab_margin">16dp</dimen>
+    <dimen name="list_item_border_size">2dp</dimen>
+    <dimen name="list_item_border_radius">3dp</dimen>
 </resources>

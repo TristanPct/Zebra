@@ -82,7 +82,11 @@ public class User {
     }
 
     public String getUsername() {
-        return username;
+        if (firebaseUser != null) {
+            return firebaseUser.getDisplayName();
+        } else {
+            return username;
+        }
     }
 
     public User updateUsername(String username) {
@@ -148,7 +152,7 @@ public class User {
 
         // update database linked model
 
-        if (isUsernameUpdated) {
+        if (isUsernameUpdated || isMailUpdated) {
             dbRef.child(getUid()).setValue(this);
         }
     }
