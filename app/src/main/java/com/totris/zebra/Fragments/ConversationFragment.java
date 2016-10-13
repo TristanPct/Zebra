@@ -66,7 +66,7 @@ public class ConversationFragment extends Fragment {
 
         List<Message> messages = new ArrayList<>();
 
-        messages.add(new Message("Loading messages...", MessageType.TEXT));
+        //TODO: add loading
 
         adapter = new MessagesAdapter(messages);
 

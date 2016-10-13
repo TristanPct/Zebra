@@ -47,6 +47,8 @@ public class MessagesAdapter extends RecyclerView.Adapter<MessagesAdapter.ViewHo
 
         if(User.getCurrent().getUid().equals(message.getSenderId())) {
             holder.container.setGravity(Gravity.END);
+        } else {
+            holder.container.setGravity(Gravity.START);
         }
     }
 
