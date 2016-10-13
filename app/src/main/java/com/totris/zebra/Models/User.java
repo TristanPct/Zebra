@@ -214,7 +214,11 @@ public class User {
     }
 
     public void initialize() {
-        dbRef.child(uid).child("groupsIds").addChildEventListener(new ChildEventListener() {
+        if(dbRef == null) {
+            dbRef = Database.getInstance().getReference("users");
+        }
+
+        dbRef.child(getUid()).child("groupsIds").addChildEventListener(new ChildEventListener() {
             @Override
             public void onChildAdded(DataSnapshot dataSnapshot, String s) {
                 registerGroup(dataSnapshot.getValue(String.class));
