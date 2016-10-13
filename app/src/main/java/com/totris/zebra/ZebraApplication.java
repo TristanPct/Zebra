@@ -14,6 +14,6 @@ public class ZebraApplication extends Application {
     }
 
     protected void initialize() {
-        Message.initialize();
+
     }
 }
