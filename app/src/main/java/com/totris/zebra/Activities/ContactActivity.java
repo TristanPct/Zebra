@@ -57,7 +57,6 @@ public class ContactActivity extends AppCompatActivity implements ContactsAdapte
         Log.d(TAG, "onContactItemClick: onContactItemClick from Activity");
 
         List<User> users = new ArrayList<>();
-        users.add(User.getCurrent());
         users.add(user);
 
         Group group = Group.getCommonGroup(users);

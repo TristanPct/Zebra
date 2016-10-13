@@ -18,6 +18,7 @@ import com.totris.zebra.Utils.Authentication;
 import com.totris.zebra.Utils.Database;
 
 import org.jdeferred.Deferred;
+import org.jdeferred.DoneCallback;
 import org.jdeferred.Promise;
 import org.jdeferred.impl.DeferredObject;
 
@@ -45,7 +46,8 @@ public class User {
     private String password;
     private String uid;
 
-    public List<String> groupsIds;
+    public List<String> groupsIds; //TODO: remove field
+    public List<GroupUser> groups = new ArrayList<>();
 
     private boolean isUsernameUpdated = false;
     private boolean isMailUpdated = false;
@@ -187,6 +189,24 @@ public class User {
         return deferred.promise();
     }
 
+    public Promise fetchGroupsIds() {
+        return Database.getInstance().get(dbRef.child(getUid()).child("groupsIds"), String.class);
+    }
+
+    public Promise fetchGroups() {
+        final DeferredObject deferred = new DeferredObject();
+
+        fetchGroupsIds().done(new DoneCallback() {
+            @Override
+            public void onDone(Object result) {
+
+                deferred.resolve(result);
+            }
+        });
+
+        return deferred.promise();
+    }
+
     public List<String> getGroupsIds() {
         if(groupsIds != null) {
             return groupsIds;
@@ -199,11 +219,21 @@ public class User {
         this.groupsIds = groupsIds;
     }
 
+    public List<GroupUser> getGroups() {
+        return groups;
+    }
+
     public void registerGroup(Group group) {
         if(groupsIds == null) {
             groupsIds = new ArrayList<>();
         }
         groupsIds.add(group.uid);
+
+        groups.add(group.getGroupUser());
+    }
+
+    public void registerGroup(GroupUser group) {
+        groups.add(group);
     }
 
     public void registerGroup(String uid) {
@@ -223,13 +253,11 @@ public class User {
 
         Log.d(TAG, "initialize: " + getUid());
 
-        dbRef.child(getUid()).child("groupsIds").addChildEventListener(new ChildEventListener() {
+        dbRef.child(getUid()).child("groups").addChildEventListener(new ChildEventListener() {
             @Override
             public void onChildAdded(DataSnapshot dataSnapshot, String s) {
-                Log.d(TAG, "onChildAdded: group added : " + dataSnapshot.getValue(String.class));
-                registerGroup(dataSnapshot.getValue(String.class));
-
-
+                Log.d(TAG, "onChildAdded: group added : " + dataSnapshot.getValue(GroupUser.class));
+                registerGroup(dataSnapshot.getValue(GroupUser.class));
             }
 
             @Override

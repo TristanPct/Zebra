@@ -3,18 +3,15 @@ package com.totris.zebra.Models;
 
 import android.util.Log;
 
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.ValueEventListener;
 import com.totris.zebra.Events.MessageChildAddedEvent;
 import com.totris.zebra.Utils.Database;
 import com.totris.zebra.Utils.EventBus;
 
 import org.jdeferred.Promise;
-import org.jdeferred.impl.DeferredObject;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -49,6 +46,10 @@ public class Group  implements Serializable {
         uid = uidVar;
     }
 
+    public Promise getUsers() {
+        return Database.getInstance().get(dbRef.child(uid).child("usersIds"), User.class);
+    }
+
     public List<Message> getMessages() {
         return messages;
     }
@@ -61,16 +62,32 @@ public class Group  implements Serializable {
         messages.add(message);
     }
 
-    public static Group getCommonGroup(List<User> users) {
-        List<String> commonGroupId = new ArrayList<String>(users.get(0).getGroupsIds());
-        commonGroupId.retainAll(users.get(1).getGroupsIds()); //TODO: iterate over each user
+    public String getUid() {
+        return uid;
+    }
 
-        Log.d(TAG, "getCommonGroup: " + commonGroupId.size());
+    public void setUid(String uid) {
+        this.uid = uid;
+    }
+
+    public static Group getCommonGroup(List<User> users) {
+        List<GroupUser> groups = new ArrayList<>(User.getCurrent().getGroups());
+
+        String commonGroupId = null;
+
+        for(GroupUser group: User.getCurrent().getGroups()) {
+            for (String userId: group.getUsersIds()) {
+                if(userId == users.get(0).getUid()) {
+                    commonGroupId = group.getGroupId();
+                    Log.d(TAG, "getCommonGroup: le group " + group.getGroupId() + " est un groupe commun");
+                }
+            }
+        }
 
         Group group;
 
-        if (commonGroupId.size() == 1) {
-            group = new Group(commonGroupId.get(0));
+        if (commonGroupId != null) {
+            group = new Group(commonGroupId);
         } else {
             group = new Group(users);
             group.persist();
@@ -104,6 +121,10 @@ public class Group  implements Serializable {
 
     public void sendMessage(Message message) {
         dbRef.child(uid).child("messages").push().setValue(message.encrypt("TEMP PASSPHRASE"));
+    }
+
+    public GroupUser getGroupUser() { //TODO: update all concerned users of the group
+        return new GroupUser(usersIds, getUid());
     }
 
     public void initialize() {

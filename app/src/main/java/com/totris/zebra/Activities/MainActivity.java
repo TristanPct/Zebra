@@ -11,6 +11,9 @@ import com.totris.zebra.Fragments.RegisterFragment;
 import com.totris.zebra.Fragments.WithErrorView;
 import com.totris.zebra.R;
 import com.totris.zebra.Utils.Authentication;
+import com.totris.zebra.Utils.Database;
+
+import org.jdeferred.DoneCallback;
 
 public class MainActivity extends AppCompatActivity implements Authentication.AuthenticationListener, LoginFragment.LoginListener, RegisterFragment.RegisterListener {
     private Authentication auth;
