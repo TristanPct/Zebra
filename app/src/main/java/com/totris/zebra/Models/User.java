@@ -228,6 +228,8 @@ public class User {
             public void onChildAdded(DataSnapshot dataSnapshot, String s) {
                 Log.d(TAG, "onChildAdded: group added : " + dataSnapshot.getValue(String.class));
                 registerGroup(dataSnapshot.getValue(String.class));
+
+
             }
 
             @Override

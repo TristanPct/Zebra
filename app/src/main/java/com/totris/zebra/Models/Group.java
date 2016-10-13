@@ -26,10 +26,10 @@ public class Group  implements Serializable {
 
     private static final long serialVersionUID = 8392718937281219L;
 
-    private List<Message> messages;
+    private List<Message> messages = new ArrayList<>();
     public Date createdAt;
     public String uid;
-    private boolean isExisting;
+    public List<String> usersIds = new ArrayList<>();
     private static DatabaseReference dbRef = Database.getInstance().getReference("groups");
 
     public Group() {
@@ -38,7 +38,10 @@ public class Group  implements Serializable {
 
     public Group(List<User> users) {
         this();
-        messages = new ArrayList<Message>();
+
+        for(User u: users) {
+            usersIds.add(u.getUid());
+        }
     }
 
     public Group(String uidVar) {
@@ -78,8 +81,6 @@ public class Group  implements Serializable {
             }
         }
 
-        //group.initListener();
-
         return group;
     }
 
@@ -99,28 +100,6 @@ public class Group  implements Serializable {
             uid = groupRef.getKey();
             Log.d(TAG, "persisted: " + uid);
         }
-    }
-
-    public void initListener() {
-        // Read from the database
-        dbRef.child(uid).addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                // This method is called once with the initial value and again
-                // whenever data at this location is updated.
-                Group value = dataSnapshot.getValue(Group.class);
-
-                /*if(value.messages != null) {
-                    setMessages(value.messages);
-                }*/
-            }
-
-            @Override
-            public void onCancelled(DatabaseError error) {
-                // Failed to read value
-                Log.w(TAG, "Failed to read value.", error.toException());
-            }
-        });
     }
 
     public void sendMessage(Message message) {
