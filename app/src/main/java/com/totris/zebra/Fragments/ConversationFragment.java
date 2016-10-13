@@ -84,7 +84,10 @@ public class ConversationFragment extends Fragment {
 
         ButterKnife.bind(this, view);
 
-        messagesListRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+        LinearLayoutManager layout = new LinearLayoutManager(inflater.getContext());
+        layout.setStackFromEnd(true);
+
+        messagesListRecyclerView.setLayoutManager(layout);
 
 
         adapter.setOnMessageItemListener(new MessagesAdapter.MessageItemListener() {
