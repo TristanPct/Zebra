@@ -46,10 +46,6 @@ public class Group  implements Serializable {
         uid = uidVar;
     }
 
-    public Promise getUsers() {
-        return Database.getInstance().get(dbRef.child(uid).child("usersIds"), User.class);
-    }
-
     public List<Message> getMessages() {
         return messages;
     }
@@ -91,6 +87,9 @@ public class Group  implements Serializable {
         } else {
             group = new Group(users);
             group.persist();
+
+            User.getCurrent().registerGroup(group);
+            User.getCurrent().persist();
 
             for(User u : users) {
                 u.registerGroup(group);
