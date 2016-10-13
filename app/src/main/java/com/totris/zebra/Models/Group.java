@@ -85,11 +85,9 @@ public class Group  implements Serializable {
         if (commonGroupId != null) {
             group = new Group(commonGroupId);
         } else {
+            users.add(User.getCurrent());
             group = new Group(users);
             group.persist();
-
-            User.getCurrent().registerGroup(group);
-            User.getCurrent().persist();
 
             for(User u : users) {
                 u.registerGroup(group);
