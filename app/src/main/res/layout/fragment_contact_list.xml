@@ -3,7 +3,7 @@
     android:id="@+id/contactListWrapper"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:showIn="@layout/activity_contact">
+    tools:showIn="@layout/activity_contact_list">
 
     <android.support.v7.widget.RecyclerView
         android:id="@+id/contactsList"
