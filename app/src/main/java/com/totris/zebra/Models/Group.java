@@ -74,8 +74,8 @@ public class Group  implements Serializable {
         for(GroupUser group: User.getCurrent().getGroups()) {
             Log.d(TAG, "getCommonGroup: test group " + group.getGroupId());
             for (String userId: group.getUsersIds()) {
-                Log.d(TAG, "getCommonGroup: test user " + userId);
-                if(userId == users.get(0).getUid()) {
+                Log.d(TAG, "getCommonGroup: test user " + userId + " - users.get(0) = " + users.get(0).getUid());
+                if(userId.equals(users.get(0).getUid())) {
                     commonGroupId = group.getGroupId();
                     Log.d(TAG, "getCommonGroup: le group " + group.getGroupId() + " est un groupe commun");
                 }
