@@ -42,7 +42,7 @@ public class ConversationFragment extends Fragment {
 
     private ConversationListener listener;
 
-    private MessagesAdapter adapter;
+    private MessagesAdapter adapter = new MessagesAdapter(new ArrayList<Message>());
 
     private Group group;
 
@@ -65,11 +65,7 @@ public class ConversationFragment extends Fragment {
 
         group = ((ConversationActivity) getActivity()).getGroup();
 
-        List<Message> messages = new ArrayList<>();
-
         //TODO: add loading
-
-        adapter = new MessagesAdapter(messages);
 
         try {
             listener = (ConversationListener) context;
@@ -102,12 +98,6 @@ public class ConversationFragment extends Fragment {
 
         return view;
     }
-
-    /*@Subscribe
-    public void onMessageDataChangeEvent(MessageDataChangeEvent event) {
-        Log.d(TAG, "onDataChange: new message(s)");
-        adapter.setMessages(event.getMessages());
-    }*/
 
     public void addMessage(Message message) {
         //if(!User.getCurrent().getUid().equals(message.getSenderId()) || message.getCreatedAt() == null) {
