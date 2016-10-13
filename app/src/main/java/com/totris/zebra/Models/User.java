@@ -9,6 +9,7 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.UserProfileChangeRequest;
 import com.google.firebase.auth.api.model.StringList;
+import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -62,6 +63,8 @@ public class User {
         User user = new User();
 
         user.firebaseUser = firebaseUser;
+
+        user.initialize();
 
         return user;
     }
@@ -201,5 +204,41 @@ public class User {
             groupsIds = new ArrayList<>();
         }
         groupsIds.add(group.uid);
+    }
+
+    public void registerGroup(String uid) {
+        if(groupsIds == null) {
+            groupsIds = new ArrayList<>();
+        }
+        groupsIds.add(uid);
+    }
+
+    public void initialize() {
+        dbRef.child(uid).child("groupsIds").addChildEventListener(new ChildEventListener() {
+            @Override
+            public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+                registerGroup(dataSnapshot.getValue(String.class));
+            }
+
+            @Override
+            public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+
+            }
+
+            @Override
+            public void onChildRemoved(DataSnapshot dataSnapshot) {
+
+            }
+
+            @Override
+            public void onChildMoved(DataSnapshot dataSnapshot, String s) {
+
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
     }
 }
