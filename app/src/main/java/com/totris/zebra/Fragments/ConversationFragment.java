@@ -15,19 +15,11 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import com.squareup.otto.Subscribe;
-import com.totris.zebra.Activities.ConversationActivity;
 import com.totris.zebra.Events.MessageChildAddedEvent;
-import com.totris.zebra.Events.MessageDataChangeEvent;
-import com.totris.zebra.Fragments.MessagesAdapter;
-import com.totris.zebra.Models.Group;
 import com.totris.zebra.Models.Message;
-import com.totris.zebra.Models.MessageType;
-import com.totris.zebra.Models.User;
 import com.totris.zebra.R;
-import com.totris.zebra.Utils.EventBus;
 
 import java.util.ArrayList;
-import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -43,8 +35,6 @@ public class ConversationFragment extends Fragment {
     private ConversationListener listener;
 
     private MessagesAdapter adapter = new MessagesAdapter(new ArrayList<Message>());
-
-    private Group group;
 
     @BindView(R.id.messagesList) //TODO: bind all those stuff in a fragment
     RecyclerView messagesListRecyclerView;
@@ -62,8 +52,6 @@ public class ConversationFragment extends Fragment {
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-
-        group = ((ConversationActivity) getActivity()).getGroup();
 
         //TODO: add loading
 

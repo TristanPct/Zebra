@@ -32,16 +32,18 @@ import java.util.List;
 public class User {
     private final static String TAG = "User";
 
-    private FirebaseUser firebaseUser;
     private static User currentUser = Authentication.getInstance().getCurrentUser();
     private static DatabaseReference dbRef = Database.getInstance().getReference("users");
 
+    private FirebaseUser firebaseUser;
+    private String uid;
     private String username;
     private String mail;
     private String password;
-    private String uid;
 
     private List<GroupUser> groups = new ArrayList<>();
+    private int instantiatedGroups = 0;
+    private boolean requestGroupUsersInstantiation = false;
 
     private boolean isUsernameUpdated = false;
     private boolean isMailUpdated = false;
@@ -115,6 +117,59 @@ public class User {
         return this;
     }
 
+    public List<GroupUser> getGroups() {
+        return groups;
+    }
+
+    public Promise getInstantiatedGroupUsers() {
+        Log.d(TAG, "getInstantiatedGroupUsers: " + groups.size());
+        instantiatedGroups = 0;
+
+        final DeferredObject deferred = new DeferredObject();
+
+        for (final GroupUser groupUser : groups) {
+            Log.d(TAG, "getInstantiatedGroupUsers: group: " + groupUser.getGroupId());
+            getInstantiatedGroupUser(groupUser).done(new DoneCallback() {
+                @Override
+                public void onDone(Object result) {
+                    instantiatedGroups++;
+                    if (instantiatedGroups == groups.size()) {
+                        deferred.resolve(groups);
+                    }
+                }
+            });
+        }
+
+        return deferred.promise();
+    }
+
+    private Promise getInstantiatedGroupUser(final GroupUser groupUser) {
+        final DeferredObject deferred = new DeferredObject();
+
+        Log.d(TAG, "getInstantiatedGroupUsers: group: " + groupUser.getGroupId());
+        groupUser.getInstantiatedGroupUsers().done(new DoneCallback() {
+            @Override
+            public void onDone(Object result) {
+                Log.d(TAG, "getInstantiatedGroupUsers: done" + groupUser.getGroupId());
+                deferred.resolve(groups);
+            }
+        });
+
+        return deferred.promise();
+    }
+
+    public void registerGroup(GroupUser group) {
+        groups.add(group);
+        getInstantiatedGroupUser(group);
+//        if (requestGroupUsersInstantiation) {
+//            getInstantiatedGroupUser(group);
+//        }
+    }
+
+    public void registerGroup(Group group) {
+        registerGroup(group.getGroupUser());
+    }
+
     public void commit() {
         if (isUsernameUpdated) {
             UserProfileChangeRequest updates = new UserProfileChangeRequest.Builder()
@@ -153,7 +208,7 @@ public class User {
         // update database linked model
 
         if (isUsernameUpdated || isMailUpdated) {
-            dbRef.child(getUid()).setValue(this);
+            persist();
         }
     }
 
@@ -165,7 +220,7 @@ public class User {
         final DeferredObject deferred = new DeferredObject();
 
         dbRef.addListenerForSingleValueEvent(new ValueEventListener() {
-            List<User> list = new ArrayList<User>();
+            List<User> list = new ArrayList<>();
 
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
@@ -203,18 +258,6 @@ public class User {
         });
 
         return deferred.promise();
-    }
-
-    public List<GroupUser> getGroups() {
-        return groups;
-    }
-
-    public void registerGroup(Group group) {
-        groups.add(group.getGroupUser());
-    }
-
-    public void registerGroup(GroupUser group) {
-        groups.add(group);
     }
 
     public void initialize() {

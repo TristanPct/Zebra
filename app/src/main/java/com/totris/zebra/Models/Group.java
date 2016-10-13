@@ -1,15 +1,13 @@
 package com.totris.zebra.Models;
 
 
-import android.support.annotation.NonNull;
 import android.util.Log;
 
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.Exclude;
 import com.totris.zebra.Events.MessageChildAddedEvent;
 import com.totris.zebra.Utils.Database;
 import com.totris.zebra.Utils.EventBus;
@@ -24,11 +22,12 @@ public class Group implements Serializable {
 
     private static final long serialVersionUID = 8392718937281219L;
 
-    private List<Message> messages = new ArrayList<>();
-    private Date createdAt;
-    private String uid;
-    private List<String> usersIds = new ArrayList<>();
     private static DatabaseReference dbRef = Database.getInstance().getReference("groups");
+
+    private String uid;
+    private Date createdAt;
+    private List<String> usersIds = new ArrayList<>();
+    private List<Message> messages = new ArrayList<>();
 
     public Group() {
         createdAt = new Date();
@@ -36,27 +35,14 @@ public class Group implements Serializable {
 
     public Group(List<User> users) {
         this();
-
         for (User u : users) {
             usersIds.add(u.getUid());
         }
     }
 
-    public Group(String uidVar) {
+    public Group(String uid) {
         this();
-        uid = uidVar;
-    }
-
-    public List<Message> getMessages() {
-        return messages;
-    }
-
-    public void setMessages(List<Message> messages) {
-        this.messages = messages;
-    }
-
-    public void addMessage(Message message) {
-        messages.add(message);
+        this.uid = uid;
     }
 
     public String getUid() {
@@ -73,6 +59,38 @@ public class Group implements Serializable {
 
     public void setCreatedAt(Date createdAt) {
         this.createdAt = createdAt;
+    }
+
+    public List<String> getUsersIds() {
+        return usersIds;
+    }
+
+    public void setUsersIds(List<String> usersIds) {
+        this.usersIds = usersIds;
+    }
+
+    @Exclude
+    public GroupUser getGroupUser() { //TODO: update all concerned users of the group
+        return new GroupUser(usersIds, getUid());
+    }
+
+    public List<Message> getMessages() {
+        return messages;
+    }
+
+    public void setMessages(List<Message> messages) {
+        this.messages = messages;
+    }
+
+    @Exclude
+    public Message getLastMessage() {
+        if (messages.size() == 0) return null;
+
+        return messages.get(messages.size() - 1);
+    }
+
+    public void addMessage(Message message) {
+        messages.add(message);
     }
 
     public static Group getCommonGroup(List<User> users) {
@@ -126,10 +144,6 @@ public class Group implements Serializable {
         final DatabaseReference tmpRef = dbRef.child(uid).child("messages").push();
 
         tmpRef.setValue(message.encrypt("TEMP PASSPHRASE"));
-    }
-
-    GroupUser getGroupUser() { //TODO: update all concerned users of the group
-        return new GroupUser(usersIds, getUid());
     }
 
     public void initialize() {

@@ -29,7 +29,6 @@ import butterknife.ButterKnife;
  * A simple {@link Fragment} subclass.
  */
 public class ContactListFragment extends Fragment {
-
     private static String TAG = "ContactListFragment";
 
     private ContactsAdapter adapter;
@@ -68,7 +67,7 @@ public class ContactListFragment extends Fragment {
         try {
             adapter.setOnContactItemListener((ContactsAdapter.ContactItemListener) getActivity());
         } catch (ClassCastException exception) {
-            throw new ClassCastException(getActivity().toString() + " must implement OnSubmitListener");
+            throw new ClassCastException(getActivity().toString() + " must implement ContactItemListener");
         }
 
         contactsPromise.done(new DoneCallback() {
@@ -90,9 +89,5 @@ public class ContactListFragment extends Fragment {
         fastScroller.setRecyclerView(contactsListRecyclerView);
 
         return view;
-    }
-
-    public void setAdapterListener(ContactsAdapter.ContactItemListener listener) {
-        adapter.setOnContactItemListener(listener);
     }
 }

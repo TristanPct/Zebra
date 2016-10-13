@@ -1,5 +1,20 @@
 package com.totris.zebra.Models;
 
+import android.util.Log;
+
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.Exclude;
+import com.google.firebase.database.ValueEventListener;
+import com.totris.zebra.Events.GroupUserInstantiateEvent;
+import com.totris.zebra.Utils.Database;
+import com.totris.zebra.Utils.EventBus;
+
+import org.jdeferred.DoneCallback;
+import org.jdeferred.Promise;
+import org.jdeferred.impl.DeferredObject;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -8,8 +23,18 @@ import java.util.List;
  */
 
 public class GroupUser {
+    private static final String TAG = "GroupUser";
+
+    private static DatabaseReference usersDbRef = Database.getInstance().getReference("users");
+    private static DatabaseReference groupsDbRef = Database.getInstance().getReference("groups");
+
     private List<String> usersIds = new ArrayList<>();
     private String groupId;
+
+    private List<User> users = new ArrayList<>();
+    private Group group = new Group();
+    private boolean usersLoaded = false;
+    private boolean groupLoaded = false;
 
     public GroupUser() {
 
@@ -33,5 +58,108 @@ public class GroupUser {
 
     public String getGroupId() {
         return groupId;
+    }
+
+    @Exclude
+    public List<User> getUsers() {
+        return users;
+    }
+
+    @Exclude
+    public Group getGroup() {
+        return group;
+    }
+
+    public Promise getInstantiatedGroupUsers() {
+        groupLoaded = false;
+        usersLoaded = false;
+
+        final DeferredObject deferred = new DeferredObject();
+
+        getInstantiatedGroup().done(new DoneCallback() {
+            @Override
+            public void onDone(Object result) {
+                groupLoaded = true;
+                Log.d(TAG, "onDone: group");
+                if (groupLoaded && usersLoaded) {
+                    deferred.resolve(GroupUser.this);
+                    EventBus.post(new GroupUserInstantiateEvent(GroupUser.this));
+                }
+            }
+        });
+
+        getInstantiatedUsers().done(new DoneCallback() {
+            @Override
+            public void onDone(Object result) {
+                usersLoaded = true;
+                Log.d(TAG, "onDone: users");
+                if (groupLoaded && usersLoaded) {
+                    deferred.resolve(GroupUser.this);
+                    EventBus.post(new GroupUserInstantiateEvent(GroupUser.this));
+                }
+            }
+        });
+
+        return deferred.promise();
+    }
+
+    private Promise getInstantiatedGroup() {
+        final DeferredObject deferred = new DeferredObject();
+
+        groupsDbRef.child(groupId).addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                    Log.d(TAG, "getInstantiatedGroup#onDataChange: " + dataSnapshot);
+                    group = dataSnapshot.getValue(Group.class); //FIXME: DatabaseException: Expected a List while deserializing, but got a class java.util.HashMap
+
+                deferred.resolve(group);
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                deferred.resolve(users);
+            }
+        });
+
+        return deferred.promise();
+    }
+
+    private Promise getInstantiatedUsers() {
+        final DeferredObject deferred = new DeferredObject();
+
+        for (String userId : usersIds) {
+            Log.d(TAG, "getInstantiatedUsers: " + userId);
+            getInstantiatedUser(userId).done(new DoneCallback() {
+                @Override
+                public void onDone(Object result) {
+                    if (users.size() == usersIds.size()) {
+                        deferred.resolve(users);
+                    }
+                }
+            });
+        }
+
+        return deferred.promise();
+    }
+
+    private Promise getInstantiatedUser(String id) {
+        final DeferredObject deferred = new DeferredObject();
+
+        usersDbRef.child(id).addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                    Log.d(TAG, "getInstantiatedUser#onDataChange: " + dataSnapshot);
+                    users.add(dataSnapshot.getValue(User.class));
+
+                deferred.resolve(users);
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                deferred.resolve(users);
+            }
+        });
+
+        return deferred.promise();
     }
 }
