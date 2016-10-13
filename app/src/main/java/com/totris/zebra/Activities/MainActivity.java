@@ -49,7 +49,7 @@ public class MainActivity extends AppCompatActivity implements Authentication.Au
 
     @Override
     public void onUserSignedIn(FirebaseUser user) {
-        Intent intent = new Intent(this, ConversationActivity.class);
+        Intent intent = new Intent(this, ContactActivity.class);
         startActivity(intent);
     }
 
