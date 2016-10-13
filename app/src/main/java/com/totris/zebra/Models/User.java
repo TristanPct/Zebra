@@ -211,6 +211,9 @@ public class User {
             groupsIds = new ArrayList<>();
         }
         groupsIds.add(uid);
+
+        Log.d(TAG, "registerGroup tmpUser groups : " + groupsIds.get(groupsIds.size()-1));
+        Log.d(TAG, "registerGroup currentUser groups: " + currentUser.groupsIds.get(groupsIds.size()-1));
     }
 
     public void initialize() {
@@ -218,9 +221,12 @@ public class User {
             dbRef = Database.getInstance().getReference("users");
         }
 
+        Log.d(TAG, "initialize: " + getUid());
+
         dbRef.child(getUid()).child("groupsIds").addChildEventListener(new ChildEventListener() {
             @Override
             public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+                Log.d(TAG, "onChildAdded: group added : " + dataSnapshot.getValue(String.class));
                 registerGroup(dataSnapshot.getValue(String.class));
             }
 
