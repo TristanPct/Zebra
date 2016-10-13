@@ -18,7 +18,7 @@ import java.util.List;
  * Created by thomaslecoeur on 11/10/2016.
  */
 public class Database {
-    private static String TAG = "Database";
+    private static final String TAG = "Database";
 
     private static Database ourInstance = new Database();
 
@@ -32,7 +32,9 @@ public class Database {
         database = FirebaseDatabase.getInstance();
     }
 
-    public DatabaseReference getReference(String ref) { return database.getReference(ref); }
+    public DatabaseReference getReference(String ref) {
+        return database.getReference(ref);
+    }
 
     public <T> Promise get(DatabaseReference dbRef, final Class<T> type) {
         final DeferredObject deferred = new DeferredObject();
@@ -42,7 +44,7 @@ public class Database {
 
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                for (DataSnapshot postSnapshot: dataSnapshot.getChildren()) {
+                for (DataSnapshot postSnapshot : dataSnapshot.getChildren()) {
                     T item = postSnapshot.getValue(type);
 
                     list.add(item);

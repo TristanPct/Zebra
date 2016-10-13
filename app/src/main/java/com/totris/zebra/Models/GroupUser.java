@@ -16,7 +16,7 @@ public class GroupUser {
     }
 
     public GroupUser(List<User> usersIds, Group groupId) {
-        for(User u : usersIds) {
+        for (User u : usersIds) {
             this.usersIds.add(u.getUid());
         }
         this.groupId = groupId.getUid();

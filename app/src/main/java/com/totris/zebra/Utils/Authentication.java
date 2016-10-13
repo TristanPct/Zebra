@@ -16,7 +16,7 @@ import com.totris.zebra.Models.User;
 public class Authentication {
     private static final String TAG = "Authentication";
 
-    private static Authentication instance;
+    private static Authentication instance = new Authentication();
 
     private AuthenticationListener listener;
 
@@ -45,10 +45,6 @@ public class Authentication {
     }
 
     public static Authentication getInstance() {
-        if (instance == null) {
-            instance = new Authentication();
-        }
-
         return instance;
     }
 
@@ -98,8 +94,11 @@ public class Authentication {
 
     public interface AuthenticationListener {
         void onUserSignedIn(FirebaseUser user);
+
         void onUserSignedOut();
+
         void onUserSignInFailed(String message);
+
         void onUserRegistrationFailed(String message);
     }
 }

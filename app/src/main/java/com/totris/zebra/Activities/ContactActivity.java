@@ -19,7 +19,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ContactActivity extends AppCompatActivity implements ContactsAdapter.ContactItemListener {
-    private static String TAG = "ContactActivity";
+    private final static String TAG = "ContactActivity";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

@@ -11,22 +11,20 @@ import com.totris.zebra.Events.MessageChildAddedEvent;
 import com.totris.zebra.Utils.Database;
 import com.totris.zebra.Utils.EventBus;
 
-import org.jdeferred.Promise;
-
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-public class Group  implements Serializable {
-    private static String TAG = "Group";
+public class Group implements Serializable {
+    private final static String TAG = "Group";
 
     private static final long serialVersionUID = 8392718937281219L;
 
     private List<Message> messages = new ArrayList<>();
-    public Date createdAt;
-    public String uid;
-    public List<String> usersIds = new ArrayList<>();
+    private Date createdAt;
+    private String uid;
+    private List<String> usersIds = new ArrayList<>();
     private static DatabaseReference dbRef = Database.getInstance().getReference("groups");
 
     public Group() {
@@ -36,7 +34,7 @@ public class Group  implements Serializable {
     public Group(List<User> users) {
         this();
 
-        for(User u: users) {
+        for (User u : users) {
             usersIds.add(u.getUid());
         }
     }
@@ -66,18 +64,21 @@ public class Group  implements Serializable {
         this.uid = uid;
     }
 
-    public static Group getCommonGroup(List<User> users) {
-        List<GroupUser> groups = new ArrayList<>(User.getCurrent().getGroups());
+    public Date getCreatedAt() {
+        return createdAt;
+    }
 
+    public void setCreatedAt(Date createdAt) {
+        this.createdAt = createdAt;
+    }
+
+    public static Group getCommonGroup(List<User> users) {
         String commonGroupId = null;
 
-        for(GroupUser group: User.getCurrent().getGroups()) {
-            Log.d(TAG, "getCommonGroup: test group " + group.getGroupId());
-            for (String userId: group.getUsersIds()) {
-                Log.d(TAG, "getCommonGroup: test user " + userId + " - users.get(0) = " + users.get(0).getUid());
-                if(userId.equals(users.get(0).getUid())) {
+        for (GroupUser group : User.getCurrent().getGroups()) {
+            for (String userId : group.getUsersIds()) {
+                if (userId.equals(users.get(0).getUid())) {
                     commonGroupId = group.getGroupId();
-                    Log.d(TAG, "getCommonGroup: le group " + group.getGroupId() + " est un groupe commun");
                 }
             }
         }
@@ -91,7 +92,7 @@ public class Group  implements Serializable {
             group = new Group(users);
             group.persist();
 
-            for(User u : users) {
+            for (User u : users) {
                 u.registerGroup(group);
                 u.persist();
             }
@@ -107,7 +108,7 @@ public class Group  implements Serializable {
     public void persist() {
         Log.d(TAG, "persist: ");
 
-        if(isDefined()) {
+        if (isDefined()) {
             dbRef.child(uid).setValue(this);
             Log.d(TAG, "persisted  exisitng: " + uid);
         } else {
@@ -122,7 +123,7 @@ public class Group  implements Serializable {
         dbRef.child(uid).child("messages").push().setValue(message.encrypt("TEMP PASSPHRASE"));
     }
 
-    public GroupUser getGroupUser() { //TODO: update all concerned users of the group
+    GroupUser getGroupUser() { //TODO: update all concerned users of the group
         return new GroupUser(usersIds, getUid());
     }
 

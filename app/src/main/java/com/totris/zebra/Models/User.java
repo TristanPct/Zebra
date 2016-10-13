@@ -8,7 +8,6 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.UserProfileChangeRequest;
-import com.google.firebase.auth.api.model.StringList;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -17,12 +16,10 @@ import com.google.firebase.database.ValueEventListener;
 import com.totris.zebra.Utils.Authentication;
 import com.totris.zebra.Utils.Database;
 
-import org.jdeferred.Deferred;
 import org.jdeferred.DoneCallback;
 import org.jdeferred.Promise;
 import org.jdeferred.impl.DeferredObject;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -33,21 +30,18 @@ import java.util.List;
  * To update user data use update methods (can be chained) and then use {@link User#commit} to push modifications to the database.
  */
 public class User {
-    private static String TAG = "User";
+    private final static String TAG = "User";
 
     private FirebaseUser firebaseUser;
     private static User currentUser = Authentication.getInstance().getCurrentUser();
     private static DatabaseReference dbRef = Database.getInstance().getReference("users");
-
-    private final Deferred deferred = new DeferredObject<>();
 
     private String username;
     private String mail;
     private String password;
     private String uid;
 
-    public List<String> groupsIds; //TODO: remove field
-    public List<GroupUser> groups = new ArrayList<>();
+    private List<GroupUser> groups = new ArrayList<>();
 
     private boolean isUsernameUpdated = false;
     private boolean isMailUpdated = false;
@@ -80,7 +74,7 @@ public class User {
     }
 
     public String getUid() {
-        if(firebaseUser != null) {
+        if (firebaseUser != null) {
             return firebaseUser.getUid();
         } else {
             return uid;
@@ -98,7 +92,7 @@ public class User {
     }
 
     public String getMail() {
-        if(firebaseUser != null) {
+        if (firebaseUser != null) {
             return firebaseUser.getEmail();
         } else {
             return mail;
@@ -154,7 +148,7 @@ public class User {
 
         // update database linked model
 
-        if(isUsernameUpdated) {
+        if (isUsernameUpdated) {
             dbRef.child(getUid()).setValue(this);
         }
     }
@@ -171,7 +165,7 @@ public class User {
 
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                for (DataSnapshot postSnapshot: dataSnapshot.getChildren()) {
+                for (DataSnapshot postSnapshot : dataSnapshot.getChildren()) {
                     User user = postSnapshot.getValue(User.class);
 
                     list.add(user);
@@ -207,28 +201,11 @@ public class User {
         return deferred.promise();
     }
 
-    public List<String> getGroupsIds() {
-        if(groupsIds != null) {
-            return groupsIds;
-        } else {
-            return new ArrayList<String>();
-        }
-    }
-
-    public void setGroupsIds(List<String> groupsIds) {
-        this.groupsIds = groupsIds;
-    }
-
     public List<GroupUser> getGroups() {
         return groups;
     }
 
     public void registerGroup(Group group) {
-        if(groupsIds == null) {
-            groupsIds = new ArrayList<>();
-        }
-        groupsIds.add(group.uid);
-
         groups.add(group.getGroupUser());
     }
 
@@ -236,18 +213,8 @@ public class User {
         groups.add(group);
     }
 
-    public void registerGroup(String uid) {
-        if(groupsIds == null) {
-            groupsIds = new ArrayList<>();
-        }
-        groupsIds.add(uid);
-
-        Log.d(TAG, "registerGroup tmpUser groups : " + groupsIds.get(groupsIds.size()-1));
-        Log.d(TAG, "registerGroup currentUser groups: " + currentUser.groupsIds.get(groupsIds.size()-1));
-    }
-
     public void initialize() {
-        if(dbRef == null) {
+        if (dbRef == null) {
             dbRef = Database.getInstance().getReference("users");
         }
 

@@ -88,7 +88,7 @@ public class AesCrypto {
         return decrypt(data.getValue(), passphrase, data.getSalt());
     }
 
-    public static <T> T decrypt(String value, String passphrase, String salt, Class<T> type)  {
+    public static <T> T decrypt(String value, String passphrase, String salt, Class<T> type) {
         Data decrypted = decrypt(value, passphrase, salt);
         Object o = null;
 

@@ -1,11 +1,9 @@
 package com.totris.zebra.Models;
 
-import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.ValueEventListener;
-import com.totris.zebra.Events.MessageChildAddedEvent;
 import com.totris.zebra.Events.MessageDataChangeEvent;
 import com.totris.zebra.Utils.AesCrypto;
 import com.totris.zebra.Utils.Database;
@@ -116,17 +114,13 @@ public class Message implements Serializable {
         return AesCrypto.decrypt(message, passphrase, salt, Message.class);
     }
 
-    public void send() {
-        dbRef.push().setValue(this.encrypt("TEMP PASSPHRASE"));
-    }
-
     private static void addValueEventListener() {
         dbRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 List<Message> messages = new ArrayList<>();
 
-                for (DataSnapshot postSnapshot: dataSnapshot.getChildren()) {
+                for (DataSnapshot postSnapshot : dataSnapshot.getChildren()) {
                     EncryptedMessage encryptedMessage = postSnapshot.getValue(EncryptedMessage.class);
                     messages.add(encryptedMessage.decrypt("TEMP PASSPHRASE")); // TODO: use a real passphrase
                 }
@@ -141,35 +135,4 @@ public class Message implements Serializable {
         });
     }
 
-    /*private static void addChildEventListener() {
-        dbRef.addChildEventListener(new ChildEventListener() {
-            @Override
-            public void onChildAdded(DataSnapshot dataSnapshot, String s) {
-                EncryptedMessage encryptedMessage = dataSnapshot.getValue(EncryptedMessage.class);
-                Message message = encryptedMessage.decrypt("TEMP PASSPHRASE"); // TODO: use a real passphrase
-
-                EventBus.post(new MessageChildAddedEvent(message));
-            }
-
-            @Override
-            public void onChildChanged(DataSnapshot dataSnapshot, String s) {
-
-            }
-
-            @Override
-            public void onChildRemoved(DataSnapshot dataSnapshot) {
-
-            }
-
-            @Override
-            public void onChildMoved(DataSnapshot dataSnapshot, String s) {
-
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-
-            }
-        });
-    }*/
 }
