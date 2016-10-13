@@ -24,7 +24,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".Activities.ContactActivity">
+            android:name=".Activities.ContactListActivity">
             <intent-filter>
                 <action android:name="android.intent.action.RUN" />
             </intent-filter>

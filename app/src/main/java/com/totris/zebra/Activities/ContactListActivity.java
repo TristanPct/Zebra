@@ -18,8 +18,8 @@ import com.totris.zebra.R;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ContactActivity extends AppCompatActivity implements ContactsAdapter.ContactItemListener {
-    private final static String TAG = "ContactActivity";
+public class ContactListActivity extends AppCompatActivity implements ContactsAdapter.ContactItemListener {
+    private final static String TAG = "ContactListActivity";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
