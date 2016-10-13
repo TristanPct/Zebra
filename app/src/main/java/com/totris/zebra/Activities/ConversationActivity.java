@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.util.Log;
 
 import com.totris.zebra.Fragments.ConversationFragment;
+import com.totris.zebra.Models.Group;
 import com.totris.zebra.Models.Message;
 import com.totris.zebra.Models.MessageType;
 import com.totris.zebra.R;
@@ -13,13 +14,16 @@ import com.totris.zebra.Utils.EventBus;
 
 public class ConversationActivity extends AppCompatActivity implements ConversationFragment.ConversationListener {
     static String TAG = "ConversationActivity";
-
+    private Group group;
     private Fragment currentFragment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_conversation);
+
+        group = (Group) getIntent().getSerializableExtra("group");
+        group.addChildEventListener();
 
         currentFragment = new ConversationFragment();
 
@@ -43,9 +47,13 @@ public class ConversationActivity extends AppCompatActivity implements Conversat
         EventBus.unregister(currentFragment);
     }
 
+    public Group getGroup() {
+        return group;
+    }
+
     @Override
     public void onSubmitMessage(String message) {
         Log.d(TAG, "onSubmitMessage: " + message);
-        new Message(message, MessageType.TEXT, 0, 0).send();
+        group.sendMessage(new Message(message, MessageType.TEXT, 0, 0));
     }
 }

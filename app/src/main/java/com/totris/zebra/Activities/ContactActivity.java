@@ -1,5 +1,6 @@
 package com.totris.zebra.Activities;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -61,7 +62,8 @@ public class ContactActivity extends AppCompatActivity implements ContactsAdapte
 
         Group group = Group.getCommonGroup(users);
 
-//        Group group = new Group(users);
-//        group.persist();
+        Intent intent = new Intent(this, ConversationActivity.class);
+        intent.putExtra("group", group);
+        startActivity(intent);
     }
 }

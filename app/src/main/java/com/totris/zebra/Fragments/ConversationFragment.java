@@ -15,9 +15,11 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import com.squareup.otto.Subscribe;
+import com.totris.zebra.Activities.ConversationActivity;
 import com.totris.zebra.Events.MessageChildAddedEvent;
 import com.totris.zebra.Events.MessageDataChangeEvent;
 import com.totris.zebra.Fragments.MessagesAdapter;
+import com.totris.zebra.Models.Group;
 import com.totris.zebra.Models.Message;
 import com.totris.zebra.Models.MessageType;
 import com.totris.zebra.R;
@@ -41,6 +43,8 @@ public class ConversationFragment extends Fragment {
 
     private MessagesAdapter adapter;
 
+    private Group group;
+
     @BindView(R.id.messagesList) //TODO: bind all those stuff in a fragment
     RecyclerView messagesListRecyclerView;
 
@@ -58,6 +62,14 @@ public class ConversationFragment extends Fragment {
     public void onAttach(Context context) {
         super.onAttach(context);
 
+        group = ((ConversationActivity) getActivity()).getGroup();
+
+        List<Message> messages = new ArrayList<>();
+
+        messages.add(new Message("Loading messages...", MessageType.TEXT, 0, 0));
+
+        adapter = new MessagesAdapter(messages);
+
         try {
             listener = (ConversationListener) context;
         } catch (ClassCastException e) {
@@ -74,11 +86,6 @@ public class ConversationFragment extends Fragment {
 
         messagesListRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
 
-        List<Message> messages = new ArrayList<>();
-
-        messages.add(new Message("Loading messages...", MessageType.TEXT, 0, 0));
-
-        adapter = new MessagesAdapter(messages);
 
         adapter.setOnMessageItemListener(new MessagesAdapter.MessageItemListener() {
             @Override
@@ -92,17 +99,17 @@ public class ConversationFragment extends Fragment {
         return view;
     }
 
-    @Subscribe
+    /*@Subscribe
     public void onMessageDataChangeEvent(MessageDataChangeEvent event) {
         Log.d(TAG, "onDataChange: new message(s)");
         adapter.setMessages(event.getMessages());
-    }
+    }*/
 
-//    @Subscribe
-//    public void onMessageChildAddedEvent(MessageChildAddedEvent event) {
-//        Log.d(TAG, "onChildAdded: new message");
-//        adapter.addMessage(event.getMessage());
-//    }
+    @Subscribe
+    public void onMessageChildAddedEvent(MessageChildAddedEvent event) {
+        Log.d(TAG, "onChildAdded: new message");
+        adapter.addMessage(event.getMessage());
+    }
 
     @OnClick(R.id.messageSubmit)
     public void onSubmitMessage(Button button) {

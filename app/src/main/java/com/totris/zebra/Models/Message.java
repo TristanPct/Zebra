@@ -141,7 +141,7 @@ public class Message implements Serializable {
         });
     }
 
-    private static void addChildEventListener() {
+    /*private static void addChildEventListener() {
         dbRef.addChildEventListener(new ChildEventListener() {
             @Override
             public void onChildAdded(DataSnapshot dataSnapshot, String s) {
@@ -171,5 +171,5 @@ public class Message implements Serializable {
 
             }
         });
-    }
+    }*/
 }
