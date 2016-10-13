@@ -24,9 +24,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".Activities.ContactActivity"
-            android:label="@string/title_activity_contact"
-            android:theme="@style/AppTheme.NoActionBar">
+            android:name=".Activities.ContactActivity">
             <intent-filter>
                 <action android:name="android.intent.action.RUN" />
             </intent-filter>

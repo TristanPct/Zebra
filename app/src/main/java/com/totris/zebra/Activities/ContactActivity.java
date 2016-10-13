@@ -39,8 +39,8 @@ public class ContactActivity extends AppCompatActivity implements ContactsAdapte
          * Setup UI
          */
 
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
+//        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+//        setSupportActionBar(toolbar);
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
@@ -54,7 +54,7 @@ public class ContactActivity extends AppCompatActivity implements ContactsAdapte
 
     @Override
     public void onContactItemClick(User user) {
-        Log.d(TAG, "onContactItemClick: onContactItemClick from Activity");
+        Log.d(TAG, "onContactItemClick");
 
         List<User> users = new ArrayList<>();
         users.add(user);

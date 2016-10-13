@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 
 import com.google.firebase.auth.FirebaseUser;
 import com.totris.zebra.Fragments.LoginFragment;
@@ -16,6 +17,8 @@ import com.totris.zebra.Utils.Database;
 import org.jdeferred.DoneCallback;
 
 public class MainActivity extends AppCompatActivity implements Authentication.AuthenticationListener, LoginFragment.LoginListener, RegisterFragment.RegisterListener {
+    private static final String TAG = "MainActivity";
+
     private Authentication auth;
 
     private Fragment currentFragment;
