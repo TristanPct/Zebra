@@ -32,9 +32,10 @@ import butterknife.ButterKnife;
  * A simple {@link Fragment} subclass.
  */
 public class ConversationListFragment extends Fragment {
-
     private static final String TAG = "ConversationListFragmen";
+
     private ConversationsAdapter adapter;
+    private boolean loaded = false;
 
     @BindView(R.id.conversationsList)
     RecyclerView conversationsListRecyclerView;
@@ -54,7 +55,18 @@ public class ConversationListFragment extends Fragment {
     public void onResume() {
         super.onResume();
         EventBus.register(this);
-        User.getCurrent().getInstantiatedGroupUsers();
+        User.getCurrent().getInstantiatedGroupUsers().done(new DoneCallback() {
+            @Override
+            public void onDone(Object result) {
+                loaded = true;
+
+                adapter.clear();
+                for (GroupUser conversation : (List<GroupUser>)result) {
+                    adapter.addConversation(conversation);
+                }
+                adapter.notifyDataSetChanged();
+            }
+        });
     }
 
     @Override
@@ -71,9 +83,7 @@ public class ConversationListFragment extends Fragment {
 
         conversationsListRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
 
-        List<GroupUser> conversations = new ArrayList<>();
-
-        adapter = new ConversationsAdapter(conversations);
+        adapter = new ConversationsAdapter();
 
         try {
             adapter.setOnConversationItemListener((ConversationsAdapter.ConversationItemListener) getActivity());
@@ -88,12 +98,22 @@ public class ConversationListFragment extends Fragment {
 
     @Subscribe
     public void onUserRegisterGroupEvent(UserRegisterGroupEvent event) {
+//        if (!loaded) {
+//            Log.d(TAG, "onUserRegisterGroupEvent: not loaded");
+//            return;
+//        }
+
         Log.d(TAG, "onUserRegisterGroupEvent");
         event.getGroupUser().getInstantiatedGroupUsers();
     }
 
     @Subscribe
     public void onGroupUserInstantiateEvent(GroupUserInstantiateEvent event) {
+//        if (!loaded) {
+//            Log.d(TAG, "onGroupUserInstantiateEvent: not loaded");
+//            return;
+//        }
+
         Log.d(TAG, "onGroupUserInstantiateEvent");
         adapter.addConversation(event.getGroupUser());
 

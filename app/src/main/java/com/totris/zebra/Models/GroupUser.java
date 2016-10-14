@@ -34,7 +34,7 @@ public class GroupUser {
     private String groupId;
 
     private List<User> users = new ArrayList<>();
-    private Group group = new Group();
+    private Group group;
     private boolean usersLoaded = false;
     private boolean groupLoaded = false;
 
@@ -112,6 +112,11 @@ public class GroupUser {
     private Promise getInstantiatedGroup() {
         final DeferredObject deferred = new DeferredObject();
 
+        if (group != null) {
+            deferred.resolve(group);
+            return deferred.promise();
+        }
+
         groupsDbRef.child(groupId).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
@@ -124,13 +129,14 @@ public class GroupUser {
                 group.setCreatedAt(dataSnapshot.child("createdAt").getValue(Date.class));
                 GenericTypeIndicator<List<String>> usersIdsT = new GenericTypeIndicator<List<String>>() {};
                 group.setUsersIds(dataSnapshot.child("usersIds").getValue(usersIdsT));
+//                group.setMessages(dataSnapshot.child("messages").getValue(encryptedMessagesT)); // DatabaseException: Expected a List while deserializing, but got a class java.util.HashMap
                 // FIX: DatabaseException: Expected a List while deserializing, but got a class java.util.HashMap
                 List<EncryptedMessage> encryptedMessages = new ArrayList<>();
                 for (DataSnapshot messageSnapshot : dataSnapshot.child("messages").getChildren()) {
                     encryptedMessages.add(messageSnapshot.getValue(EncryptedMessage.class));
                 }
-                group.setMessages(encryptedMessages);
-//                group.setMessages(dataSnapshot.child("messages").getValue(encryptedMessagesT)); // DatabaseException: Expected a List while deserializing, but got a class java.util.HashMap
+                Log.d(TAG, "getInstantiatedGroup#onDataChange: encryptedMessages: " + encryptedMessages.size());
+                group.setMessages(encryptedMessages); //TODO: do not load messages here ?
 
                 deferred.resolve(group);
             }
@@ -148,13 +154,18 @@ public class GroupUser {
     private Promise getInstantiatedUsers() {
         final DeferredObject deferred = new DeferredObject();
 
+        if (users.size() >= usersIds.size()) {
+            deferred.resolve(users);
+            return deferred.promise();
+        }
+
         for (String userId : usersIds) {
             Log.d(TAG, "getInstantiatedUsers: " + userId);
             getInstantiatedUser(userId).done(new DoneCallback() {
                 @Override
                 public void onDone(Object result) {
                     Log.d(TAG, "getInstantiatedUsers#onDone: " + users.size() + " | " +  usersIds.size());
-                    if (users.size() >= usersIds.size()) { // TODO: move before for to optimise or clear users before query
+                    if (users.size() >= usersIds.size()) {
                         deferred.resolve(users);
                     }
                 }

@@ -20,13 +20,13 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 
 public class ConversationsAdapter extends RecyclerView.Adapter<ConversationsAdapter.ViewHolder> {
-    private static List<GroupUser> conversations;
+    private static List<GroupUser> conversations = new ArrayList<>();
     private static ConversationItemListener listener;
 
     private static DateFormat lastDateFormat = DateFormat.getDateTimeInstance(DateFormat.SHORT, DateFormat.SHORT);
 
-    public ConversationsAdapter(List<GroupUser> conversations) {
-        ConversationsAdapter.conversations = new ArrayList<>(conversations);
+    public ConversationsAdapter() {
+
     }
 
     public void setOnConversationItemListener(ConversationItemListener listener) {
@@ -120,12 +120,7 @@ public class ConversationsAdapter extends RecyclerView.Adapter<ConversationsAdap
     }
 
     public void addConversation(GroupUser conversation) {
-        if(conversations != null) {
-            conversations.add(conversation);
-        } else {
-            conversations = new ArrayList<>();
-            conversations.add(conversation);
-        }
+        conversations.add(conversation);
     }
 
     public interface ConversationItemListener {
