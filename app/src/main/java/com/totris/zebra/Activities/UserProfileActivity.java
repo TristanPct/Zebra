@@ -12,6 +12,7 @@ import com.totris.zebra.EditUsernameFragment;
 import com.totris.zebra.Fragments.EditProfileListFragment;
 import com.totris.zebra.Models.EditProfileFragmentType;
 import com.totris.zebra.Models.MessageType;
+import com.totris.zebra.Models.User;
 import com.totris.zebra.R;
 import com.totris.zebra.Fragments.UserProfileFragment;
 
@@ -24,12 +25,26 @@ public class UserProfileActivity extends AppCompatActivity implements EditProfil
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_user_profile);
 
+        String userId = getIntent().getStringExtra("user");
+
+        Bundle bundle = new Bundle();
+
+        if(userId != null && !User.getCurrent().getUid().equals(userId)) { // Display for currentUser
+            bundle.putString("userId", userId);
+        } else { // Display for another user
+            bundle.putString("userId", User.getCurrent().getUid());
+        }
+
+        Fragment fragment = new UserProfileFragment();
+        fragment.setArguments(bundle);
+
         if(savedInstanceState == null) {
             getSupportFragmentManager()
                     .beginTransaction()
-                    .add(R.id.user_activity_profile, new UserProfileFragment())
+                    .add(R.id.user_activity_profile, fragment)
                     .commit();
         }
+
     }
 
     public void startEditIntent(EditProfileFragmentType fragmentType) {
