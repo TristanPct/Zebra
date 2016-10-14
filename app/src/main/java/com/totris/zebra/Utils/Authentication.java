@@ -23,6 +23,8 @@ public class Authentication {
     private FirebaseAuth auth;
     private FirebaseAuth.AuthStateListener authListener;
 
+    private boolean flag = true;
+
     private Authentication() {
         auth = FirebaseAuth.getInstance();
         authListener = new FirebaseAuth.AuthStateListener() {
@@ -31,9 +33,15 @@ public class Authentication {
                 if (listener != null) {
                     FirebaseUser user = firebaseAuth.getCurrentUser();
                     if (user != null) {
+                        if(!flag) return;
+
+                        flag = false;
                         Log.d(TAG, "onAuthStateChanged:signed_in:" + user.getEmail() + ":" + user.getDisplayName());
                         listener.onUserSignedIn(user);
                     } else {
+                        if(flag) return;
+
+                        flag = true;
                         Log.d(TAG, "onAuthStateChanged:signed_out");
                         listener.onUserSignedOut();
                     }
