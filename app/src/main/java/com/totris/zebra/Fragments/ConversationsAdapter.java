@@ -8,6 +8,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.totris.zebra.Models.GroupUser;
+import com.totris.zebra.Models.Message;
 import com.totris.zebra.Models.User;
 import com.totris.zebra.R;
 
@@ -45,22 +46,38 @@ public class ConversationsAdapter extends RecyclerView.Adapter<ConversationsAdap
 
         String usernames = "";
         for (User u : conversation.getUsers()) {
-            usernames += u.getUsername() + ", ";
+            if (!User.getCurrent().getUid().equals(u.getUid())) {
+                usernames += u.getUsername() + ", ";
+            }
         }
         if (usernames.length() != 0) {
             usernames = usernames.substring(0, usernames.length() - 2);
         }
 
-        String lastMessage = conversation.getGroup().getLastMessage().getContent();
-        if (lastMessage.length() > 20) {
-            lastMessage = lastMessage.substring(0, 20) + "...";
-        }
-
-        String lastDate = lastDateFormat.format(conversation.getGroup().getLastMessage().getReceiveAt());
-
         holder.usernames.setText(usernames);
-        holder.lastMessage.setText(lastMessage);
-        holder.lastDate.setText(lastDate);
+
+        Message lastMessage = conversation.getGroup().getLastMessage();
+
+        if (lastMessage != null) {
+            String lastMessageString = lastMessage.getContent();
+            if (lastMessageString.length() > 20) {
+                lastMessageString = lastMessageString.substring(0, 20) + "...";
+            }
+
+            holder.lastMessage.setVisibility(View.VISIBLE);
+            holder.lastMessage.setText(lastMessageString);
+
+            if (lastMessage.getReceiveAt() != null) {
+                String lastDate = lastDateFormat.format(lastMessage.getReceiveAt());
+                holder.lastDate.setVisibility(View.VISIBLE);
+                holder.lastDate.setText(lastDate);
+            } else {
+                holder.lastDate.setVisibility(View.GONE);
+            }
+        } else {
+            holder.lastMessage.setVisibility(View.GONE);
+            holder.lastDate.setVisibility(View.GONE);
+        }
     }
 
     public GroupUser getItem(int position) {

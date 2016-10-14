@@ -1,5 +1,6 @@
 package com.totris.zebra.Activities;
 
+import android.os.PersistableBundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
@@ -17,19 +18,15 @@ import com.totris.zebra.Utils.EventBus;
 public class ConversationListActivity extends AppCompatActivity implements ConversationsAdapter.ConversationItemListener {
     private final static String TAG = "ConversationListActivit";
 
-    private Fragment currentFragment;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_conversation_list);
 
-        if(savedInstanceState == null) {
-            currentFragment = new ConversationListFragment();
-
+        if (savedInstanceState == null) {
             getSupportFragmentManager()
                     .beginTransaction()
-                    .add(R.id.conversationContent, currentFragment)
+                    .replace(R.id.conversationContent, new ConversationListFragment())
                     .commit();
         }
 
@@ -47,15 +44,9 @@ public class ConversationListActivity extends AppCompatActivity implements Conve
     }
 
     @Override
-    protected void onResume() {
-        super.onResume();
-        EventBus.register(currentFragment);
-    }
+    public void onSaveInstanceState(Bundle outState, PersistableBundle outPersistentState) {
+        super.onSaveInstanceState(outState, outPersistentState);
 
-    @Override
-    protected void onPause() {
-        super.onPause();
-        EventBus.unregister(currentFragment);
     }
 
     @Override

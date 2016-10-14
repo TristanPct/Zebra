@@ -5,16 +5,19 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
 import com.squareup.otto.Subscribe;
 import com.totris.zebra.Events.GroupUserInstantiateEvent;
+import com.totris.zebra.Events.UserRegisterGroupEvent;
 import com.totris.zebra.Models.Group;
 import com.totris.zebra.Models.GroupUser;
 import com.totris.zebra.Models.User;
 import com.totris.zebra.R;
+import com.totris.zebra.Utils.EventBus;
 
 import org.jdeferred.DoneCallback;
 import org.jdeferred.Promise;
@@ -30,6 +33,7 @@ import butterknife.ButterKnife;
  */
 public class ConversationListFragment extends Fragment {
 
+    private static final String TAG = "ConversationListFragmen";
     private ConversationsAdapter adapter;
 
     @BindView(R.id.conversationsList)
@@ -41,12 +45,29 @@ public class ConversationListFragment extends Fragment {
 
 
     @Override
+    public void onPause() {
+        super.onPause();
+        EventBus.unregister(this);
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        EventBus.register(this);
+        User.getCurrent().getInstantiatedGroupUsers();
+    }
+
+    @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_conversation_list, container, false);
 
         ButterKnife.bind(this, view);
+
+        if (savedInstanceState == null){
+
+        }
 
         /**
          * Setup RecyclerView
@@ -56,8 +77,6 @@ public class ConversationListFragment extends Fragment {
 
         List<GroupUser> conversations = new ArrayList<>();
 
-        Promise conversationsPromise = User.getCurrent().getInstantiatedGroupUsers();
-
         adapter = new ConversationsAdapter(conversations);
 
         try {
@@ -66,26 +85,20 @@ public class ConversationListFragment extends Fragment {
             throw new ClassCastException(getActivity().toString() + " must implement ConversationItemListener");
         }
 
-        conversationsPromise.done(new DoneCallback() {
-            @Override
-            public void onDone(Object result) {
-                adapter.clear();
-
-                for (GroupUser groupUser : (List<GroupUser>) result) {
-                    adapter.addConversation(groupUser);
-                }
-
-                adapter.notifyDataSetChanged();
-            }
-        });
-
         conversationsListRecyclerView.setAdapter(adapter);
 
         return view;
     }
 
     @Subscribe
+    public void onUserRegisterGroupEvent(UserRegisterGroupEvent event) {
+        Log.d(TAG, "onUserRegisterGroupEvent");
+        event.getGroupUser().getInstantiatedGroupUsers();
+    }
+
+    @Subscribe
     public void onGroupUserInstantiateEvent(GroupUserInstantiateEvent event) {
+        Log.d(TAG, "onGroupUserInstantiateEvent");
         adapter.addConversation(event.getGroupUser());
 
         adapter.notifyDataSetChanged();

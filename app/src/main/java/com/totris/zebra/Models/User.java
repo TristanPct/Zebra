@@ -12,9 +12,12 @@ import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.Exclude;
 import com.google.firebase.database.ValueEventListener;
+import com.totris.zebra.Events.UserRegisterGroupEvent;
 import com.totris.zebra.Utils.Authentication;
 import com.totris.zebra.Utils.Database;
+import com.totris.zebra.Utils.EventBus;
 
 import org.jdeferred.DoneCallback;
 import org.jdeferred.Promise;
@@ -121,11 +124,24 @@ public class User {
         return groups;
     }
 
+    public void requestGroupUserInstantiation(boolean requested) {
+        requestGroupUsersInstantiation = requested;
+    }
+
+    @Exclude
     public Promise getInstantiatedGroupUsers() {
         Log.d(TAG, "getInstantiatedGroupUsers: " + groups.size());
-        instantiatedGroups = 0;
 
         final DeferredObject deferred = new DeferredObject();
+
+        if (instantiatedGroups == groups.size()) {
+            deferred.resolve(groups);
+            return deferred.promise();
+        }
+
+        instantiatedGroups = 0;
+
+        requestGroupUserInstantiation(true);
 
         for (final GroupUser groupUser : groups) {
             Log.d(TAG, "getInstantiatedGroupUsers: group: " + groupUser.getGroupId());
@@ -143,6 +159,7 @@ public class User {
         return deferred.promise();
     }
 
+    @Exclude
     private Promise getInstantiatedGroupUser(final GroupUser groupUser) {
         final DeferredObject deferred = new DeferredObject();
 
@@ -160,10 +177,8 @@ public class User {
 
     public void registerGroup(GroupUser group) {
         groups.add(group);
-        getInstantiatedGroupUser(group);
-//        if (requestGroupUsersInstantiation) {
-//            getInstantiatedGroupUser(group);
-//        }
+
+        EventBus.post(new UserRegisterGroupEvent(group));
     }
 
     public void registerGroup(Group group) {

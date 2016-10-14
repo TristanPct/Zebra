@@ -1,16 +1,20 @@
 package com.totris.zebra.Utils;
 
 
+import android.util.Log;
+
 import com.squareup.otto.Bus;
 
 public class EventBus {
     private final static Bus bus = new Bus();
+    private static final String TAG = "EventBus";
 
     private EventBus() {
 
     }
 
     public static void post(Object event) {
+        Log.d(TAG, "post: " + event.toString());
         bus.post(event);
     }
 

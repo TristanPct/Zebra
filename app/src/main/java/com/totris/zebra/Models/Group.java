@@ -15,6 +15,7 @@ import com.totris.zebra.Utils.EventBus;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 
 public class Group implements Serializable {
@@ -78,8 +79,26 @@ public class Group implements Serializable {
         return messages;
     }
 
-    public void setMessages(List<Message> messages) {
-        this.messages = messages;
+    public <T> void setMessages(List<T> messages) {
+        this.messages.clear();
+
+        if (messages == null) {
+            Log.d(TAG, "setMessages: null");
+            return;
+        }
+
+        if (messages.size() != 0) {
+            if (messages.get(0) instanceof Message) {
+                Log.d(TAG, "setMessages: normal messages");
+                this.messages = (List<Message>) messages;
+            } else if (messages.get(0) instanceof EncryptedMessage) {
+                Log.d(TAG, "setMessages: encrypted messages");
+                List<EncryptedMessage> encryptedMessages = (List<EncryptedMessage>) messages;
+                for (EncryptedMessage em : encryptedMessages) {
+                    this.messages.add(em.decrypt("TEMP PASSPHRASE")); // TODO: use a real passphrase
+                }
+            }
+        }
     }
 
     @Exclude

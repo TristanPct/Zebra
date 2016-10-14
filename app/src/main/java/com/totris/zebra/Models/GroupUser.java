@@ -6,6 +6,7 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.Exclude;
+import com.google.firebase.database.GenericTypeIndicator;
 import com.google.firebase.database.ValueEventListener;
 import com.totris.zebra.Events.GroupUserInstantiateEvent;
 import com.totris.zebra.Utils.Database;
@@ -16,6 +17,7 @@ import org.jdeferred.Promise;
 import org.jdeferred.impl.DeferredObject;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -37,10 +39,11 @@ public class GroupUser {
     private boolean groupLoaded = false;
 
     public GroupUser() {
-
+//        EventBus.register(this);
     }
 
     public GroupUser(List<User> usersIds, Group groupId) {
+        this();
         for (User u : usersIds) {
             this.usersIds.add(u.getUid());
         }
@@ -48,6 +51,7 @@ public class GroupUser {
     }
 
     public GroupUser(List<String> usersIds, String groupId) {
+        this();
         this.usersIds = usersIds;
         this.groupId = groupId;
     }
@@ -70,6 +74,7 @@ public class GroupUser {
         return group;
     }
 
+    @Exclude
     public Promise getInstantiatedGroupUsers() {
         groupLoaded = false;
         usersLoaded = false;
@@ -103,14 +108,29 @@ public class GroupUser {
         return deferred.promise();
     }
 
+    @Exclude
     private Promise getInstantiatedGroup() {
         final DeferredObject deferred = new DeferredObject();
 
         groupsDbRef.child(groupId).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                    Log.d(TAG, "getInstantiatedGroup#onDataChange: " + dataSnapshot);
-                    group = dataSnapshot.getValue(Group.class); //FIXME: DatabaseException: Expected a List while deserializing, but got a class java.util.HashMap
+                Log.d(TAG, "getInstantiatedGroup#onDataChange: " + dataSnapshot);
+//                group = dataSnapshot.getValue(EncryptedGroupMessage.class).toGroup(); // DatabaseException: Expected a List while deserializing, but got a class java.util.HashMap
+
+                group = new Group();
+
+                group.setUid(dataSnapshot.getKey());
+                group.setCreatedAt(dataSnapshot.child("createdAt").getValue(Date.class));
+                GenericTypeIndicator<List<String>> usersIdsT = new GenericTypeIndicator<List<String>>() {};
+                group.setUsersIds(dataSnapshot.child("usersIds").getValue(usersIdsT));
+                // FIX: DatabaseException: Expected a List while deserializing, but got a class java.util.HashMap
+                List<EncryptedMessage> encryptedMessages = new ArrayList<>();
+                for (DataSnapshot messageSnapshot : dataSnapshot.child("messages").getChildren()) {
+                    encryptedMessages.add(messageSnapshot.getValue(EncryptedMessage.class));
+                }
+                group.setMessages(encryptedMessages);
+//                group.setMessages(dataSnapshot.child("messages").getValue(encryptedMessagesT)); // DatabaseException: Expected a List while deserializing, but got a class java.util.HashMap
 
                 deferred.resolve(group);
             }
@@ -124,6 +144,7 @@ public class GroupUser {
         return deferred.promise();
     }
 
+    @Exclude
     private Promise getInstantiatedUsers() {
         final DeferredObject deferred = new DeferredObject();
 
@@ -142,6 +163,7 @@ public class GroupUser {
         return deferred.promise();
     }
 
+    @Exclude
     private Promise getInstantiatedUser(String id) {
         final DeferredObject deferred = new DeferredObject();
 
