@@ -21,14 +21,6 @@ import butterknife.OnClick;
  */
 public class UserProfileFragment extends Fragment {
 
-    OnClickListener onClickListener;
-
-    @BindView(R.id.editUsername)
-    Layout editUsername;
-
-    @BindView(R.id.editEmail)
-    Layout editEmail;
-
     public UserProfileFragment() {
         // Required empty public constructor
     }
@@ -36,12 +28,6 @@ public class UserProfileFragment extends Fragment {
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-
-        try {
-            onClickListener = (OnClickListener) context;
-        } catch (ClassCastException exception) {
-            throw new ClassCastException(context.toString() + " must implement OnClickListener"); // Try catch pour afficher un message d'erreur custom pour mieux travailler en groupe
-        }
     }
 
     @Override
@@ -50,16 +36,14 @@ public class UserProfileFragment extends Fragment {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_user_profile, container, false);
 
-        ButterKnife.bind(this, view);
+        if(savedInstanceState == null) {
+            getActivity().getSupportFragmentManager()
+                    .beginTransaction()
+                    .add(R.id.userProfileContent, new EditProfileListFragment())
+                    .commit();
+        }
 
         return view;
-    }
-
-
-
-    public interface OnClickListener {
-        void onEditUsernameClick();
-        void onEditEmailClick();
     }
 
 }
