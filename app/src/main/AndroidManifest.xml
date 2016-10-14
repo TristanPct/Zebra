@@ -37,6 +37,14 @@
                 <action android:name="android.intent.action.RUN" />
             </intent-filter>
         </activity>
+        <activity android:name=".EditProfileItemActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.RUN" />
+            </intent-filter>
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".Activities.UserProfileActivity" />
+        </activity>
     </application>
 
 </manifest>
