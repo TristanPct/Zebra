@@ -10,9 +10,9 @@
     app:alignContent="stretch"
     app:alignItems="stretch"
     app:flexDirection="column"
-    app:justifyContent="space_between">
+    app:justifyContent="flex_end">
 
-    <RelativeLayout
+    <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
@@ -21,7 +21,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent" />
 
-    </RelativeLayout>
+    </FrameLayout>
 
     <com.google.android.flexbox.FlexboxLayout
         android:layout_width="match_parent"
