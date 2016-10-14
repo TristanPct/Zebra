@@ -153,7 +153,8 @@ public class GroupUser {
             getInstantiatedUser(userId).done(new DoneCallback() {
                 @Override
                 public void onDone(Object result) {
-                    if (users.size() == usersIds.size()) {
+                    Log.d(TAG, "getInstantiatedUsers#onDone: " + users.size() + " | " +  usersIds.size());
+                    if (users.size() >= usersIds.size()) { // TODO: move before for to optimise or clear users before query
                         deferred.resolve(users);
                     }
                 }

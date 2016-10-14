@@ -65,10 +65,6 @@ public class ConversationListFragment extends Fragment {
 
         ButterKnife.bind(this, view);
 
-        if (savedInstanceState == null){
-
-        }
-
         /**
          * Setup RecyclerView
          */
