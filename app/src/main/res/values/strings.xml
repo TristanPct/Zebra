@@ -21,6 +21,7 @@
     <string name="app_name">Zebra</string>
     <string name="title_activity_conversations_list">Conversations</string>
     <string name="title_activity_contacts_list">Contacts</string>
+    <string name="title_activity_new_conversation">New conversation</string>
 
     <string name="your_message">Your message...</string>
     <string name="email">E-Mail</string>

@@ -31,6 +31,7 @@ import butterknife.ButterKnife;
 public class ContactsListFragment extends Fragment {
     private static String TAG = "ContactsListFragment";
 
+    private ContactsListMode mode = ContactsListMode.NORMAL;
     private ContactsAdapter adapter;
 
     @BindView(R.id.contactsList)
@@ -43,6 +44,13 @@ public class ContactsListFragment extends Fragment {
         // Required empty public constructor
     }
 
+    public void setMode(ContactsListMode mode) {
+        this.mode = mode;
+
+        if (this.adapter != null) {
+            this.adapter.setMode(mode);
+        }
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -63,6 +71,7 @@ public class ContactsListFragment extends Fragment {
         Promise contactsPromise = User.getList();
 
         adapter = new ContactsAdapter(contacts);
+        adapter.setMode(mode);
 
         try {
             adapter.setOnContactItemListener((ContactsAdapter.ContactItemListener) getActivity());
