@@ -9,6 +9,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.totris.zebra.DisplayProfileListFragment;
+import com.totris.zebra.Models.User;
 import com.totris.zebra.R;
 
 import butterknife.BindView;
@@ -36,11 +38,20 @@ public class UserProfileFragment extends Fragment {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_user_profile, container, false);
 
-        if(savedInstanceState == null) {
-            getActivity().getSupportFragmentManager()
-                    .beginTransaction()
-                    .add(R.id.userProfileContent, new EditProfileListFragment())
-                    .commit();
+        String userId = this.getArguments().getString("userId");
+
+        if (savedInstanceState == null) {
+            if (User.getCurrent().getUid().equals(userId)) {
+                getActivity().getSupportFragmentManager()
+                        .beginTransaction()
+                        .replace(R.id.userProfileContent, new EditProfileListFragment())
+                        .commit();
+            } else {
+                getActivity().getSupportFragmentManager()
+                        .beginTransaction()
+                        .replace(R.id.userProfileContent, new DisplayProfileListFragment())
+                        .commit();
+            }
         }
 
         return view;

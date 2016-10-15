@@ -1,13 +1,20 @@
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.totris.zebra.EditEmailFragment">
+    tools:context="com.totris.zebra.EditEmailFragment"
+    android:orientation="vertical">
 
-    <!-- TODO: Update blank fragment layout -->
-    <TextView
+    <EditText
+        android:id="@+id/emailEditText"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:text="edit email" />
+        android:layout_height="wrap_content"
+        android:hint="New email" />
 
-</FrameLayout>
+    <Button
+        android:id="@+id/emailEditSubmit"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Go"/>
+
+</LinearLayout>
