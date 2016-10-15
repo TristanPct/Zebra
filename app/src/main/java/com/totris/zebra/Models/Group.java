@@ -1,6 +1,7 @@
 package com.totris.zebra.Models;
 
 
+import android.graphics.Bitmap;
 import android.util.Log;
 
 import com.google.firebase.database.ChildEventListener;
@@ -11,6 +12,7 @@ import com.google.firebase.database.Exclude;
 import com.totris.zebra.Events.MessageChildAddedEvent;
 import com.totris.zebra.Utils.Database;
 import com.totris.zebra.Utils.EventBus;
+import com.totris.zebra.Utils.OnlineStorage;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -168,10 +170,22 @@ public class Group implements Serializable {
         }
     }
 
-    public void sendMessage(final Message message) {
-        final DatabaseReference tmpRef = dbRef.child(uid).child("messages").push();
+    public DatabaseReference sendMessage(Message message) {
+        DatabaseReference tmpRef = dbRef.child(uid).child("messages").push();
 
         tmpRef.setValue(message.encrypt("TEMP PASSPHRASE"));
+
+        return tmpRef;
+    }
+
+    public DatabaseReference sendImageMessage(Message message, byte[] imageBitmap) {
+        DatabaseReference tmpRef = dbRef.child(uid).child("messages").push();
+
+        OnlineStorage.uploadImage(imageBitmap, message.getContent());
+
+        tmpRef.setValue(message.encrypt("TEMP PASSPHRASE"));
+
+        return tmpRef;
     }
 
     public void initialize() {

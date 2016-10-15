@@ -19,7 +19,7 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-public class MessagesAdapter extends RecyclerView.Adapter<MessagesAdapter.ViewHolder> implements SectionTitleProvider {
+public class MessagesAdapter extends RecyclerView.Adapter<MessagesAdapter.ViewHolder> {
     private static MessageItemListener listener;
 
     private List<Message> messages = new ArrayList<>();
@@ -82,12 +82,6 @@ public class MessagesAdapter extends RecyclerView.Adapter<MessagesAdapter.ViewHo
                 }
             });
         }
-    }
-
-    @Override
-    public String getSectionTitle(int position) {
-        //this String will be shown in a bubble for specified position
-        return getItem(position).getContent().substring(0, 1);
     }
 
     public void clear() {
