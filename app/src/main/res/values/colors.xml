@@ -8,4 +8,6 @@
     <color name="colorErrorText">#FF0000</color>
     <color name="colorBorder">#CABBBBBB</color>
     <color name="colorBlackTranslucent">#000000</color>
+    <color name="colorBackground">#EEEEEE</color>
+    <color name="colorBackgroundMedium">#AAAAAA</color>
 </resources>
