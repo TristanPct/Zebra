@@ -41,9 +41,18 @@
             <intent-filter>
                 <action android:name="android.intent.action.RUN" />
             </intent-filter>
+
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".Activities.UserProfileActivity" />
+        </activity>
+        <activity
+            android:name=".DrawerMenuActivity"
+            android:label="@string/title_activity_drawer_menu"
+            android:theme="@style/AppTheme.NoActionBar">
+            <intent-filter>
+                <action android:name="android.intent.action.RUN" />
+            </intent-filter>
         </activity>
     </application>
 
