@@ -28,8 +28,8 @@ import butterknife.ButterKnife;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class ContactListFragment extends Fragment {
-    private static String TAG = "ContactListFragment";
+public class ContactsListFragment extends Fragment {
+    private static String TAG = "ContactsListFragment";
 
     private ContactsAdapter adapter;
 
@@ -39,7 +39,7 @@ public class ContactListFragment extends Fragment {
     @BindView(R.id.fastScroller)
     FastScroller fastScroller;
 
-    public ContactListFragment() {
+    public ContactsListFragment() {
         // Required empty public constructor
     }
 

@@ -51,7 +51,7 @@ public class MainActivity extends AppCompatActivity implements Authentication.Au
 
     @Override
     public void onUserSignedIn(FirebaseUser user) {
-        Intent intent = new Intent(this, ContactListActivity.class);
+        Intent intent = new Intent(this, ContactsListActivity.class);
         startActivity(intent);
     }
 
