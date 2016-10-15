@@ -131,12 +131,12 @@ public class GroupUser {
                 group.setUsersIds(dataSnapshot.child("usersIds").getValue(usersIdsT));
 //                group.setMessages(dataSnapshot.child("messages").getValue(encryptedMessagesT)); // DatabaseException: Expected a List while deserializing, but got a class java.util.HashMap
                 // FIX: DatabaseException: Expected a List while deserializing, but got a class java.util.HashMap
-                List<EncryptedMessage> encryptedMessages = new ArrayList<>();
-                for (DataSnapshot messageSnapshot : dataSnapshot.child("messages").getChildren()) {
-                    encryptedMessages.add(messageSnapshot.getValue(EncryptedMessage.class));
-                }
-                Log.d(TAG, "getInstantiatedGroup#onDataChange: encryptedMessages: " + encryptedMessages.size());
-                group.setMessages(encryptedMessages); //TODO: do not load messages here ?
+//                List<EncryptedMessage> encryptedMessages = new ArrayList<>();
+//                for (DataSnapshot messageSnapshot : dataSnapshot.child("messages").getChildren()) {
+//                    encryptedMessages.add(messageSnapshot.getValue(EncryptedMessage.class));
+//                }
+//                Log.d(TAG, "getInstantiatedGroup#onDataChange: encryptedMessages: " + encryptedMessages.size());
+//                group.setMessages(encryptedMessages); //TODO: do not load messages here ?
 
                 deferred.resolve(group);
             }

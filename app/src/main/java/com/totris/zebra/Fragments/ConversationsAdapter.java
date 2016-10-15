@@ -56,6 +56,7 @@ public class ConversationsAdapter extends RecyclerView.Adapter<ConversationsAdap
 
         holder.usernames.setText(usernames);
 
+        // unused:
         Message lastMessage = conversation.getGroup().getLastMessage();
 
         if (lastMessage != null) {

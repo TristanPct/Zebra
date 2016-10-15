@@ -29,6 +29,7 @@ public class Group implements Serializable {
     private Date createdAt;
     private List<String> usersIds = new ArrayList<>();
     private List<Message> messages = new ArrayList<>();
+    private boolean messagesLoaded = false;
 
     public Group() {
         createdAt = new Date();
@@ -80,6 +81,7 @@ public class Group implements Serializable {
     }
 
     public <T> void setMessages(List<T> messages) {
+        messagesLoaded = false;
         this.messages.clear();
 
         if (messages == null) {
@@ -99,6 +101,13 @@ public class Group implements Serializable {
                 }
             }
         }
+
+        messagesLoaded = true;
+    }
+
+    @Exclude
+    public boolean isMessagesLoaded() {
+        return messagesLoaded;
     }
 
     @Exclude

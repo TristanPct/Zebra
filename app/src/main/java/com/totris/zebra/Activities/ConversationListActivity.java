@@ -1,9 +1,10 @@
 package com.totris.zebra.Activities;
 
+import android.content.Intent;
 import android.os.PersistableBundle;
 import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -11,9 +12,14 @@ import android.view.View;
 
 import com.totris.zebra.Fragments.ConversationListFragment;
 import com.totris.zebra.Fragments.ConversationsAdapter;
+import com.totris.zebra.Models.Group;
 import com.totris.zebra.Models.GroupUser;
+import com.totris.zebra.Models.User;
 import com.totris.zebra.R;
 import com.totris.zebra.Utils.EventBus;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class ConversationListActivity extends AppCompatActivity implements ConversationsAdapter.ConversationItemListener {
     private final static String TAG = "ConversationListActivit";
@@ -30,8 +36,10 @@ public class ConversationListActivity extends AppCompatActivity implements Conve
                     .commit();
         }
 
-//        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-//        setSupportActionBar(toolbar);
+        ActionBar actionBar = getSupportActionBar();
+        if (actionBar != null) {
+            actionBar.setTitle(getString(R.string.title_activity_conversations_list));
+        }
 
 //        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
 //        fab.setOnClickListener(new View.OnClickListener() {
@@ -52,5 +60,9 @@ public class ConversationListActivity extends AppCompatActivity implements Conve
     @Override
     public void onConversationItemClick(GroupUser conversation) {
         Log.d(TAG, "onConversationItemClick");
+
+        Intent intent = new Intent(this, ConversationActivity.class);
+        intent.putExtra("group", conversation.getGroup());
+        startActivity(intent);
     }
 }
