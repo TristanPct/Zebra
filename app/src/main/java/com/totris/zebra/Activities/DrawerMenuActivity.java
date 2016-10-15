@@ -1,4 +1,4 @@
-package com.totris.zebra;
+package com.totris.zebra.Activities;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -14,10 +14,8 @@ import android.view.View;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import com.totris.zebra.Activities.ContactsListActivity;
-import com.totris.zebra.Activities.ConversationsListActivity;
-import com.totris.zebra.Activities.UserProfileActivity;
 import com.totris.zebra.Models.User;
+import com.totris.zebra.R;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;

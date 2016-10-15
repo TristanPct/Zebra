@@ -1,20 +1,16 @@
-package com.totris.zebra;
+package com.totris.zebra.Activities;
 
 import android.content.Intent;
-import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
-import com.totris.zebra.Activities.UserProfileActivity;
+import com.totris.zebra.Fragments.EditUsernameFragment;
+import com.totris.zebra.Fragments.EditEmailFragment;
 import com.totris.zebra.Models.EditProfileFragmentType;
-import com.totris.zebra.Models.MessageType;
 import com.totris.zebra.Models.User;
+import com.totris.zebra.R;
 
 public class EditProfileItemActivity extends AppCompatActivity implements EditEmailFragment.OnSubmitListener, EditUsernameFragment.OnSubmitListener {
 

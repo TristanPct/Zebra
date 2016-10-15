@@ -4,18 +4,12 @@ package com.totris.zebra.Fragments;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.text.Layout;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.totris.zebra.DisplayProfileListFragment;
 import com.totris.zebra.Models.User;
 import com.totris.zebra.R;
-
-import butterknife.BindView;
-import butterknife.ButterKnife;
-import butterknife.OnClick;
 
 
 /**

@@ -1,4 +1,4 @@
-package com.totris.zebra;
+package com.totris.zebra.Fragments;
 
 
 import android.content.Context;
@@ -8,6 +8,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
+
+import com.totris.zebra.R;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
