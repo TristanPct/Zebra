@@ -5,6 +5,7 @@
     <color name="colorAccent">#FF4081</color>
     <color name="colorPrimaryContrast">#FFFFFF</color>
     <color name="colorBackgroundLight">#FFFFFF</color>
+    <color name="colorBackgroundSelected">#7EEC7E</color>
     <color name="colorErrorText">#FF0000</color>
     <color name="colorBorder">#CABBBBBB</color>
     <color name="colorBlackTranslucent">#000000</color>

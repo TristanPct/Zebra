@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/contactItem"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_marginLeft="@dimen/activity_horizontal_margin"
@@ -8,29 +10,55 @@
     android:layout_marginTop="@dimen/activity_vertical_margin"
     android:background="@drawable/list_item_bg">
 
-    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-
+    <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="?android:attr/selectableItemBackground"
-        android:orientation="vertical"
         android:padding="@dimen/activity_horizontal_margin">
 
-        <TextView
-            android:id="@+id/contactUsername"
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textSize="15sp"
-            tools:text="Username" />
+            android:orientation="vertical">
 
-        <TextView
-            android:id="@+id/contactMail"
-            android:layout_width="match_parent"
+            <TextView
+                android:id="@+id/contactUsername"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textSize="15sp"
+                tools:text="Username" />
+
+            <TextView
+                android:id="@+id/contactMail"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="2dp"
+                android:textSize="10sp"
+                tools:text="mail@example.com" />
+
+        </LinearLayout>
+
+        <ImageView
+            android:id="@+id/contactImageAdd"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="2dp"
-            android:textSize="10sp"
-            tools:text="mail@example.com" />
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            app:srcCompat="@drawable/ic_item_add"
+            android:visibility="gone"/>
 
-    </LinearLayout>
+        <ImageView
+            android:id="@+id/contactImageRemove"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            app:srcCompat="@drawable/ic_item_remove"
+            android:visibility="gone"/>
+
+    </RelativeLayout>
+
 
 </RelativeLayout>
