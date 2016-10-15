@@ -12,6 +12,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.TextView;
 
 import com.squareup.otto.Subscribe;
@@ -43,7 +44,7 @@ public class ConversationFragment extends Fragment {
     TextView messageInput;
 
     @BindView(R.id.messageSubmit)
-    Button messageSubmit;
+    ImageButton messageSubmit;
 
     public ConversationFragment() {
         // Required empty public constructor

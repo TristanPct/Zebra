@@ -25,7 +25,10 @@ public class ConversationActivity extends AppCompatActivity implements Conversat
         setContentView(R.layout.activity_conversation);
 
         group = (Group) getIntent().getSerializableExtra("group");
-        group.addChildEventListener();
+
+        if(group != null) {
+            group.addChildEventListener();
+        }
 
         currentFragment = new ConversationFragment();
 

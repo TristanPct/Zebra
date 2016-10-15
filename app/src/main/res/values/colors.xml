@@ -7,4 +7,5 @@
     <color name="colorBackgroundLight">#FFFFFF</color>
     <color name="colorErrorText">#FF0000</color>
     <color name="colorBorder">#CABBBBBB</color>
+    <color name="colorBlackTranslucent">#000000</color>
 </resources>

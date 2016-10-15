@@ -27,24 +27,38 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@color/colorBackgroundLight"
-        android:padding="@dimen/activity_vertical_margin"
         app:alignContent="stretch"
-        app:alignItems="flex_end"
+        app:alignItems="center"
         app:flexDirection="row"
         app:layout_flexShrink="0">
 
+        <ImageButton
+            android:id="@+id/messageFile"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:srcCompat="@drawable/ic_attachment"
+            android:tint="@color/colorBlackTranslucent"
+            android:padding="@dimen/activity_vertical_margin"
+            android:background="@null"
+            app:layout_flexGrow="1"
+            app:layout_flexShrink="0" />
+
         <EditText
             android:id="@+id/messageInput"
+            android:padding="@dimen/activity_vertical_margin"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="@string/your_message"
             app:layout_flexGrow="1" />
 
-        <Button
+        <ImageButton
             android:id="@+id/messageSubmit"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/send"
+            app:srcCompat="@drawable/ic_send"
+            android:padding="@dimen/activity_vertical_margin"
+            android:tint="@color/colorBlackTranslucent"
+            android:background="@null"
             app:layout_flexGrow="1"
             app:layout_flexShrink="0" />
 
