@@ -13,16 +13,13 @@ import android.view.ViewGroup;
 import com.squareup.otto.Subscribe;
 import com.totris.zebra.Events.GroupUserInstantiateEvent;
 import com.totris.zebra.Events.UserRegisterGroupEvent;
-import com.totris.zebra.Models.Group;
 import com.totris.zebra.Models.GroupUser;
 import com.totris.zebra.Models.User;
 import com.totris.zebra.R;
 import com.totris.zebra.Utils.EventBus;
 
 import org.jdeferred.DoneCallback;
-import org.jdeferred.Promise;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.BindView;
@@ -31,8 +28,8 @@ import butterknife.ButterKnife;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class ConversationListFragment extends Fragment {
-    private static final String TAG = "ConversationListFragmen";
+public class ConversationsListFragment extends Fragment {
+    private static final String TAG = "ConversationsListFragme";
 
     private ConversationsAdapter adapter;
     private boolean loaded = false;
@@ -40,7 +37,7 @@ public class ConversationListFragment extends Fragment {
     @BindView(R.id.conversationsList)
     RecyclerView conversationsListRecyclerView;
 
-    public ConversationListFragment() {
+    public ConversationsListFragment() {
         // Required empty public constructor
     }
 
@@ -73,7 +70,7 @@ public class ConversationListFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        View view = inflater.inflate(R.layout.fragment_conversation_list, container, false);
+        View view = inflater.inflate(R.layout.fragment_conversations_list, container, false);
 
         ButterKnife.bind(this, view);
 
