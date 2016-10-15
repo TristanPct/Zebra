@@ -57,7 +57,7 @@ public class ContactsListActivity extends DrawerMenuActivity implements Contacts
     }
 
     @Override
-    public void onContactItemClick(User user) {
+    public void onContactItemClick(User user, boolean selected) {
         Log.d(TAG, "onContactItemClick");
 
         // TODO: open contact profile
