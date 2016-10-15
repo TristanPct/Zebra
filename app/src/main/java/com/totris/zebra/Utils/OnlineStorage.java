@@ -28,11 +28,15 @@ public class OnlineStorage {
     }
 
     private OnlineStorage() {
-        mStorageRef = FirebaseStorage.getInstance().getReference();
+
+    }
+
+    public static StorageReference getImageReference(String imageName) {
+        return mStorageRef.child(imageName);
     }
 
     public static void uploadImage(byte[] data, String imageName) {
-        UploadTask uploadTask = mStorageRef.child(imageName + ".jpg").putBytes(data);
+        UploadTask uploadTask = mStorageRef.child(imageName).putBytes(data);
 
         uploadTask.addOnFailureListener(new OnFailureListener() {
             @Override

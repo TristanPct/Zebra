@@ -102,7 +102,7 @@ public class ConversationActivity extends AppCompatActivity implements Conversat
         imageBitmap.compress(Bitmap.CompressFormat.JPEG, 70, baos);
         byte[] byteArrayImage = baos.toByteArray();
 
-        Message messageObj = new Message(OnlineStorage.RandomIdGenerator(), MessageType.IMAGE);
+        Message messageObj = new Message(OnlineStorage.RandomIdGenerator() + ".jpg", MessageType.IMAGE);
 
         group.sendImageMessage(messageObj, byteArrayImage);
     }
