@@ -22,10 +22,16 @@ import butterknife.ButterKnife;
 
 public class ContactsAdapter extends RecyclerView.Adapter<ContactsAdapter.ViewHolder> implements SectionTitleProvider {
     private static List<User> users;
+    private static ContactsListMode mode;
     private static ContactItemListener listener;
 
+
     public ContactsAdapter(List<User> users) {
-        ContactsAdapter.users = new ArrayList<User>(users);
+        ContactsAdapter.users = new ArrayList<>(users);
+    }
+
+    public void setMode(ContactsListMode mode) {
+        ContactsAdapter.mode = mode;
     }
 
     public void setOnContactItemListener(ContactItemListener listenerArg) {
@@ -71,7 +77,7 @@ public class ContactsAdapter extends RecyclerView.Adapter<ContactsAdapter.ViewHo
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    if(listener != null) {
+                    if (listener != null) {
                         listener.onContactItemClick(users.get(getAdapterPosition()));
                     }
                 }

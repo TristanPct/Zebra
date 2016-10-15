@@ -41,9 +41,15 @@
             <intent-filter>
                 <action android:name="android.intent.action.RUN" />
             </intent-filter>
+
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".Activities.UserProfileActivity" />
+        </activity>
+        <activity android:name=".Activities.NewConversationActivity">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".Activities.ConversationsListActivity" />
         </activity>
     </application>
 
