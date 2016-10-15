@@ -1,5 +1,6 @@
 package com.totris.zebra.Activities;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
@@ -7,6 +8,7 @@ import android.support.design.widget.Snackbar;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
 
 import com.totris.zebra.Fragments.ContactsListFragment;
@@ -18,13 +20,17 @@ import com.totris.zebra.R;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ContactsListActivity extends AppCompatActivity implements ContactsAdapter.ContactItemListener {
+public class ContactsListActivity extends DrawerMenuActivity implements ContactsAdapter.ContactItemListener {
     private final static String TAG = "ContactsListActivity";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_contacts_list);
+
+        LayoutInflater inflater = (LayoutInflater) this
+                .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        View contentView = inflater.inflate(R.layout.activity_contacts_list, null, false);
+        contentLayout.addView(contentView, 0);
 
         if(savedInstanceState == null) {
             ContactsListFragment contactsList = new ContactsListFragment();
@@ -40,7 +46,7 @@ public class ContactsListActivity extends AppCompatActivity implements ContactsA
             actionBar.setTitle(getString(R.string.title_activity_contacts_list));
         }
 
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
+        FloatingActionButton fab = (FloatingActionButton) contentView.findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

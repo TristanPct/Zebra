@@ -22,7 +22,8 @@
                 <action android:name="android.intent.action.RUN" />
             </intent-filter>
         </activity>
-        <activity android:name=".Activities.ContactsListActivity">
+        <activity android:name=".Activities.ContactsListActivity"
+            android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.RUN" />
             </intent-filter>
