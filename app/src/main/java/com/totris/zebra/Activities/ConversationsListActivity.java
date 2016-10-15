@@ -1,5 +1,6 @@
 package com.totris.zebra.Activities;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.PersistableBundle;
 import android.support.design.widget.FloatingActionButton;
@@ -7,6 +8,7 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
 
 import com.totris.zebra.Fragments.ConversationsListFragment;
@@ -14,13 +16,23 @@ import com.totris.zebra.Fragments.ConversationsAdapter;
 import com.totris.zebra.Models.GroupUser;
 import com.totris.zebra.R;
 
-public class ConversationsListActivity extends AppCompatActivity implements ConversationsAdapter.ConversationItemListener {
+import butterknife.BindView;
+import butterknife.ButterKnife;
+
+public class ConversationsListActivity extends DrawerMenuActivity implements ConversationsAdapter.ConversationItemListener {
     private final static String TAG = "ConversationsListActivi";
+
+    @BindView(R.id.fab)
+    FloatingActionButton fab;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_conversations_list);
+
+        LayoutInflater inflater = (LayoutInflater) this
+                .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        View contentView = inflater.inflate(R.layout.activity_conversations_list, null, false);
+        contentLayout.addView(contentView, 0);
 
         if (savedInstanceState == null) {
             getSupportFragmentManager()
@@ -34,7 +46,9 @@ public class ConversationsListActivity extends AppCompatActivity implements Conv
             actionBar.setTitle(getString(R.string.title_activity_conversations_list));
         }
 
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
+        ButterKnife.bind(this, contentView);
+
+        FloatingActionButton fab = (FloatingActionButton) contentView.findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

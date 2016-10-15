@@ -25,9 +25,7 @@ public class DrawerMenuActivity extends AppCompatActivity
 
     protected DrawerLayout drawer;
     protected RelativeLayout contentLayout;
-
-    @BindView(R.id.nav_view)
-    NavigationView navigationView;
+    private NavigationView navigationView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,8 +34,6 @@ public class DrawerMenuActivity extends AppCompatActivity
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        ButterKnife.bind(this);
-
         drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
@@ -45,6 +41,7 @@ public class DrawerMenuActivity extends AppCompatActivity
         toggle.syncState();
 
         if(User.getCurrent() != null) {
+            navigationView = (NavigationView) findViewById(R.id.nav_view);
             View headerLayout = navigationView.inflateHeaderView(R.layout.nav_header_drawer_menu);
 
             TextView usernameTextView = (TextView) headerLayout.findViewById(R.id.menuUserUsername);
@@ -100,12 +97,15 @@ public class DrawerMenuActivity extends AppCompatActivity
 
         if (id == R.id.nav_conversations_list) {
             Intent intent = new Intent(this, ConversationsListActivity.class);
+            intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
             startActivity(intent);
         } else if (id == R.id.nav_contacts_list) {
             Intent intent = new Intent(this, ContactsListActivity.class);
+            intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
             startActivity(intent);
         } else if (id == R.id.nav_user_profile) {
             Intent intent = new Intent(this, UserProfileActivity.class);
+            intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
             startActivity(intent);
         }
 
