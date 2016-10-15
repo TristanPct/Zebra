@@ -1,9 +1,7 @@
 package com.totris.zebra;
 
+import android.content.Intent;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
-import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
@@ -12,9 +10,26 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.RelativeLayout;
+import android.widget.TextView;
+
+import com.totris.zebra.Activities.ContactsListActivity;
+import com.totris.zebra.Activities.ConversationsListActivity;
+import com.totris.zebra.Activities.UserProfileActivity;
+import com.totris.zebra.Models.User;
+
+import butterknife.BindView;
+import butterknife.ButterKnife;
 
 public class DrawerMenuActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
+
+    protected DrawerLayout drawer;
+    protected RelativeLayout contentLayout;
+
+    @BindView(R.id.nav_view)
+    NavigationView navigationView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -23,11 +38,25 @@ public class DrawerMenuActivity extends AppCompatActivity
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        ButterKnife.bind(this);
+
+        drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         drawer.setDrawerListener(toggle);
         toggle.syncState();
+
+        if(User.getCurrent() != null) {
+            View headerLayout = navigationView.inflateHeaderView(R.layout.nav_header_drawer_menu);
+
+            TextView usernameTextView = (TextView) headerLayout.findViewById(R.id.menuUserUsername);
+            TextView emailTextView = (TextView) headerLayout.findViewById(R.id.menuUserEmail);
+
+            usernameTextView.setText(User.getCurrent().getUsername());
+            emailTextView.setText(User.getCurrent().getMail());
+        }
+
+        contentLayout = (RelativeLayout) findViewById(R.id.content_drawer_menu);
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
@@ -71,18 +100,15 @@ public class DrawerMenuActivity extends AppCompatActivity
         // Handle navigation view item clicks here.
         int id = item.getItemId();
 
-        if (id == R.id.nav_camera) {
-            // Handle the camera action
-        } else if (id == R.id.nav_gallery) {
-
-        } else if (id == R.id.nav_slideshow) {
-
-        } else if (id == R.id.nav_manage) {
-
-        } else if (id == R.id.nav_share) {
-
-        } else if (id == R.id.nav_send) {
-
+        if (id == R.id.nav_conversations_list) {
+            Intent intent = new Intent(this, ConversationsListActivity.class);
+            startActivity(intent);
+        } else if (id == R.id.nav_contacts_list) {
+            Intent intent = new Intent(this, ContactsListActivity.class);
+            startActivity(intent);
+        } else if (id == R.id.nav_user_profile) {
+            Intent intent = new Intent(this, UserProfileActivity.class);
+            startActivity(intent);
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);

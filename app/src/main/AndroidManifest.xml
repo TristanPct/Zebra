@@ -32,7 +32,8 @@
                 <action android:name="android.intent.action.RUN" />
             </intent-filter>
         </activity>
-        <activity android:name=".Activities.UserProfileActivity">
+        <activity android:name=".Activities.UserProfileActivity"
+            android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.RUN" />
             </intent-filter>
