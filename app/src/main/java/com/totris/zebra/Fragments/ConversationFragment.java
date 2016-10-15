@@ -41,7 +41,7 @@ public class ConversationFragment extends Fragment {
 
     private MessagesAdapter adapter = new MessagesAdapter(new ArrayList<Message>());
 
-    @BindView(R.id.messagesList) //TODO: bind all those stuff in a fragment
+    @BindView(R.id.messagesList)
     RecyclerView messagesListRecyclerView;
 
     @BindView(R.id.messageInput)
@@ -132,7 +132,7 @@ public class ConversationFragment extends Fragment {
     }
 
     @OnClick(R.id.messageSubmit)
-    public void onSubmitMessage(Button button) {
+    public void onSubmitMessage(ImageButton button) {
         View view = getActivity().getCurrentFocus();
         if (view != null) {
             InputMethodManager imm = (InputMethodManager)getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
