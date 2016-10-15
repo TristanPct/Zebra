@@ -51,13 +51,24 @@
             android:hint="@string/your_message"
             app:layout_flexGrow="1" />
 
+        <ToggleButton
+            android:id="@+id/leetToggle"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_marginLeft="@dimen/activity_horizontal_margin"
+            android:background="@drawable/leet_toggle"
+            app:layout_flexGrow="0"
+            app:layout_flexShrink="0"
+            android:textOff=""
+            android:textOn=""/>
+
         <ImageButton
             android:id="@+id/messageSubmit"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             app:srcCompat="@drawable/ic_send"
             android:padding="@dimen/activity_vertical_margin"
-            android:tint="@color/colorBlackTranslucent"
+            android:tint="@color/colorPrimary"
             android:background="?android:attr/selectableItemBackground"
             app:layout_flexGrow="1"
             app:layout_flexShrink="0" />

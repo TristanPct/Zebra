@@ -13,6 +13,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.Manifest;
+import android.widget.ToggleButton;
 
 import com.totris.zebra.Fragments.ConversationFragment;
 import com.totris.zebra.Models.Group;
@@ -21,6 +22,7 @@ import com.totris.zebra.Models.MessageType;
 import com.totris.zebra.R;
 import com.totris.zebra.Utils.EventBus;
 import com.totris.zebra.Utils.OnlineStorage;
+import com.totris.zebra.Utils.StringUtils;
 
 import java.io.ByteArrayOutputStream;
 import java.util.Date;
@@ -74,6 +76,12 @@ public class ConversationActivity extends AppCompatActivity implements Conversat
     @Override
     public void onSubmitMessage(String message) {
         Log.d(TAG, "onSubmitMessage: " + message);
+
+        ToggleButton leetToggle = (ToggleButton) findViewById(R.id.leetToggle); // TODO: see how to get that binding from the fragment
+
+        if(leetToggle.isChecked()) {
+            message = StringUtils.leetify(message);
+        }
 
         Message messageObj = new Message(message, MessageType.TEXT);
 
