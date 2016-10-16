@@ -2,6 +2,7 @@ package com.totris.zebra.Activities;
 
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
+import android.content.Context;
 import android.content.Intent;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
@@ -11,6 +12,7 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 
 import com.totris.zebra.Fragments.EditPasswordFragment;
 import com.totris.zebra.Fragments.EditProfileItemFragment;
@@ -106,6 +108,12 @@ public class EditProfileItemActivity extends AppCompatActivity {
     private void editCurrentValue(String value) {
         if (value == null) return;
 
+        View view = getCurrentFocus();
+        if (view != null) {
+            InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
+            imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
+        }
+
         toggleProgress(true);
 
         User user = User.getCurrent();
@@ -126,6 +134,8 @@ public class EditProfileItemActivity extends AppCompatActivity {
             @Override
             public void onComplete(boolean success, List<String> errors) {
                 toggleProgress(false);
+
+                Log.d(TAG, "editCurrentValue#onComplete: " + success + " " + errors);
 
                 if (success) {
                     Intent intent = new Intent(EditProfileItemActivity.this, UserProfileActivity.class);

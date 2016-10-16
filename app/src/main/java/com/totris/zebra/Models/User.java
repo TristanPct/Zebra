@@ -51,6 +51,8 @@ public class User {
     private boolean isUsernameUpdated = false;
     private boolean isMailUpdated = false;
     private boolean isPasswordUpdated = false;
+    private String oldUsername;
+    private String oldMail;
     private int valuesToCommit = 0;
 
     public User() {
@@ -59,6 +61,7 @@ public class User {
 
     public User(String username) {
         this.username = username;
+        this.oldUsername = username;
     }
 
     public static User from(FirebaseUser firebaseUser) {
@@ -68,7 +71,32 @@ public class User {
 
         user.initialize();
 
+        user.oldUsername = user.username;
+        user.oldMail = user.mail;
+
         return user;
+    }
+
+    public static Promise getById(String uid) {
+        final DeferredObject deferred = new DeferredObject();
+
+        if (uid == null || uid.trim().equals("") || getCurrent().getUid().equals(uid)) {
+            deferred.resolve(getCurrent());
+        } else {
+            dbRef.child(uid).addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
+                    deferred.resolve(dataSnapshot.getValue(User.class));
+                }
+
+                @Override
+                public void onCancelled(DatabaseError databaseError) {
+                    deferred.resolve(null);
+                }
+            });
+        }
+
+        return deferred.promise();
     }
 
     public static User getCurrent() {
@@ -215,11 +243,13 @@ public class User {
                             isUsernameUpdated = !task.isSuccessful();
                             valuesToCommit--;
 
-                            if (!isUsernameUpdated) {
+                            if (isUsernameUpdated) {
                                 errors.add("ERROR_USERNAME");
+                                username = oldUsername;
                             }
 
                             if (valuesToCommit == 0) {
+                                persist();
                                 listener.onComplete(errors.size() == 0, errors);
                             }
                         }
@@ -234,11 +264,13 @@ public class User {
                             isMailUpdated = !task.isSuccessful();
                             valuesToCommit--;
 
-                            if (!isUsernameUpdated) {
+                            if (isMailUpdated) {
                                 errors.add("ERROR_EMAIL");
+                                mail = oldMail;
                             }
 
                             if (valuesToCommit == 0) {
+                                persist();
                                 listener.onComplete(errors.size() == 0, errors);
                             }
                         }
@@ -253,7 +285,7 @@ public class User {
                             isPasswordUpdated = !task.isSuccessful();
                             valuesToCommit--;
 
-                            if (!isUsernameUpdated) {
+                            if (isPasswordUpdated) {
                                 errors.add("ERROR_PASSWORD");
                             }
 
@@ -266,9 +298,9 @@ public class User {
 
         // update database linked model
 
-        if (isUsernameUpdated || isMailUpdated) {
-            persist();
-        }
+//        if (isUsernameUpdated || isMailUpdated) {
+//            persist();
+//        }
     }
 
     public void persist() {
