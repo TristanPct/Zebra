@@ -1,5 +1,7 @@
 package com.totris.zebra.Activities;
 
+import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
 import android.content.Intent;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
@@ -8,6 +10,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.View;
 
 import com.totris.zebra.Fragments.EditPasswordFragment;
 import com.totris.zebra.Fragments.EditProfileItemFragment;
@@ -17,11 +20,23 @@ import com.totris.zebra.Models.EditProfileFragmentType;
 import com.totris.zebra.Models.User;
 import com.totris.zebra.R;
 
+import java.util.List;
+
+import butterknife.BindView;
+import butterknife.ButterKnife;
+
 public class EditProfileItemActivity extends AppCompatActivity {
 
     private static final String TAG = "EditProfileItemActivity";
 
     private EditProfileFragmentType type;
+    private EditProfileItemFragment fragment;
+
+    @BindView(R.id.progress)
+    View progressView;
+
+    @BindView(R.id.editProfileItemContent)
+    View editProfileItemContent;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -31,6 +46,8 @@ public class EditProfileItemActivity extends AppCompatActivity {
         type = EditProfileFragmentType.valueOf(getIntent().getStringExtra("fragmentType"));
 
         Log.d(TAG, "onCreate: " + type);
+
+        ButterKnife.bind(this);
 
         Fragment currentFragment;
 
@@ -53,6 +70,8 @@ public class EditProfileItemActivity extends AppCompatActivity {
                 currentFragment = new Fragment();
         }
 
+        fragment = (EditProfileItemFragment) currentFragment;
+
         if (getSupportActionBar() != null) {
             getSupportActionBar().setTitle(actionBarTitle);
         }
@@ -60,7 +79,7 @@ public class EditProfileItemActivity extends AppCompatActivity {
         if(savedInstanceState == null) {
             getSupportFragmentManager()
                     .beginTransaction()
-                    .replace(R.id.activity_edit_profile_item, currentFragment)
+                    .replace(R.id.editProfileItemContent, currentFragment)
                     .commit();
         }
     }
@@ -76,7 +95,6 @@ public class EditProfileItemActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.action_confirm:
-                EditProfileItemFragment fragment = (EditProfileItemFragment) getSupportFragmentManager().getFragments().get(0);
                 editCurrentValue(fragment.getValue());
                 return true;
 
@@ -88,21 +106,58 @@ public class EditProfileItemActivity extends AppCompatActivity {
     private void editCurrentValue(String value) {
         if (value == null) return;
 
+        toggleProgress(true);
+
         User user = User.getCurrent();
 
         switch (type) {
             case USERNAME:
-                user.updateUsername(value).commit(); //TODO: add error callback
+                user.updateUsername(value);
                 break;
             case EMAIL:
-                user.updateMail(value).commit(); //TODO: add error callback
+                user.updateMail(value);
                 break;
             case PASSWORD:
-                user.updatePassword(value).commit(); //TODO: add error callback
+                user.updatePassword(value);
                 break;
         }
 
-        Intent intent = new Intent(EditProfileItemActivity.this, UserProfileActivity.class);
-        startActivity(intent);
+        user.commit(new User.OnCommitListener() {
+            @Override
+            public void onComplete(boolean success, List<String> errors) {
+                toggleProgress(false);
+
+                if (success) {
+                    Intent intent = new Intent(EditProfileItemActivity.this, UserProfileActivity.class);
+                    startActivity(intent);
+                } else {
+                    fragment.setError(errors.get(0));
+                }
+            }
+        });
+    }
+
+    private void toggleProgress(final boolean show) {
+        if (progressView.getVisibility() == View.VISIBLE && show) return;
+
+        int shortAnimTime = getResources().getInteger(android.R.integer.config_shortAnimTime);
+
+        editProfileItemContent.setVisibility(show ? View.GONE : View.VISIBLE);
+        editProfileItemContent.animate().setDuration(shortAnimTime).alpha(
+                show ? 0 : 1).setListener(new AnimatorListenerAdapter() {
+            @Override
+            public void onAnimationEnd(Animator animation) {
+                editProfileItemContent.setVisibility(show ? View.GONE : View.VISIBLE);
+            }
+        });
+
+        progressView.setVisibility(show ? View.VISIBLE : View.GONE);
+        progressView.animate().setDuration(shortAnimTime).alpha(
+                show ? 1 : 0).setListener(new AnimatorListenerAdapter() {
+            @Override
+            public void onAnimationEnd(Animator animation) {
+                progressView.setVisibility(show ? View.VISIBLE : View.GONE);
+            }
+        });
     }
 }

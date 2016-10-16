@@ -51,6 +51,7 @@ public class User {
     private boolean isUsernameUpdated = false;
     private boolean isMailUpdated = false;
     private boolean isPasswordUpdated = false;
+    private int valuesToCommit = 0;
 
     public User() {
 
@@ -186,6 +187,22 @@ public class User {
     }
 
     public void commit() {
+        commit(new OnCommitListener() {
+            @Override
+            public void onComplete(boolean success, List<String> errors) {
+
+            }
+        });
+    }
+
+    public void commit(final OnCommitListener listener) {
+        valuesToCommit = 0;
+        valuesToCommit += isUsernameUpdated ? 1 : 0;
+        valuesToCommit += isMailUpdated ? 1 : 0;
+        valuesToCommit += isPasswordUpdated ? 1 : 0;
+
+        final List<String> errors = new ArrayList<>();
+
         if (isUsernameUpdated) {
             UserProfileChangeRequest updates = new UserProfileChangeRequest.Builder()
                     .setDisplayName(username)
@@ -196,6 +213,15 @@ public class User {
                         @Override
                         public void onComplete(@NonNull Task<Void> task) {
                             isUsernameUpdated = !task.isSuccessful();
+                            valuesToCommit--;
+
+                            if (!isUsernameUpdated) {
+                                errors.add("ERROR_USERNAME");
+                            }
+
+                            if (valuesToCommit == 0) {
+                                listener.onComplete(errors.size() == 0, errors);
+                            }
                         }
                     });
         }
@@ -206,6 +232,15 @@ public class User {
                         @Override
                         public void onComplete(@NonNull Task<Void> task) {
                             isMailUpdated = !task.isSuccessful();
+                            valuesToCommit--;
+
+                            if (!isUsernameUpdated) {
+                                errors.add("ERROR_EMAIL");
+                            }
+
+                            if (valuesToCommit == 0) {
+                                listener.onComplete(errors.size() == 0, errors);
+                            }
                         }
                     });
         }
@@ -216,6 +251,15 @@ public class User {
                         @Override
                         public void onComplete(@NonNull Task<Void> task) {
                             isPasswordUpdated = !task.isSuccessful();
+                            valuesToCommit--;
+
+                            if (!isUsernameUpdated) {
+                                errors.add("ERROR_PASSWORD");
+                            }
+
+                            if (valuesToCommit == 0) {
+                                listener.onComplete(errors.size() == 0, errors);
+                            }
                         }
                     });
         }
@@ -309,5 +353,9 @@ public class User {
 
             }
         });
+    }
+
+    public interface OnCommitListener {
+        void onComplete(boolean success, List<String> errors);
     }
 }
