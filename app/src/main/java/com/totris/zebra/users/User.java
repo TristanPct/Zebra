@@ -160,7 +160,7 @@ public class User {
 
     @Exclude
     public Promise getInstantiatedGroupUsers() {
-        Log.d(TAG, "getInstantiatedGroupUsers: " + groups.size());
+        Log.d(TAG, "getInstantiatedGroupUsers: " + instantiatedGroups + " / " + groups.size());
 
         final DeferredObject deferred = new DeferredObject();
 

@@ -20,6 +20,7 @@ import com.totris.zebra.utils.EventBus;
 
 import org.jdeferred.DoneCallback;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.BindView;
@@ -32,7 +33,8 @@ public class ConversationsListFragment extends Fragment {
     private static final String TAG = "ConversationsListFragme";
 
     private ConversationsAdapter adapter;
-    private boolean loaded = false;
+
+    private ArrayList<String> conversationsIds = new ArrayList<>();
 
     @BindView(R.id.conversationsList)
     RecyclerView conversationsListRecyclerView;
@@ -52,18 +54,6 @@ public class ConversationsListFragment extends Fragment {
     public void onResume() {
         super.onResume();
         EventBus.register(this);
-        User.getCurrent().getInstantiatedGroupUsers().done(new DoneCallback() {
-            @Override
-            public void onDone(Object result) {
-                loaded = true;
-
-                adapter.clear();
-                for (GroupUser conversation : (List<GroupUser>)result) {
-                    adapter.addConversation(conversation);
-                }
-                adapter.notifyDataSetChanged();
-            }
-        });
     }
 
     @Override
@@ -74,9 +64,9 @@ public class ConversationsListFragment extends Fragment {
 
         ButterKnife.bind(this, view);
 
-        /**
-         * Setup RecyclerView
-         */
+        if (savedInstanceState != null) {
+            conversationsIds = savedInstanceState.getStringArrayList("conversationsIds");
+        }
 
         conversationsListRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
 
@@ -93,23 +83,28 @@ public class ConversationsListFragment extends Fragment {
         return view;
     }
 
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        outState.putStringArrayList("conversationsIds", conversationsIds);
+        super.onSaveInstanceState(outState);
+    }
+
     @Subscribe
     public void onUserRegisterGroupEvent(UserRegisterGroupEvent event) {
-//        if (!loaded) {
-//            Log.d(TAG, "onUserRegisterGroupEvent: not loaded");
-//            return;
-//        }
-
         Log.d(TAG, "onUserRegisterGroupEvent");
         event.getGroupUser().getInstantiatedGroupUsers();
     }
 
     @Subscribe
     public void onGroupUserInstantiateEvent(GroupUserInstantiateEvent event) {
-//        if (!loaded) {
-//            Log.d(TAG, "onGroupUserInstantiateEvent: not loaded");
-//            return;
-//        }
+        String uid = event.getGroupUser().getUid();
+
+        if (conversationsIds.contains(uid)) {
+            Log.d(TAG, "onGroupUserInstantiateEvent: already added");
+            return;
+        }
+
+        conversationsIds.add(uid);
 
         Log.d(TAG, "onGroupUserInstantiateEvent");
         adapter.addConversation(event.getGroupUser());

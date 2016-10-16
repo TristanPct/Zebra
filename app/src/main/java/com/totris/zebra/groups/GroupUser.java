@@ -65,6 +65,17 @@ public class GroupUser {
     }
 
     @Exclude
+    public String getUid() {
+        String uid = getGroupId() + ":";
+
+        for (String userId : getUsersIds()) {
+            uid += userId + "|";
+        }
+
+        return uid;
+    }
+
+    @Exclude
     public List<User> getUsers() {
         return users;
     }
@@ -180,7 +191,7 @@ public class GroupUser {
             getInstantiatedUser(userId).done(new DoneCallback() {
                 @Override
                 public void onDone(Object result) {
-                    Log.d(TAG, "getInstantiatedUsers#onDone: " + users.size() + " | " +  usersIds.size());
+                    Log.d(TAG, "getInstantiatedUsers#onDone: " + users.size() + " / " +  usersIds.size());
                     if (users.size() >= usersIds.size()) {
                         deferred.resolve(users);
                     }
