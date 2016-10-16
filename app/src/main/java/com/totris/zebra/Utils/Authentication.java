@@ -85,6 +85,10 @@ public class Authentication {
                 });
     }
 
+    public void signOut() {
+        auth.signOut();
+    }
+
     public void register(final String username, String mail, String password) {
         auth.createUserWithEmailAndPassword(mail, password)
                 .addOnCompleteListener(new OnCompleteListener<AuthResult>() {

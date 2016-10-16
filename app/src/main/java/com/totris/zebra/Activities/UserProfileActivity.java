@@ -13,6 +13,7 @@ import com.totris.zebra.Models.EditProfileFragmentType;
 import com.totris.zebra.Models.User;
 import com.totris.zebra.R;
 import com.totris.zebra.Fragments.UserProfileFragment;
+import com.totris.zebra.Utils.Authentication;
 
 public class UserProfileActivity extends DrawerMenuActivity implements EditProfileListFragment.OnClickListener {
 
@@ -66,5 +67,13 @@ public class UserProfileActivity extends DrawerMenuActivity implements EditProfi
     public void onEditEmailClick() {
         startEditIntent(EditProfileFragmentType.EMAIL);
         Log.d(TAG, "onEditUsernameClick");
+    }
+
+    @Override
+    public void onEditLogoutClick() {
+        Log.d(TAG, "onEditLogoutClick");
+        Authentication.getInstance().signOut();
+        Intent intent = new Intent(this, MainActivity.class);
+        startActivity(intent);
     }
 }

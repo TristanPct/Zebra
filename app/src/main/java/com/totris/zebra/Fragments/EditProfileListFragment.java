@@ -38,7 +38,6 @@ public class EditProfileListFragment extends Fragment {
         // Required empty public constructor
     }
 
-
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -60,9 +59,15 @@ public class EditProfileListFragment extends Fragment {
         if(onClickListener != null) onClickListener.onEditEmailClick();
     }
 
+    @OnClick(R.id.editLogout)
+    public void editLogoutClick() {
+        if (onClickListener != null) onClickListener.onEditLogoutClick();
+    }
+
     public interface OnClickListener {
         void onEditUsernameClick();
         void onEditEmailClick();
+        void onEditLogoutClick();
     }
 
 }

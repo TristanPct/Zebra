@@ -34,8 +34,6 @@
     <string name="goto_login">I already have an account</string>
     <string name="send">Send</string>
 
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="title_activity_drawer_menu">DrawerMenuActivity</string>
 
     <string name="navigation_drawer_open">Open navigation drawer</string>
@@ -49,4 +47,5 @@
     <string name="take_a_picture">Take a picture</string>
     <string name="choose_from_gallery">Choose from gallery</string>
     <string name="confirm">Confirm</string>
+    <string name="logout">Logout</string>
 </resources>
