@@ -29,7 +29,7 @@
             </intent-filter>
         </activity>
         <activity android:name=".Activities.ConversationsListActivity"
-            android:theme="@style/AppTheme.NoActionBar"/>
+            android:theme="@style/AppTheme.CustomActionBar"/>
         <activity android:name=".Activities.ConversationActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
@@ -41,7 +41,7 @@
                 android:value=".Activities.ConversationsListActivity" />
         </activity>
         <activity android:name=".Activities.ContactsListActivity"
-            android:theme="@style/AppTheme.NoActionBar"/>
+            android:theme="@style/AppTheme.CustomActionBar"/>
         <activity android:name=".Activities.UserProfileActivity"
             android:theme="@style/AppTheme.NoActionBar"/>
         <activity android:name=".Activities.EditProfileItemActivity">
