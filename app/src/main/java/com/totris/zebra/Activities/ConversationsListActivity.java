@@ -66,10 +66,11 @@ public class ConversationsListActivity extends DrawerMenuActivity implements Con
 
     @Override
     public void onConversationItemClick(GroupUser conversation) {
-        Log.d(TAG, "onConversationItemClick");
+        Log.d(TAG, "onConversationItemClick: " + conversation.getTitle());
 
         Intent intent = new Intent(this, ConversationActivity.class);
         intent.putExtra("group", conversation.getGroup());
+        intent.putExtra("title", conversation.getTitle());
         startActivity(intent);
     }
 }

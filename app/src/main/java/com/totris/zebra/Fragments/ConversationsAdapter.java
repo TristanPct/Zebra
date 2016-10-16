@@ -44,17 +44,7 @@ public class ConversationsAdapter extends RecyclerView.Adapter<ConversationsAdap
     public void onBindViewHolder(ConversationsAdapter.ViewHolder holder, int position) {
         GroupUser conversation = conversations.get(position);
 
-        String usernames = "";
-        for (User u : conversation.getUsers()) {
-            if (!User.getCurrent().getUid().equals(u.getUid())) {
-                usernames += u.getUsername() + ", ";
-            }
-        }
-        if (usernames.length() != 0) {
-            usernames = usernames.substring(0, usernames.length() - 2);
-        }
-
-        holder.usernames.setText(usernames);
+        holder.usernames.setText(conversation.getTitle());
 
         // unused:
         Message lastMessage = conversation.getGroup().getLastMessage();

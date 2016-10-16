@@ -9,6 +9,7 @@ import android.net.Uri;
 import android.provider.MediaStore;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -28,12 +29,15 @@ import java.io.ByteArrayOutputStream;
 import java.util.Date;
 
 public class ConversationActivity extends AppCompatActivity implements ConversationFragment.ConversationListener {
+    private static final String TAG = "ConversationActivity";
+
     private static final int RESULT_LOAD_IMAGE_FROM_GALLERY = 1;
     private static final int RESULT_LOAD_IMAGE_FROM_CAMERA = 2;
     private static final int MAX_IMAGE_SIZE = 500;
     private static final int PERMISSIONS_REQUEST_READ_MEDIA = 1;
-    static String TAG = "ConversationActivity";
+
     private Group group;
+    private String title;
     private ConversationFragment currentFragment;
 
     @Override
@@ -42,6 +46,7 @@ public class ConversationActivity extends AppCompatActivity implements Conversat
         setContentView(R.layout.activity_conversation);
 
         group = (Group) getIntent().getSerializableExtra("group");
+        title = getIntent().getStringExtra("title");
 
         if (group != null) {
             group.addChildEventListener();
@@ -54,6 +59,11 @@ public class ConversationActivity extends AppCompatActivity implements Conversat
                     .beginTransaction()
                     .add(R.id.activity_conversation, currentFragment)
                     .commit();
+        }
+
+        ActionBar actionBar = getSupportActionBar();
+        if (actionBar != null) {
+            actionBar.setTitle(title);
         }
     }
 

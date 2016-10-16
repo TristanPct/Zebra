@@ -39,7 +39,7 @@ public class GroupUser {
     private boolean groupLoaded = false;
 
     public GroupUser() {
-//        EventBus.register(this);
+
     }
 
     public GroupUser(List<User> usersIds, Group groupId) {
@@ -72,6 +72,22 @@ public class GroupUser {
     @Exclude
     public Group getGroup() {
         return group;
+    }
+
+    @Exclude
+    public String getTitle() {
+        String title = "";
+
+        for (User u : getUsers()) {
+            if (!User.getCurrent().getUid().equals(u.getUid())) {
+                title += u.getUsername() + ", ";
+            }
+        }
+        if (title.length() != 0) {
+            title = title.substring(0, title.length() - 2);
+        }
+
+        return title;
     }
 
     @Exclude
