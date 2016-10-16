@@ -4,7 +4,7 @@
     android:layout_height="match_parent"
     android:layout_gravity="center"
     android:orientation="vertical"
-    tools:context="com.totris.zebra.Fragments.RegisterFragment">
+    tools:context="com.totris.zebra.users.auth.RegisterFragment">
 
     <ProgressBar
         android:id="@+id/register_progress"

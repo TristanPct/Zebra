@@ -4,6 +4,6 @@
     android:id="@+id/user_activity_profile"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.totris.zebra.Activities.UserProfileActivity">
+    tools:context="com.totris.zebra.users.profile.UserProfileActivity">
 
 </RelativeLayout>

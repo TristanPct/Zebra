@@ -3,7 +3,7 @@
     android:id="@+id/conversationsListWrapper"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.totris.zebra.Fragments.ConversationsListFragment"
+    tools:context="com.totris.zebra.conversations.ConversationsListFragment"
     tools:showIn="@layout/activity_conversations_list">
 
     <android.support.v7.widget.RecyclerView

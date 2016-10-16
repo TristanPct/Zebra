@@ -7,7 +7,7 @@
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
-    tools:context="com.totris.zebra.Fragments.EditEmailFragment">
+    tools:context="com.totris.zebra.users.profile.EditEmailFragment">
 
     <android.support.design.widget.TextInputLayout
         android:id="@+id/username_input_container"

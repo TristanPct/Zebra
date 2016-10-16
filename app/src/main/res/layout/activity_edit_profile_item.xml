@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:gravity="center"
-    tools:context="com.totris.zebra.Activities.EditProfileItemActivity">
+    tools:context="com.totris.zebra.users.profile.EditProfileItemActivity">
 
     <ProgressBar
         android:id="@+id/progress"

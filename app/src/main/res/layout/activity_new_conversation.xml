@@ -4,6 +4,6 @@
     android:id="@+id/activity_new_conversation"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.totris.zebra.Activities.NewConversationActivity">
+    tools:context="com.totris.zebra.conversations.NewConversationActivity">
 
 </FrameLayout>
