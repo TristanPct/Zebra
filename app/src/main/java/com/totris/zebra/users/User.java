@@ -16,9 +16,9 @@ import com.google.firebase.database.Exclude;
 import com.google.firebase.database.ValueEventListener;
 import com.totris.zebra.groups.Group;
 import com.totris.zebra.groups.GroupUser;
-import com.totris.zebra.Utils.Authentication;
-import com.totris.zebra.Utils.Database;
-import com.totris.zebra.Utils.EventBus;
+import com.totris.zebra.utils.Authentication;
+import com.totris.zebra.utils.Database;
+import com.totris.zebra.utils.EventBus;
 
 import org.jdeferred.DoneCallback;
 import org.jdeferred.Promise;

@@ -20,9 +20,9 @@ import com.totris.zebra.groups.Group;
 import com.totris.zebra.messages.Message;
 import com.totris.zebra.messages.MessageType;
 import com.totris.zebra.R;
-import com.totris.zebra.Utils.EventBus;
-import com.totris.zebra.Utils.OnlineStorage;
-import com.totris.zebra.Utils.StringUtils;
+import com.totris.zebra.utils.EventBus;
+import com.totris.zebra.utils.OnlineStorage;
+import com.totris.zebra.utils.StringUtils;
 
 import java.io.ByteArrayOutputStream;
 import java.util.Date;

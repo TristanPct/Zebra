@@ -1,4 +1,4 @@
-package com.totris.zebra.Utils;
+package com.totris.zebra.utils;
 
 /**
  * Created by thomaslecoeur on 16/10/2016.

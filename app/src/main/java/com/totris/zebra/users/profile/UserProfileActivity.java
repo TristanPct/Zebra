@@ -12,7 +12,7 @@ import com.totris.zebra.DrawerMenuActivity;
 import com.totris.zebra.users.User;
 import com.totris.zebra.users.auth.LoginActivity;
 import com.totris.zebra.R;
-import com.totris.zebra.Utils.Authentication;
+import com.totris.zebra.utils.Authentication;
 
 public class UserProfileActivity extends DrawerMenuActivity implements EditProfileListFragment.OnClickListener {
 

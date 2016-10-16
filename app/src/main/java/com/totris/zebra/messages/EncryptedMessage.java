@@ -1,7 +1,7 @@
 package com.totris.zebra.messages;
 
 
-import com.totris.zebra.Utils.AesCrypto;
+import com.totris.zebra.utils.AesCrypto;
 
 public class EncryptedMessage extends AesCrypto.Data {
 

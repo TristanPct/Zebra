@@ -1,8 +1,8 @@
 package com.totris.zebra.messages;
 
 import com.google.firebase.database.DatabaseReference;
-import com.totris.zebra.Utils.AesCrypto;
-import com.totris.zebra.Utils.Database;
+import com.totris.zebra.utils.AesCrypto;
+import com.totris.zebra.utils.Database;
 import com.totris.zebra.users.User;
 
 import java.io.Serializable;

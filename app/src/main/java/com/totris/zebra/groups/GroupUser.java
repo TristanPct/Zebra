@@ -8,8 +8,8 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.Exclude;
 import com.google.firebase.database.GenericTypeIndicator;
 import com.google.firebase.database.ValueEventListener;
-import com.totris.zebra.Utils.Database;
-import com.totris.zebra.Utils.EventBus;
+import com.totris.zebra.utils.Database;
+import com.totris.zebra.utils.EventBus;
 import com.totris.zebra.users.User;
 
 import org.jdeferred.DoneCallback;

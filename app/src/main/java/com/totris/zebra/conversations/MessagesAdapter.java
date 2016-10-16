@@ -17,7 +17,7 @@ import com.totris.zebra.messages.Message;
 import com.totris.zebra.messages.MessageType;
 import com.totris.zebra.users.User;
 import com.totris.zebra.R;
-import com.totris.zebra.Utils.OnlineStorage;
+import com.totris.zebra.utils.OnlineStorage;
 
 import java.util.ArrayList;
 import java.util.List;

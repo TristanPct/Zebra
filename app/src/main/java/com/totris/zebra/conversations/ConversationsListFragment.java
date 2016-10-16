@@ -16,7 +16,7 @@ import com.totris.zebra.users.UserRegisterGroupEvent;
 import com.totris.zebra.groups.GroupUser;
 import com.totris.zebra.users.User;
 import com.totris.zebra.R;
-import com.totris.zebra.Utils.EventBus;
+import com.totris.zebra.utils.EventBus;
 
 import org.jdeferred.DoneCallback;
 

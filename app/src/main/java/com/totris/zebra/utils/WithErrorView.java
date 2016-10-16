@@ -1,4 +1,4 @@
-package com.totris.zebra.Utils;
+package com.totris.zebra.utils;
 
 
 public interface WithErrorView {

@@ -15,7 +15,7 @@ import android.widget.EditText;
 import android.widget.TextView;
 
 import com.totris.zebra.R;
-import com.totris.zebra.Utils.WithErrorView;
+import com.totris.zebra.utils.WithErrorView;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;

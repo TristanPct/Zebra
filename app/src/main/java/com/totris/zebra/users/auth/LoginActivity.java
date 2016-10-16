@@ -8,10 +8,8 @@ import android.os.Bundle;
 import com.google.firebase.auth.FirebaseUser;
 import com.totris.zebra.conversations.ConversationsListActivity;
 import com.totris.zebra.R;
-import com.totris.zebra.Utils.Authentication;
-import com.totris.zebra.Utils.WithErrorView;
-import com.totris.zebra.users.auth.LoginFragment;
-import com.totris.zebra.users.auth.RegisterFragment;
+import com.totris.zebra.utils.Authentication;
+import com.totris.zebra.utils.WithErrorView;
 
 public class LoginActivity extends AppCompatActivity implements Authentication.AuthenticationListener, LoginFragment.LoginListener, RegisterFragment.RegisterListener {
     private static final String TAG = "LoginActivity";

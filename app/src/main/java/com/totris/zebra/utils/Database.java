@@ -1,4 +1,4 @@
-package com.totris.zebra.Utils;
+package com.totris.zebra.utils;
 
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;

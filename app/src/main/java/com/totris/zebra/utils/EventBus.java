@@ -1,4 +1,4 @@
-package com.totris.zebra.Utils;
+package com.totris.zebra.utils;
 
 
 import android.util.Log;

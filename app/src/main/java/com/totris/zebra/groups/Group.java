@@ -12,9 +12,9 @@ import com.totris.zebra.messages.MessageChildAddedEvent;
 import com.totris.zebra.messages.EncryptedMessage;
 import com.totris.zebra.messages.Message;
 import com.totris.zebra.users.User;
-import com.totris.zebra.Utils.Database;
-import com.totris.zebra.Utils.EventBus;
-import com.totris.zebra.Utils.OnlineStorage;
+import com.totris.zebra.utils.Database;
+import com.totris.zebra.utils.EventBus;
+import com.totris.zebra.utils.OnlineStorage;
 
 import java.io.Serializable;
 import java.util.ArrayList;
