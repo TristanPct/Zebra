@@ -1,7 +1,6 @@
 package com.totris.zebra.Fragments;
 
 
-import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -13,34 +12,19 @@ import com.totris.zebra.R;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import butterknife.OnClick;
 
 
 /**
  * A simple {@link Fragment} subclass.
  */
-public class EditEmailFragment extends Fragment {
-
-    OnSubmitListener onSubmitListener;
+public class EditEmailFragment extends Fragment implements EditProfileItemFragment {
 
     @BindView(R.id.emailEditText)
     EditText emailEditText;
 
-    @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
-
-        try {
-            onSubmitListener = (OnSubmitListener) getActivity();
-        } catch (ClassCastException exception) {
-            throw new ClassCastException(context.toString() + " must implement OnClickListener"); // Try catch pour afficher un message d'erreur custom pour mieux travailler en groupe
-        }
-    }
-
     public EditEmailFragment() {
         // Required empty public constructor
     }
-
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -53,13 +37,25 @@ public class EditEmailFragment extends Fragment {
         return view;
     }
 
-    @OnClick(R.id.emailEditSubmit)
-    public void submitEmail() {
-        onSubmitListener.onEmailSubmit(emailEditText.getText().toString());
+    private boolean validate() {
+        boolean isValid = emailEditText.getText().toString().matches(getString(R.string.pattern_email));
+
+        if (!isValid) {
+            emailEditText.setError(getString(R.string.error_invalid_email));
+        }
+
+        return isValid;
     }
 
-    public interface OnSubmitListener {
-        void onEmailSubmit(String email);
+    @Override
+    public String getValue() {
+        if (!validate()) return null;
+
+        return emailEditText.getText().toString();
     }
 
+    @Override
+    public void setError(String error) {
+
+    }
 }

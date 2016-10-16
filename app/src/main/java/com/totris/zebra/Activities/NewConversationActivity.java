@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
+import android.view.MenuItem;
 
 import com.totris.zebra.Fragments.ContactsAdapter;
 import com.totris.zebra.Fragments.ContactsListFragment;
@@ -47,8 +48,20 @@ public class NewConversationActivity extends AppCompatActivity implements Contac
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
-        inflater.inflate(R.menu.menu_new_conversation, menu);
+        inflater.inflate(R.menu.menu_confirmation, menu);
         return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.action_confirm:
+                //TODO: create conversation
+                return true;
+
+            default:
+                return super.onOptionsItemSelected(item);
+        }
     }
 
     @Override

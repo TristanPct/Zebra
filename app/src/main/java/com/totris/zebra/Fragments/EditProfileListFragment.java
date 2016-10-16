@@ -51,12 +51,17 @@ public class EditProfileListFragment extends Fragment {
 
     @OnClick(R.id.editUsername)
     public void editUsernameClick() {
-        if(onClickListener != null) onClickListener.onEditUsernameClick();
+        if (onClickListener != null) onClickListener.onEditUsernameClick();
     }
 
     @OnClick(R.id.editEmail)
     public void editEmailClick() {
-        if(onClickListener != null) onClickListener.onEditEmailClick();
+        if (onClickListener != null) onClickListener.onEditEmailClick();
+    }
+
+    @OnClick(R.id.editPassword)
+    public void editPasswordClick() {
+        if (onClickListener != null) onClickListener.onEditPasswordClick();
     }
 
     @OnClick(R.id.editLogout)
@@ -66,7 +71,11 @@ public class EditProfileListFragment extends Fragment {
 
     public interface OnClickListener {
         void onEditUsernameClick();
+
         void onEditEmailClick();
+
+        void onEditPasswordClick();
+
         void onEditLogoutClick();
     }
 

@@ -59,14 +59,20 @@ public class UserProfileActivity extends DrawerMenuActivity implements EditProfi
 
     @Override
     public void onEditUsernameClick() {
-        startEditIntent(EditProfileFragmentType.USERNAME);
         Log.d(TAG, "onEditUsernameClick");
+        startEditIntent(EditProfileFragmentType.USERNAME);
     }
 
     @Override
     public void onEditEmailClick() {
-        startEditIntent(EditProfileFragmentType.EMAIL);
         Log.d(TAG, "onEditUsernameClick");
+        startEditIntent(EditProfileFragmentType.EMAIL);
+    }
+
+    @Override
+    public void onEditPasswordClick() {
+        Log.d(TAG, "onEditPasswordClick");
+        startEditIntent(EditProfileFragmentType.PASSWORD);
     }
 
     @Override

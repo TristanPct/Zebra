@@ -1,7 +1,6 @@
 package com.totris.zebra.Fragments;
 
 
-import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -13,29 +12,15 @@ import com.totris.zebra.R;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import butterknife.OnClick;
 
 
 /**
  * A simple {@link Fragment} subclass.
  */
-public class EditUsernameFragment extends Fragment {
-
-    OnSubmitListener onSubmitListener;
+public class EditUsernameFragment extends Fragment implements EditProfileItemFragment {
 
     @BindView(R.id.usernameEditText)
     EditText usernameEditText;
-
-    @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
-
-        try {
-            onSubmitListener = (OnSubmitListener) getActivity();
-        } catch (ClassCastException exception) {
-            throw new ClassCastException(context.toString() + " must implement OnClickListener"); // Try catch pour afficher un message d'erreur custom pour mieux travailler en groupe
-        }
-    }
 
     public EditUsernameFragment() {
         // Required empty public constructor
@@ -52,13 +37,25 @@ public class EditUsernameFragment extends Fragment {
         return view;
     }
 
-    @OnClick(R.id.usernameEditSubmit)
-    public void submitUsername() {
-        onSubmitListener.onUsernameSubmit(usernameEditText.getText().toString());
+    private boolean validate() {
+        boolean isValid = !usernameEditText.getText().toString().matches("");
+
+        if (!isValid) {
+            usernameEditText.setError(getString(R.string.error_required));
+        }
+
+        return isValid;
     }
 
-    public interface OnSubmitListener {
-        void onUsernameSubmit(String username);
+    @Override
+    public String getValue() {
+        if (!validate()) return null;
+
+        return usernameEditText.getText().toString();
     }
 
+    @Override
+    public void setError(String error) {
+
+    }
 }

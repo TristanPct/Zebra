@@ -15,11 +15,9 @@ import com.totris.zebra.R;
  */
 public class DisplayProfileListFragment extends Fragment {
 
-
     public DisplayProfileListFragment() {
         // Required empty public constructor
     }
-
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
