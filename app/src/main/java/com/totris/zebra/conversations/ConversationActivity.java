@@ -20,6 +20,7 @@ import android.util.Log;
 import android.Manifest;
 import android.view.View;
 import android.widget.ToggleButton;
+
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
 import com.google.android.gms.vision.CameraSource;
@@ -36,6 +37,7 @@ import com.totris.zebra.utils.OnlineStorage;
 import com.totris.zebra.utils.StringUtils;
 
 import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.util.Date;
 
 public class ConversationActivity extends AppCompatActivity implements ConversationFragment.ConversationListener {
@@ -119,6 +121,15 @@ public class ConversationActivity extends AppCompatActivity implements Conversat
         EventBus.unregister(currentFragment);
     }
 
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+
+        if (mCameraSource != null) {
+            mCameraSource.release();
+        }
+    }
+
     public Group getGroup() {
         return group;
     }
@@ -156,6 +167,8 @@ public class ConversationActivity extends AppCompatActivity implements Conversat
 
     private void createCameraSource() {
 
+        Log.d(TAG, "createCameraSource");
+
         Context context = getApplicationContext();
         FaceDetector detector = new FaceDetector.Builder(context)
                 .setClassificationType(FaceDetector.ALL_CLASSIFICATIONS)
@@ -180,11 +193,12 @@ public class ConversationActivity extends AppCompatActivity implements Conversat
         mCameraSource = new CameraSource.Builder(context, detector)
                 .setRequestedPreviewSize(640, 480)
                 .setFacing(CameraSource.CAMERA_FACING_FRONT)
-                .setRequestedFps(10.0f)
+                .setRequestedFps(5.0f)
                 .build();
     }
 
     private void startCameraSource() {
+        Log.d(TAG, "startCameraSource");
         // check that the device has play services available.
         int code = GoogleApiAvailability.getInstance().isGooglePlayServicesAvailable(
                 getApplicationContext());
@@ -192,6 +206,20 @@ public class ConversationActivity extends AppCompatActivity implements Conversat
             Dialog dlg =
                     GoogleApiAvailability.getInstance().getErrorDialog(this, code, RC_HANDLE_GMS);
             dlg.show();
+        }
+
+        if (mCameraSource != null) {
+            try {
+                if (ActivityCompat.checkSelfPermission(this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
+                    requestCameraPermission();
+                    return;
+                }
+                mCameraSource.start();
+            } catch (IOException e) {
+                Log.e(TAG, "Unable to start camera source.", e);
+                mCameraSource.release();
+                mCameraSource = null;
+            }
         }
     }
 
@@ -217,7 +245,7 @@ public class ConversationActivity extends AppCompatActivity implements Conversat
     private class GraphicFaceTracker extends Tracker<Face> {
 
         GraphicFaceTracker() {
-
+            Log.d(TAG, "GraphicFaceTracker");
         }
 
         /**
@@ -233,7 +261,9 @@ public class ConversationActivity extends AppCompatActivity implements Conversat
          */
         @Override
         public void onUpdate(FaceDetector.Detections<Face> detectionResults, Face face) {
-            Log.d(TAG, "FaceOnUpdate");
+//            Log.d(TAG, "FaceOnUpdate - leftOpen : " + face.getIsLeftEyeOpenProbability() + " - rightOpen : " + face.getIsRightEyeOpenProbability());
+
+            face.getIsLeftEyeOpenProbability();
         }
 
         /**
@@ -279,7 +309,7 @@ public class ConversationActivity extends AppCompatActivity implements Conversat
         group.sendMessage(messageObj);
     }
 
-    private void fixBitmapOrientation() {
+    private void fixBitmapOrientation() { //TODO: fix picture orientation after camera capture
 
     }
 
@@ -336,6 +366,17 @@ public class ConversationActivity extends AppCompatActivity implements Conversat
                 if ((grantResults.length > 0) && (grantResults[0] == PackageManager.PERMISSION_GRANTED)) {
                     openGallery();
                 }
+                break;
+
+            case RC_HANDLE_CAMERA_PERM:
+
+                if (grantResults.length != 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    Log.d(TAG, "Camera permission granted - initialize the camera source");
+
+                    createCameraSource();
+                    return;
+                }
+
                 break;
 
             default:
