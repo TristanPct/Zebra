@@ -97,6 +97,14 @@ public class ConversationFragment extends Fragment {
         //}
     }
 
+    public void showMessages() {
+        messagesListRecyclerView.setVisibility(View.VISIBLE);
+    }
+
+    public void hideMessages() {
+        messagesListRecyclerView.setVisibility(View.GONE);
+    }
+
     @Subscribe
     public void onMessageChildAddedEvent(MessageChildAddedEvent event) {
         Log.d(TAG, "onChildAdded: new message");

@@ -28,6 +28,7 @@ import com.google.android.gms.vision.MultiProcessor;
 import com.google.android.gms.vision.Tracker;
 import com.google.android.gms.vision.face.Face;
 import com.google.android.gms.vision.face.FaceDetector;
+import com.google.android.gms.vision.face.Landmark;
 import com.totris.zebra.groups.Group;
 import com.totris.zebra.messages.Message;
 import com.totris.zebra.messages.MessageType;
@@ -38,7 +39,9 @@ import com.totris.zebra.utils.StringUtils;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 public class ConversationActivity extends AppCompatActivity implements ConversationFragment.ConversationListener {
     private static final String TAG = "ConversationActivity";
@@ -59,6 +62,7 @@ public class ConversationActivity extends AppCompatActivity implements Conversat
     private static final int RC_HANDLE_GMS = 9001;
     // permission request codes need to be < 256
     private static final int RC_HANDLE_CAMERA_PERM = 2;
+    private List<Face> facesList = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -234,7 +238,7 @@ public class ConversationActivity extends AppCompatActivity implements Conversat
     private class GraphicFaceTrackerFactory implements MultiProcessor.Factory<Face> {
         @Override
         public Tracker<Face> create(Face face) {
-            return new GraphicFaceTracker();
+            return new GraphicFaceTracker(facesList);
         }
     }
 
@@ -244,16 +248,45 @@ public class ConversationActivity extends AppCompatActivity implements Conversat
      */
     private class GraphicFaceTracker extends Tracker<Face> {
 
-        GraphicFaceTracker() {
+        private Face face;
+        private int faceAmount = 0;
+
+        GraphicFaceTracker(List<Face> facesList) {
             Log.d(TAG, "GraphicFaceTracker");
+
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    ConversationActivity.this.currentFragment.hideMessages();
+                }
+            });
         }
 
         /**
          * Start tracking the detected face instance within the face overlay.
          */
         @Override
-        public void onNewItem(int faceId, Face item) {
+        public void onNewItem(int faceId, Face face) {
             Log.d(TAG, "FaceOnNewItem");
+            this.face = face;
+
+            facesList.add(face);
+
+            if(facesList.size() == 1) {
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        ConversationActivity.this.currentFragment.showMessages();
+                    }
+                });
+            } else {
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        ConversationActivity.this.currentFragment.hideMessages();
+                    }
+                });
+            }
         }
 
         /**
@@ -263,7 +296,7 @@ public class ConversationActivity extends AppCompatActivity implements Conversat
         public void onUpdate(FaceDetector.Detections<Face> detectionResults, Face face) {
 //            Log.d(TAG, "FaceOnUpdate - leftOpen : " + face.getIsLeftEyeOpenProbability() + " - rightOpen : " + face.getIsRightEyeOpenProbability());
 
-            face.getIsLeftEyeOpenProbability();
+            List<Landmark> landmarks = face.getLandmarks();
         }
 
         /**
@@ -282,7 +315,24 @@ public class ConversationActivity extends AppCompatActivity implements Conversat
          */
         @Override
         public void onDone() {
-            Log.d(TAG, "FaceGood");
+            Log.d(TAG, "FaceGone");
+            facesList.remove(face);
+
+            if(facesList.size() == 1) {
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        ConversationActivity.this.currentFragment.showMessages();
+                    }
+                });
+            } else {
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        ConversationActivity.this.currentFragment.hideMessages();
+                    }
+                });
+            }
         }
     }
 
