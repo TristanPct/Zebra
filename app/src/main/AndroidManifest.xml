@@ -5,6 +5,10 @@
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
 
+    <uses-permission android:name="android.permission.CAMERA" />
+    <uses-feature android:name="android.hardware.camera" />
+    <uses-feature android:name="android.hardware.camera.autofocus" />
+
     <application
         android:name=".ZebraApplication"
         android:allowBackup="true"
@@ -34,6 +38,10 @@
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".Activities.ConversationsListActivity" />
+
+            <intent-filter>
+                <action android:name="android.intent.action.RUN" />
+            </intent-filter>
         </activity>
         <activity android:name=".Activities.NewConversationActivity">
             <meta-data

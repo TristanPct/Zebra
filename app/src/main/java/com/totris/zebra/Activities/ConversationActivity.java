@@ -1,5 +1,8 @@
 package com.totris.zebra.Activities;
 
+import android.app.Activity;
+import android.app.Dialog;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
@@ -7,6 +10,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.provider.MediaStore;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.ActionBar;
@@ -14,8 +18,16 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.Manifest;
+import android.view.View;
 import android.widget.ToggleButton;
 
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.GoogleApiAvailability;
+import com.google.android.gms.vision.CameraSource;
+import com.google.android.gms.vision.MultiProcessor;
+import com.google.android.gms.vision.Tracker;
+import com.google.android.gms.vision.face.Face;
+import com.google.android.gms.vision.face.FaceDetector;
 import com.totris.zebra.Fragments.ConversationFragment;
 import com.totris.zebra.Models.Group;
 import com.totris.zebra.Models.Message;
@@ -40,9 +52,22 @@ public class ConversationActivity extends AppCompatActivity implements Conversat
     private String title;
     private ConversationFragment currentFragment;
 
+    // Facetracking vars
+
+    private CameraSource mCameraSource = null;
+
+    private static final int RC_HANDLE_GMS = 9001;
+    // permission request codes need to be < 256
+    private static final int RC_HANDLE_CAMERA_PERM = 2;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        /****
+         * Initialisation
+         */
+
         setContentView(R.layout.activity_conversation);
 
         group = (Group) getIntent().getSerializableExtra("group");
@@ -61,6 +86,22 @@ public class ConversationActivity extends AppCompatActivity implements Conversat
                     .commit();
         }
 
+        /****
+         * FaceDetector
+         */
+
+        int rc = ActivityCompat.checkSelfPermission(this, Manifest.permission.CAMERA);
+        if (rc == PackageManager.PERMISSION_GRANTED) {
+            Log.d(TAG, "onCreate: PERMISSION_GRANTED");
+            createCameraSource();
+        } else {
+            requestCameraPermission();
+        }
+
+        /****
+         * UI
+         */
+
         ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) {
             actionBar.setTitle(title);
@@ -70,6 +111,7 @@ public class ConversationActivity extends AppCompatActivity implements Conversat
     @Override
     protected void onResume() {
         super.onResume();
+        startCameraSource();
         EventBus.register(currentFragment);
     }
 
@@ -82,6 +124,143 @@ public class ConversationActivity extends AppCompatActivity implements Conversat
     public Group getGroup() {
         return group;
     }
+
+    /*************
+     * Facetracking
+     */
+
+    private void requestCameraPermission() {
+        Log.w(TAG, "Camera permission is not granted. Requesting permission");
+
+        final String[] permissions = new String[]{Manifest.permission.CAMERA};
+
+        if (!ActivityCompat.shouldShowRequestPermissionRationale(this,
+                Manifest.permission.CAMERA)) {
+            ActivityCompat.requestPermissions(this, permissions, RC_HANDLE_CAMERA_PERM);
+            return;
+        }
+
+        final Activity thisActivity = this;
+
+        View.OnClickListener listener = new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                ActivityCompat.requestPermissions(thisActivity, permissions,
+                        RC_HANDLE_CAMERA_PERM);
+            }
+        };
+
+//        Snackbar.make(mGraphicOverlay, R.string.permission_camera_rationale,
+//                Snackbar.LENGTH_INDEFINITE)
+//                .setAction(R.string.ok, listener)
+//                .show();
+    }
+
+    private void createCameraSource() {
+
+        Context context = getApplicationContext();
+        FaceDetector detector = new FaceDetector.Builder(context)
+                .setClassificationType(FaceDetector.ALL_CLASSIFICATIONS)
+                .build();
+
+        detector.setProcessor(
+                new MultiProcessor.Builder<>(new GraphicFaceTrackerFactory())
+                        .build());
+
+        if (!detector.isOperational()) {
+            // Note: The first time that an app using face API is installed on a device, GMS will
+            // download a native library to the device in order to do detection.  Usually this
+            // completes before the app is run for the first time.  But if that download has not yet
+            // completed, then the above call will not detect any faces.
+            //
+            // isOperational() can be used to check if the required native library is currently
+            // available.  The detector will automatically become operational once the library
+            // download completes on device.
+            Log.w(TAG, "Face detector dependencies are not yet available.");
+        }
+
+        mCameraSource = new CameraSource.Builder(context, detector)
+                .setRequestedPreviewSize(640, 480)
+                .setFacing(CameraSource.CAMERA_FACING_FRONT)
+                .setRequestedFps(10.0f)
+                .build();
+    }
+
+    private void startCameraSource() {
+        // check that the device has play services available.
+        int code = GoogleApiAvailability.getInstance().isGooglePlayServicesAvailable(
+                getApplicationContext());
+        if (code != ConnectionResult.SUCCESS) {
+            Dialog dlg =
+                    GoogleApiAvailability.getInstance().getErrorDialog(this, code, RC_HANDLE_GMS);
+            dlg.show();
+        }
+    }
+
+    //==============================================================================================
+    // Graphic Face Tracker
+    //==============================================================================================
+
+    /**
+     * Factory for creating a face tracker to be associated with a new face.  The multiprocessor
+     * uses this factory to create face trackers as needed -- one for each individual.
+     */
+    private class GraphicFaceTrackerFactory implements MultiProcessor.Factory<Face> {
+        @Override
+        public Tracker<Face> create(Face face) {
+            return new GraphicFaceTracker();
+        }
+    }
+
+    /**
+     * Face tracker for each detected individual. This maintains a face graphic within the app's
+     * associated face overlay.
+     */
+    private class GraphicFaceTracker extends Tracker<Face> {
+
+        GraphicFaceTracker() {
+
+        }
+
+        /**
+         * Start tracking the detected face instance within the face overlay.
+         */
+        @Override
+        public void onNewItem(int faceId, Face item) {
+            Log.d(TAG, "FaceOnNewItem");
+        }
+
+        /**
+         * Update the position/characteristics of the face within the overlay.
+         */
+        @Override
+        public void onUpdate(FaceDetector.Detections<Face> detectionResults, Face face) {
+            Log.d(TAG, "FaceOnUpdate");
+        }
+
+        /**
+         * Hide the graphic when the corresponding face was not detected.  This can happen for
+         * intermediate frames temporarily (e.g., if the face was momentarily blocked from
+         * view).
+         */
+        @Override
+        public void onMissing(FaceDetector.Detections<Face> detectionResults) {
+            Log.d(TAG, "FaceOnMissing");
+        }
+
+        /**
+         * Called when the face is assumed to be gone for good. Remove the graphic annotation from
+         * the overlay.
+         */
+        @Override
+        public void onDone() {
+            Log.d(TAG, "FaceGood");
+        }
+    }
+
+    /*************
+     * Message submission
+     */
 
     @Override
     public void onSubmitMessage(String message) {
