@@ -9,6 +9,7 @@ import android.view.ViewGroup;
 import android.widget.EditText;
 
 import com.totris.zebra.R;
+import com.totris.zebra.users.User;
 import com.totris.zebra.users.profile.EditProfileItemFragment;
 
 import butterknife.BindView;
@@ -35,11 +36,15 @@ public class EditEmailFragment extends Fragment implements EditProfileItemFragme
 
         ButterKnife.bind(this, view);
 
+        if (savedInstanceState == null) {
+            emailEditText.setText(User.getCurrent().getMail());
+        }
+
         return view;
     }
 
     private boolean validate() {
-        boolean isValid = emailEditText.getText().toString().matches(getString(R.string.pattern_email));
+        boolean isValid = emailEditText.getText().toString().matches(getString(R.string.pattern_email)); //FIXME: NullPointerException after changing device orientation
 
         if (!isValid) {
             emailEditText.setError(getString(R.string.error_invalid_email));

@@ -16,13 +16,15 @@ import android.view.inputmethod.InputMethodManager;
 
 import com.totris.zebra.users.User;
 import com.totris.zebra.R;
+import com.totris.zebra.users.auth.ReauthenticateDialogFragment;
+import com.totris.zebra.utils.ViewUtils;
 
 import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-public class EditProfileItemActivity extends AppCompatActivity {
+public class EditProfileItemActivity extends AppCompatActivity implements ReauthenticateDialogFragment.ReauthenticateDialogListener {
 
     private static final String TAG = "EditProfileItemActivity";
 
@@ -92,7 +94,7 @@ public class EditProfileItemActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.action_confirm:
-                editCurrentValue(fragment.getValue());
+                editCurrentValue(true);
                 return true;
 
             default:
@@ -100,14 +102,24 @@ public class EditProfileItemActivity extends AppCompatActivity {
         }
     }
 
-    private void editCurrentValue(String value) {
+    private void editCurrentValue(boolean reauthenticate) {
+        String value = fragment.getValue();
+
         if (value == null) return;
 
-        View view = getCurrentFocus();
-        if (view != null) {
-            InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
-            imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
+        if (reauthenticate) {
+            ReauthenticateDialogFragment reauthenticateDialog = new ReauthenticateDialogFragment();
+//            reauthenticateDialog.setListener(new ReauthenticateDialogFragment.ReauthenticateDialogListener() {
+//                @Override
+//                public void onReauthenticationSuccess() {
+//                    editCurrentValue(false);
+//                }
+//            });
+            reauthenticateDialog.show(getSupportFragmentManager(), "ReauthenticateDialogFragment");
+            return;
         }
+
+        ViewUtils.closeKeyboard(this);
 
         toggleProgress(true);
 
@@ -142,27 +154,12 @@ public class EditProfileItemActivity extends AppCompatActivity {
         });
     }
 
-    private void toggleProgress(final boolean show) {
-        if (progressView.getVisibility() == View.VISIBLE && show) return;
+    private void toggleProgress(boolean show) {
+        ViewUtils.toggleProgress(progressView, editProfileItemContent, show);
+    }
 
-        int shortAnimTime = getResources().getInteger(android.R.integer.config_shortAnimTime);
-
-        editProfileItemContent.setVisibility(show ? View.GONE : View.VISIBLE);
-        editProfileItemContent.animate().setDuration(shortAnimTime).alpha(
-                show ? 0 : 1).setListener(new AnimatorListenerAdapter() {
-            @Override
-            public void onAnimationEnd(Animator animation) {
-                editProfileItemContent.setVisibility(show ? View.GONE : View.VISIBLE);
-            }
-        });
-
-        progressView.setVisibility(show ? View.VISIBLE : View.GONE);
-        progressView.animate().setDuration(shortAnimTime).alpha(
-                show ? 1 : 0).setListener(new AnimatorListenerAdapter() {
-            @Override
-            public void onAnimationEnd(Animator animation) {
-                progressView.setVisibility(show ? View.VISIBLE : View.GONE);
-            }
-        });
+    @Override
+    public void onReauthenticationSuccess() {
+        editCurrentValue(false);
     }
 }

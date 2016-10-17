@@ -6,11 +6,15 @@ import android.util.Log;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.AuthCredential;
 import com.google.firebase.auth.AuthResult;
+import com.google.firebase.auth.EmailAuthProvider;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseAuthException;
 import com.google.firebase.auth.FirebaseUser;
 import com.totris.zebra.users.User;
+
+import butterknife.OnClick;
 
 public class Authentication {
     private static final String TAG = "Authentication";
@@ -21,6 +25,7 @@ public class Authentication {
 
     private FirebaseAuth auth;
     private FirebaseAuth.AuthStateListener authListener;
+    private FirebaseUser user;
 
     private boolean flag = true;
 
@@ -30,7 +35,7 @@ public class Authentication {
             @Override
             public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
                 if (listener != null) {
-                    FirebaseUser user = firebaseAuth.getCurrentUser();
+                    user = firebaseAuth.getCurrentUser();
                     if (user != null) {
                         if(!flag) return;
 
@@ -56,7 +61,7 @@ public class Authentication {
     }
 
     public User getCurrentUser() {
-        return User.from(auth.getCurrentUser());
+        return User.from(user);
     }
 
     public void setListener(AuthenticationListener listener) {
@@ -101,6 +106,12 @@ public class Authentication {
                         }
                     }
                 });
+    }
+
+    public void reauthenticate(String password, OnCompleteListener<Void> listener) {
+        AuthCredential credential = EmailAuthProvider.getCredential(User.getCurrent().getMail(), password);
+
+        user.reauthenticate(credential).addOnCompleteListener(listener);
     }
 
     public interface AuthenticationListener {
