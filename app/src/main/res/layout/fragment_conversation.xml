@@ -4,7 +4,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/activity_conversation"
-    tools:context="com.totris.zebra.Fragments.ConversationFragment"
+    tools:context="com.totris.zebra.conversations.ConversationFragment"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     app:alignContent="stretch"

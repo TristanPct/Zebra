@@ -3,8 +3,6 @@ package com.totris.zebra;
 
 import android.app.Application;
 
-import com.totris.zebra.Models.Message;
-
 public class ZebraApplication extends Application {
 
     @Override

@@ -1,36 +1,53 @@
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical"
-    tools:context="com.totris.zebra.Fragments.UserProfileFragment">
+    android:layout_height="match_parent">
 
-    <ImageView
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:srcCompat="@android:drawable/sym_def_app_icon"
-        android:adjustViewBounds="false"
-        android:cropToPadding="false"
-        android:layout_marginTop="@dimen/margin_large"
-        android:layout_marginBottom="@dimen/activity_vertical_margin"/>
+        android:orientation="vertical"
+        android:paddingBottom="@dimen/activity_vertical_margin"
+        android:paddingTop="@dimen/activity_vertical_margin"
+        tools:context="com.totris.zebra.users.profile.UserProfileFragment">
 
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="@string/hello_blank_fragment"
-        android:id="@+id/textView"
-        android:textStyle="bold"
-        android:textAlignment="center"
-        android:textSize="20sp"
-        android:paddingLeft="@dimen/activity_horizontal_margin"
-        android:paddingRight="@dimen/activity_horizontal_margin"
-        android:layout_marginBottom="@dimen/margin_huge"/>
+        <ImageView
+            android:id="@+id/userImageView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/activity_vertical_margin"
+            android:layout_marginTop="@dimen/margin_large"
+            android:adjustViewBounds="false"
+            android:cropToPadding="false"
+            app:srcCompat="@android:drawable/sym_def_app_icon" />
 
-    <FrameLayout
-        android:id="@+id/userProfileContent"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"></FrameLayout>
+        <TextView
+            android:id="@+id/usernameView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/activity_vertical_margin_half"
+            android:paddingLeft="@dimen/activity_horizontal_margin"
+            android:paddingRight="@dimen/activity_horizontal_margin"
+            android:textAlignment="center"
+            android:textSize="20sp"
+            android:textStyle="bold" />
 
+        <TextView
+            android:id="@+id/userEmailView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/margin_huge"
+            android:paddingLeft="@dimen/activity_horizontal_margin"
+            android:paddingRight="@dimen/activity_horizontal_margin"
+            android:textAlignment="center"
+            android:textSize="15sp" />
 
-</LinearLayout>
+        <FrameLayout
+            android:id="@+id/userProfileContent"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+    </LinearLayout>
+
+</ScrollView>

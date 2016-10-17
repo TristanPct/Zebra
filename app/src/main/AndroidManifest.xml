@@ -16,7 +16,7 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity
-            android:name=".Activities.DrawerMenuActivity"
+            android:name=".DrawerMenuActivity"
             android:label="@string/title_activity_drawer_menu"
             android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
@@ -24,7 +24,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".Activities.MainActivity"
+            android:name=".users.auth.LoginActivity"
             android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -32,30 +32,29 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".Activities.ConversationsListActivity"
-            android:theme="@style/AppTheme.NoActionBar"/>
-        <activity android:name=".Activities.ConversationActivity">
+        <activity android:name=".conversations.ConversationsListActivity"
+            android:theme="@style/AppTheme.CustomActionBar"/>
+        <activity android:name=".conversations.ConversationActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".Activities.ConversationsListActivity" />
-
+                android:value=".conversations.ConversationsListActivity" />
             <intent-filter>
                 <action android:name="android.intent.action.RUN" />
             </intent-filter>
         </activity>
-        <activity android:name=".Activities.NewConversationActivity">
+        <activity android:name=".conversations.NewConversationActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".Activities.ConversationsListActivity" />
+                android:value=".conversations.ConversationsListActivity" />
         </activity>
-        <activity android:name=".Activities.ContactsListActivity"
+        <activity android:name=".users.contacts.ContactsListActivity"
+            android:theme="@style/AppTheme.CustomActionBar"/>
+        <activity android:name=".users.profile.UserProfileActivity"
             android:theme="@style/AppTheme.NoActionBar"/>
-        <activity android:name=".Activities.UserProfileActivity"
-            android:theme="@style/AppTheme.NoActionBar"/>
-        <activity android:name=".Activities.EditProfileItemActivity">
+        <activity android:name=".users.profile.EditProfileItemActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".Activities.UserProfileActivity" />
+                android:value=".users.profile.UserProfileActivity" />
         </activity>
     </application>
 
