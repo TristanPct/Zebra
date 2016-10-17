@@ -15,6 +15,7 @@ import android.widget.EditText;
 import android.widget.TextView;
 
 import com.totris.zebra.R;
+import com.totris.zebra.utils.ViewUtils;
 import com.totris.zebra.utils.WithErrorView;
 
 import butterknife.BindView;
@@ -95,28 +96,8 @@ public class RegisterFragment extends Fragment implements WithErrorView {
         }
     }
 
-    private void toggleProgress(final boolean show) {
-        if (progressView.getVisibility() == View.VISIBLE && show) return;
-
-        int shortAnimTime = getResources().getInteger(android.R.integer.config_shortAnimTime);
-
-        registerForm.setVisibility(show ? View.GONE : View.VISIBLE);
-        registerForm.animate().setDuration(shortAnimTime).alpha(
-                show ? 0 : 1).setListener(new AnimatorListenerAdapter() {
-            @Override
-            public void onAnimationEnd(Animator animation) {
-                registerForm.setVisibility(show ? View.GONE : View.VISIBLE);
-            }
-        });
-
-        progressView.setVisibility(show ? View.VISIBLE : View.GONE);
-        progressView.animate().setDuration(shortAnimTime).alpha(
-                show ? 1 : 0).setListener(new AnimatorListenerAdapter() {
-            @Override
-            public void onAnimationEnd(Animator animation) {
-                progressView.setVisibility(show ? View.VISIBLE : View.GONE);
-            }
-        });
+    private void toggleProgress(boolean show) {
+        ViewUtils.toggleProgress(progressView, registerForm, show);
     }
 
     protected boolean validate() {
@@ -153,11 +134,7 @@ public class RegisterFragment extends Fragment implements WithErrorView {
 
     @OnClick(R.id.register_button)
     public void onRegisterButtonClick() {
-        View view = getActivity().getCurrentFocus();
-        if (view != null) {
-            InputMethodManager imm = (InputMethodManager)getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
-            imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
-        }
+        ViewUtils.closeKeyboard(getActivity());
 
         setError("");
 

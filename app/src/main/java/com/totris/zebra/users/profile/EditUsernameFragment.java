@@ -9,6 +9,7 @@ import android.view.ViewGroup;
 import android.widget.EditText;
 
 import com.totris.zebra.R;
+import com.totris.zebra.users.User;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -34,11 +35,15 @@ public class EditUsernameFragment extends Fragment implements EditProfileItemFra
 
         ButterKnife.bind(this, view);
 
+        if (savedInstanceState == null) {
+            usernameEditText.setText(User.getCurrent().getUsername());
+        }
+
         return view;
     }
 
     private boolean validate() {
-        boolean isValid = !usernameEditText.getText().toString().matches("");
+        boolean isValid = !usernameEditText.getText().toString().matches(""); //FIXME: NullPointerException after changing device orientation
 
         if (!isValid) {
             usernameEditText.setError(getString(R.string.error_required));

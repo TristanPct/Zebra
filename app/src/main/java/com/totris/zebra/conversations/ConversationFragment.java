@@ -19,6 +19,7 @@ import com.squareup.otto.Subscribe;
 import com.totris.zebra.messages.MessageChildAddedEvent;
 import com.totris.zebra.messages.Message;
 import com.totris.zebra.R;
+import com.totris.zebra.utils.ViewUtils;
 
 import java.util.ArrayList;
 
@@ -155,11 +156,7 @@ public class ConversationFragment extends Fragment {
 
     @OnClick(R.id.messageSubmit)
     public void onSubmitMessage(ImageButton button) {
-        View view = getActivity().getCurrentFocus();
-        if (view != null) {
-            InputMethodManager imm = (InputMethodManager)getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
-            imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
-        }
+        ViewUtils.closeKeyboard(getActivity());
 
         if (listener != null) {
             listener.onSubmitMessage(messageInput.getText().toString());
