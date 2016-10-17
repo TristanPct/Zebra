@@ -44,6 +44,10 @@ public class ContactsListFragment extends Fragment {
         // Required empty public constructor
     }
 
+    public ArrayList<User> getSelectedUsers() {
+        return adapter.getSelectedUsers();
+    }
+
     public void setMode(ContactsListMode mode) {
         this.mode = mode;
 

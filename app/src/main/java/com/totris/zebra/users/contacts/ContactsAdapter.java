@@ -14,6 +14,7 @@ import com.futuremind.recyclerviewfastscroll.SectionTitleProvider;
 import com.totris.zebra.users.User;
 import com.totris.zebra.R;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -30,7 +31,6 @@ public class ContactsAdapter extends RecyclerView.Adapter<ContactsAdapter.ViewHo
 
     public ContactsAdapter(List<User> users) {
         ContactsAdapter.users = new ArrayList<>(users);
-        Log.d(TAG, "constructor: " + selection);
     }
 
     public void setMode(ContactsListMode mode) {
@@ -51,7 +51,6 @@ public class ContactsAdapter extends RecyclerView.Adapter<ContactsAdapter.ViewHo
     public void onBindViewHolder(ViewHolder holder, int position) {
         User user = users.get(position);
 
-        Log.d(TAG, "onBindViewHolder: " + user.getUid() + " | " + selection);
         holder.setUid(user.getUid());
 
         holder.username.setText(user.getUsername());
@@ -65,6 +64,16 @@ public class ContactsAdapter extends RecyclerView.Adapter<ContactsAdapter.ViewHo
     @Override
     public int getItemCount() {
         return users.size();
+    }
+
+    public ArrayList<User> getSelectedUsers() {
+        ArrayList<User> selectedUsers = new ArrayList<>();
+
+        for (User user : users) {
+            if (selection.contains(user.getUid())) selectedUsers.add(user);
+        }
+
+        return selectedUsers;
     }
 
     public static class ViewHolder extends RecyclerView.ViewHolder {

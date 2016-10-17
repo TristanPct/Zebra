@@ -127,6 +127,7 @@ public class Group implements Serializable {
     public static Group getCommonGroup(List<User> users) {
         String commonGroupId = null;
 
+        //TODO: make it work for selection > 1
         for (GroupUser group : User.getCurrent().getGroups()) {
             for (String userId : group.getUsersIds()) {
                 if (userId.equals(users.get(0).getUid())) {

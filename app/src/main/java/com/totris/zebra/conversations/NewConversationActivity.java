@@ -1,5 +1,6 @@
 package com.totris.zebra.conversations;
 
+import android.content.Intent;
 import android.os.PersistableBundle;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -8,6 +9,7 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 
+import com.totris.zebra.groups.Group;
 import com.totris.zebra.users.contacts.ContactsAdapter;
 import com.totris.zebra.users.contacts.ContactsListFragment;
 import com.totris.zebra.users.contacts.ContactsListMode;
@@ -18,7 +20,8 @@ import java.util.ArrayList;
 
 public class NewConversationActivity extends AppCompatActivity implements ContactsAdapter.ContactItemListener {
     private static final String TAG = "NewConversationActivity";
-    private ArrayList<String> usersIds;
+
+//    private ArrayList<String> usersIds;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -26,7 +29,7 @@ public class NewConversationActivity extends AppCompatActivity implements Contac
         setContentView(R.layout.activity_new_conversation);
 
         if (savedInstanceState == null) {
-            usersIds = new ArrayList<>();
+//            usersIds = new ArrayList<>();
 
             ContactsListFragment fragment = new ContactsListFragment();
             fragment.setMode(ContactsListMode.SELECTABLE);
@@ -36,7 +39,7 @@ public class NewConversationActivity extends AppCompatActivity implements Contac
                     .replace(R.id.activity_new_conversation, fragment)
                     .commit();
         } else {
-            usersIds = savedInstanceState.getStringArrayList("usersIds");
+//            usersIds = savedInstanceState.getStringArrayList("usersIds");
 
             ((ContactsListFragment)getSupportFragmentManager().getFragments().get(0)).setMode(ContactsListMode.SELECTABLE);
         }
@@ -57,7 +60,16 @@ public class NewConversationActivity extends AppCompatActivity implements Contac
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.action_confirm:
-                //TODO: create conversation
+                ContactsListFragment fragment = (ContactsListFragment) getSupportFragmentManager().getFragments().get(0);
+                ArrayList<User> users = fragment.getSelectedUsers();
+
+                if (users.size() == 0) return true;
+
+                Group group = Group.getCommonGroup(fragment.getSelectedUsers());
+
+                Intent intent = new Intent(this, ConversationActivity.class);
+                intent.putExtra("group", group);
+                startActivity(intent); //FIXME: no title in the activity
                 return true;
 
             default:
@@ -65,21 +77,21 @@ public class NewConversationActivity extends AppCompatActivity implements Contac
         }
     }
 
-    @Override
-    public void onSaveInstanceState(Bundle outState) {
-        outState.putStringArrayList("usersIds", usersIds);
-
-        super.onSaveInstanceState(outState);
-    }
+//    @Override
+//    public void onSaveInstanceState(Bundle outState) {
+//        outState.putStringArrayList("usersIds", usersIds);
+//
+//        super.onSaveInstanceState(outState);
+//    }
 
     @Override
     public void onContactItemClick(User user, boolean selected) {
-        if (selected) {
-            usersIds.add(user.getUid());
-        } else {
-            usersIds.remove(user.getUid());
-        }
+//        if (selected) {
+//            usersIds.add(user.getUid());
+//        } else {
+//            usersIds.remove(user.getUid());
+//        }
 
-        Log.d(TAG, "onContactItemClick: " + usersIds);
+//        Log.d(TAG, "onContactItemClick: " + usersIds);
     }
 }
