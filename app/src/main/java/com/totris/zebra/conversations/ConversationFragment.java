@@ -2,6 +2,7 @@ package com.totris.zebra.conversations;
 
 
 import android.content.Context;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
@@ -52,6 +53,10 @@ public class ConversationFragment extends Fragment {
 
     @BindView(R.id.fileUploadWrapper)
     FlexboxLayout fileUploadWrapper;
+
+    @BindView(R.id.messageFile)
+    ImageButton messageFile;
+
     private boolean messagesHidden = false;
 
     public ConversationFragment() {
@@ -96,6 +101,10 @@ public class ConversationFragment extends Fragment {
         return view;
     }
 
+    public boolean getMessagesHidden() {
+        return messagesHidden;
+    }
+
     public void addMessage(Message message) {
         //if(!User.getCurrent().getUid().equals(message.getSenderId()) || message.getCreatedAt() == null) {
             adapter.addMessage(message);
@@ -108,6 +117,8 @@ public class ConversationFragment extends Fragment {
         if(messagesHidden) {
             messagesHidden = false;
 
+            toggleTouchEvents(true);
+
             Blurry.delete(conversationFragmentWrapper);
         }
     }
@@ -116,11 +127,20 @@ public class ConversationFragment extends Fragment {
         if(!messagesHidden) {
             messagesHidden = true;
 
+            toggleTouchEvents(false);
+
             Blurry.with(getActivity())
-                    .radius(30)
-                    .animate(500)
+                    .radius(25)
+                    .animate(400)
                     .onto(conversationFragmentWrapper);
         }
+    }
+
+    public void toggleTouchEvents(boolean enable) {
+        messagesListRecyclerView.setEnabled(enable);
+        messageInput.setEnabled(enable);
+        messageSubmit.setEnabled(enable);
+        messageFile.setEnabled(enable);
     }
 
     @Subscribe
