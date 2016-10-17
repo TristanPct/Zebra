@@ -25,6 +25,7 @@ import java.util.ArrayList;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import jp.wasabeef.blurry.Blurry;
 
 
 /**
@@ -37,6 +38,9 @@ public class ConversationFragment extends Fragment {
 
     private MessagesAdapter adapter = new MessagesAdapter(new ArrayList<Message>());
 
+    @BindView(R.id.activity_conversation)
+    ViewGroup conversationFragmentWrapper;
+
     @BindView(R.id.messagesList)
     RecyclerView messagesListRecyclerView;
 
@@ -48,6 +52,7 @@ public class ConversationFragment extends Fragment {
 
     @BindView(R.id.fileUploadWrapper)
     FlexboxLayout fileUploadWrapper;
+    private boolean messagesHidden = false;
 
     public ConversationFragment() {
         // Required empty public constructor
@@ -98,11 +103,24 @@ public class ConversationFragment extends Fragment {
     }
 
     public void showMessages() {
-        messagesListRecyclerView.setVisibility(View.VISIBLE);
+        Log.d(TAG, "showMessages: delete blur");
+
+        if(messagesHidden) {
+            messagesHidden = false;
+
+            Blurry.delete(conversationFragmentWrapper);
+        }
     }
 
     public void hideMessages() {
-        messagesListRecyclerView.setVisibility(View.GONE);
+        if(!messagesHidden) {
+            messagesHidden = true;
+
+            Blurry.with(getActivity())
+                    .radius(30)
+                    .animate(500)
+                    .onto(conversationFragmentWrapper);
+        }
     }
 
     @Subscribe
