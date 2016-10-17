@@ -20,8 +20,6 @@ import android.util.Log;
 import android.Manifest;
 import android.view.View;
 import android.widget.ToggleButton;
-
-<<<<<<< HEAD:app/src/main/java/com/totris/zebra/Activities/ConversationActivity.java
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
 import com.google.android.gms.vision.CameraSource;
@@ -29,15 +27,9 @@ import com.google.android.gms.vision.MultiProcessor;
 import com.google.android.gms.vision.Tracker;
 import com.google.android.gms.vision.face.Face;
 import com.google.android.gms.vision.face.FaceDetector;
-import com.totris.zebra.Fragments.ConversationFragment;
-import com.totris.zebra.Models.Group;
-import com.totris.zebra.Models.Message;
-import com.totris.zebra.Models.MessageType;
-=======
 import com.totris.zebra.groups.Group;
 import com.totris.zebra.messages.Message;
 import com.totris.zebra.messages.MessageType;
->>>>>>> b374077db451288583b828c50ccf2e631fcae482:app/src/main/java/com/totris/zebra/conversations/ConversationActivity.java
 import com.totris.zebra.R;
 import com.totris.zebra.utils.EventBus;
 import com.totris.zebra.utils.OnlineStorage;
