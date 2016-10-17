@@ -18,7 +18,7 @@ import java.util.ArrayList;
 
 public class NewConversationActivity extends AppCompatActivity implements ContactsAdapter.ContactItemListener {
     private static final String TAG = "NewConversationActivity";
-    private ArrayList<String> usersIds = new ArrayList<>();
+    private ArrayList<String> usersIds;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -26,6 +26,8 @@ public class NewConversationActivity extends AppCompatActivity implements Contac
         setContentView(R.layout.activity_new_conversation);
 
         if (savedInstanceState == null) {
+            usersIds = new ArrayList<>();
+
             ContactsListFragment fragment = new ContactsListFragment();
             fragment.setMode(ContactsListMode.SELECTABLE);
 
@@ -35,10 +37,9 @@ public class NewConversationActivity extends AppCompatActivity implements Contac
                     .commit();
         } else {
             usersIds = savedInstanceState.getStringArrayList("usersIds");
+
             ((ContactsListFragment)getSupportFragmentManager().getFragments().get(0)).setMode(ContactsListMode.SELECTABLE);
         }
-
-        Log.d(TAG, "onCreate: " + (savedInstanceState != null) + " | " + usersIds);
 
         if (getSupportActionBar() != null) {
             getSupportActionBar().setTitle(getString(R.string.title_activity_new_conversation));
@@ -65,11 +66,10 @@ public class NewConversationActivity extends AppCompatActivity implements Contac
     }
 
     @Override
-    public void onSaveInstanceState(Bundle outState, PersistableBundle outPersistentState) {
-        Log.d(TAG, "onSaveInstanceState: " + usersIds); //FIXME: onSaveInstanceState seems to not be called
+    public void onSaveInstanceState(Bundle outState) {
         outState.putStringArrayList("usersIds", usersIds);
 
-        super.onSaveInstanceState(outState, outPersistentState);
+        super.onSaveInstanceState(outState);
     }
 
     @Override

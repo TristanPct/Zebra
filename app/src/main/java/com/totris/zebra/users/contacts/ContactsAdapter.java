@@ -2,6 +2,7 @@ package com.totris.zebra.users.contacts;
 
 import android.os.Build;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -29,6 +30,7 @@ public class ContactsAdapter extends RecyclerView.Adapter<ContactsAdapter.ViewHo
 
     public ContactsAdapter(List<User> users) {
         ContactsAdapter.users = new ArrayList<>(users);
+        Log.d(TAG, "constructor: " + selection);
     }
 
     public void setMode(ContactsListMode mode) {
@@ -42,15 +44,14 @@ public class ContactsAdapter extends RecyclerView.Adapter<ContactsAdapter.ViewHo
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View itemView = LayoutInflater.from(parent.getContext()).inflate(R.layout.contact_item, parent, false);
-        ViewHolder viewHolder = new ViewHolder(itemView);
-
-        return viewHolder;
+        return new ViewHolder(itemView);
     }
 
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
         User user = users.get(position);
 
+        Log.d(TAG, "onBindViewHolder: " + user.getUid() + " | " + selection);
         holder.setUid(user.getUid());
 
         holder.username.setText(user.getUsername());
@@ -113,7 +114,7 @@ public class ContactsAdapter extends RecyclerView.Adapter<ContactsAdapter.ViewHo
 
             if (mode == ContactsListMode.SELECTABLE) {
                 if (selected) {
-                    selection.add(uid);
+                    if (!selection.contains(uid)) selection.add(uid);
                     contactImageAdd.setVisibility(View.GONE);
                     contactImageRemove.setVisibility(View.VISIBLE);
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
