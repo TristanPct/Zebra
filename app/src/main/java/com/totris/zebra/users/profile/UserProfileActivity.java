@@ -9,14 +9,22 @@ import android.view.LayoutInflater;
 import android.view.View;
 
 import com.totris.zebra.DrawerMenuActivity;
+import com.totris.zebra.conversations.ConversationActivity;
+import com.totris.zebra.groups.Group;
+import com.totris.zebra.groups.GroupUser;
 import com.totris.zebra.users.User;
 import com.totris.zebra.users.auth.LoginActivity;
 import com.totris.zebra.R;
 import com.totris.zebra.utils.Authentication;
 
-public class UserProfileActivity extends DrawerMenuActivity implements EditProfileListFragment.OnClickListener {
+import org.jdeferred.DoneCallback;
 
+import java.util.ArrayList;
+
+public class UserProfileActivity extends DrawerMenuActivity implements EditProfileListFragment.OnClickListener, DisplayProfileListFragment.OnClickListener {
     private static String TAG = "UserProfileActivity";
+
+    private String userId;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -27,7 +35,11 @@ public class UserProfileActivity extends DrawerMenuActivity implements EditProfi
         View contentView = inflater.inflate(R.layout.activity_user_profile, null, false);
         contentLayout.addView(contentView, 0);
 
-        String userId = getIntent().getStringExtra("user");
+        if (savedInstanceState == null) {
+            userId = getIntent().getStringExtra("userId");
+        } else {
+            userId = savedInstanceState.getString("userId");
+        }
 
         Bundle bundle = new Bundle();
 
@@ -40,13 +52,18 @@ public class UserProfileActivity extends DrawerMenuActivity implements EditProfi
         Fragment fragment = new UserProfileFragment();
         fragment.setArguments(bundle);
 
-        if(savedInstanceState == null) {
+        if (savedInstanceState == null) {
             getSupportFragmentManager()
                     .beginTransaction()
                     .add(R.id.user_activity_profile, fragment)
                     .commit();
         }
+    }
 
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        outState.putString("userId", userId);
+        super.onSaveInstanceState(outState);
     }
 
     public void startEditIntent(EditProfileFragmentType fragmentType) {
@@ -80,5 +97,28 @@ public class UserProfileActivity extends DrawerMenuActivity implements EditProfi
         Authentication.getInstance().signOut();
         Intent intent = new Intent(this, LoginActivity.class);
         startActivity(intent);
+    }
+
+    @Override
+    public void onContactSendMessageClick() {
+        User.getById(userId).done(new DoneCallback() {
+            @Override
+            public void onDone(Object result) {
+                User user = (User) result;
+
+                ArrayList<User> users = new ArrayList<>();
+                users.add(user);
+
+                Group group = Group.getCommonGroup(users);
+
+                users.add(User.getCurrent());
+                GroupUser conversation = new GroupUser(users, group);
+
+                Intent intent = new Intent(UserProfileActivity.this, ConversationActivity.class);
+                intent.putExtra("group", group);
+                intent.putExtra("title", conversation.getTitle());
+                startActivity(intent);
+            }
+        });
     }
 }

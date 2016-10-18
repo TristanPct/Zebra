@@ -15,6 +15,7 @@ import com.totris.zebra.DrawerMenuActivity;
 import com.totris.zebra.groups.Group;
 import com.totris.zebra.R;
 import com.totris.zebra.users.User;
+import com.totris.zebra.users.profile.UserProfileActivity;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -59,14 +60,8 @@ public class ContactsListActivity extends DrawerMenuActivity implements Contacts
     public void onContactItemClick(User user, boolean selected) {
         Log.d(TAG, "onContactItemClick");
 
-        // TODO: open contact profile
-        List<User> users = new ArrayList<>();
-        users.add(user);
-
-        Group group = Group.getCommonGroup(users);
-
-        Intent intent = new Intent(this, ConversationActivity.class);
-        intent.putExtra("group", group);
+        Intent intent = new Intent(this, UserProfileActivity.class);
+        intent.putExtra("userId", user.getUid());
         startActivity(intent);
     }
 }
