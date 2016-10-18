@@ -63,6 +63,7 @@ public class NewConversationActivity extends AppCompatActivity implements Contac
 
                 Group group = Group.getCommonGroup(fragment.getSelectedUsers());
 
+                users.add(User.getCurrent());
                 GroupUser conversation = new GroupUser(users, group);
 
                 Intent intent = new Intent(this, ConversationActivity.class);

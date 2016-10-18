@@ -54,6 +54,8 @@ public class GroupUser {
             this.usersIds.add(u.getUid());
         }
         this.groupId = group.getUid();
+
+        EventBus.post(new GroupUserInstantiateEvent(this));
     }
 
     public GroupUser(List<String> usersIds, String groupId) {
