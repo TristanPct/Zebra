@@ -42,12 +42,18 @@ public class GroupUser {
 
     }
 
-    public GroupUser(List<User> usersIds, Group groupId) {
+    public GroupUser(List<User> users, Group group) {
         this();
-        for (User u : usersIds) {
+
+        this.users = users;
+        this.group = group;
+        usersLoaded = true;
+        groupLoaded = true;
+
+        for (User u : users) {
             this.usersIds.add(u.getUid());
         }
-        this.groupId = groupId.getUid();
+        this.groupId = group.getUid();
     }
 
     public GroupUser(List<String> usersIds, String groupId) {

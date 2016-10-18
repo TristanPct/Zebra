@@ -10,6 +10,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 
 import com.totris.zebra.groups.Group;
+import com.totris.zebra.groups.GroupUser;
 import com.totris.zebra.users.contacts.ContactsAdapter;
 import com.totris.zebra.users.contacts.ContactsListFragment;
 import com.totris.zebra.users.contacts.ContactsListMode;
@@ -21,15 +22,12 @@ import java.util.ArrayList;
 public class NewConversationActivity extends AppCompatActivity implements ContactsAdapter.ContactItemListener {
     private static final String TAG = "NewConversationActivity";
 
-//    private ArrayList<String> usersIds;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_new_conversation);
 
         if (savedInstanceState == null) {
-//            usersIds = new ArrayList<>();
 
             ContactsListFragment fragment = new ContactsListFragment();
             fragment.setMode(ContactsListMode.SELECTABLE);
@@ -39,8 +37,6 @@ public class NewConversationActivity extends AppCompatActivity implements Contac
                     .replace(R.id.activity_new_conversation, fragment)
                     .commit();
         } else {
-//            usersIds = savedInstanceState.getStringArrayList("usersIds");
-
             ((ContactsListFragment)getSupportFragmentManager().getFragments().get(0)).setMode(ContactsListMode.SELECTABLE);
         }
 
@@ -67,9 +63,12 @@ public class NewConversationActivity extends AppCompatActivity implements Contac
 
                 Group group = Group.getCommonGroup(fragment.getSelectedUsers());
 
+                GroupUser conversation = new GroupUser(users, group);
+
                 Intent intent = new Intent(this, ConversationActivity.class);
                 intent.putExtra("group", group);
-                startActivity(intent); //FIXME: no title in the activity
+                intent.putExtra("title", conversation.getTitle());
+                startActivity(intent);
                 return true;
 
             default:
@@ -77,21 +76,8 @@ public class NewConversationActivity extends AppCompatActivity implements Contac
         }
     }
 
-//    @Override
-//    public void onSaveInstanceState(Bundle outState) {
-//        outState.putStringArrayList("usersIds", usersIds);
-//
-//        super.onSaveInstanceState(outState);
-//    }
-
     @Override
     public void onContactItemClick(User user, boolean selected) {
-//        if (selected) {
-//            usersIds.add(user.getUid());
-//        } else {
-//            usersIds.remove(user.getUid());
-//        }
 
-//        Log.d(TAG, "onContactItemClick: " + usersIds);
     }
 }
