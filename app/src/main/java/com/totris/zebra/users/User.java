@@ -24,6 +24,7 @@ import org.jdeferred.DoneCallback;
 import org.jdeferred.Promise;
 import org.jdeferred.impl.DeferredObject;
 
+import java.security.PublicKey;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -44,6 +45,7 @@ public class User {
     private String username;
     private String mail;
     private String password;
+    private PublicKey publicKey;
 
     private List<GroupUser> groups = new ArrayList<>();
     private int instantiatedGroups = 0;
@@ -55,6 +57,7 @@ public class User {
     private String oldUsername;
     private String oldMail;
     private int valuesToCommit = 0;
+    private boolean isPublicKeyUpdated;
 
     public User() {
 
@@ -147,6 +150,12 @@ public class User {
     public User updatePassword(String password) {
         this.password = password;
         isPasswordUpdated = true;
+        return this;
+    }
+
+    public User updatePublicKey(PublicKey publicKey) {
+        this.publicKey = publicKey;
+        isPublicKeyUpdated = true;
         return this;
     }
 
@@ -297,6 +306,14 @@ public class User {
                     });
         }
 
+        if(isPublicKeyUpdated) {
+            valuesToCommit--;
+
+            if (valuesToCommit == 0) {
+                persist();
+            }
+        }
+
         // update database linked model
 
 //        if (isUsernameUpdated || isMailUpdated) {
@@ -386,6 +403,14 @@ public class User {
 
             }
         });
+    }
+
+    public PublicKey getPublicKey() {
+        return publicKey;
+    }
+
+    public void setPublicKey(PublicKey publicKey) {
+        this.publicKey = publicKey;
     }
 
     public interface OnCommitListener {
