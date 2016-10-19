@@ -11,12 +11,21 @@ android {
         versionName "1.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         vectorDrawables.useSupportLibrary = true
+        multiDexEnabled true
     }
     buildTypes {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
+    }
+    packagingOptions {
+        exclude 'META-INF/NOTICE'
+        exclude 'META-INF/LICENSE'
+        exclude 'META-INF/notice'
+        exclude 'META-INF/notice.txt'
+        exclude 'META-INF/license'
+        exclude 'META-INF/license.txt'
     }
 }
 
@@ -48,6 +57,8 @@ dependencies {
     compile 'com.firebaseui:firebase-ui-storage:0.6.1'
     compile 'com.google.android.gms:play-services:9.6.1'
     compile 'jp.wasabeef:blurry:2.0.3'
+    compile 'com.github.satyan:sugar:1.5'
+    compile 'com.fasterxml.jackson.core:jackson-databind:2.8.4'
     testCompile 'junit:junit:4.12'
     annotationProcessor 'com.jakewharton:butterknife-compiler:8.4.0'
 }

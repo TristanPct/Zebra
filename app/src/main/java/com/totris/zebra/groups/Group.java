@@ -20,6 +20,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 public class Group implements Serializable {
     private final static String TAG = "Group";
@@ -27,6 +28,8 @@ public class Group implements Serializable {
     private static final long serialVersionUID = 8392718937281219L;
 
     private static DatabaseReference dbRef = Database.getInstance().getReference("groups");
+
+    private String passphrase = "TEMP PASSPHRASE"; // TODO: use a real passphrase
 
     private String uid;
     private Date createdAt;
@@ -83,6 +86,11 @@ public class Group implements Serializable {
         return messages;
     }
 
+    public void setMessages(Map<String, EncryptedMessage> messages) {
+        setMessages(new ArrayList<>(messages.values()));
+    }
+
+    @Exclude
     public <T> void setMessages(List<T> messages) {
         messagesLoaded = false;
         this.messages.clear();
@@ -100,7 +108,7 @@ public class Group implements Serializable {
                 Log.d(TAG, "setMessages: encrypted messages");
                 List<EncryptedMessage> encryptedMessages = (List<EncryptedMessage>) messages;
                 for (EncryptedMessage em : encryptedMessages) {
-                    this.messages.add(em.decrypt("TEMP PASSPHRASE")); // TODO: use a real passphrase
+                    this.messages.add(decryptMessage(em));
                 }
             }
         }
@@ -122,6 +130,14 @@ public class Group implements Serializable {
 
     public void addMessage(Message message) {
         messages.add(message);
+    }
+
+    public EncryptedMessage encryptedMessage(Message message) {
+        return message.encrypt(passphrase);
+    }
+
+    public Message decryptMessage(EncryptedMessage encryptedMessage) {
+        return encryptedMessage.decrypt(passphrase);
     }
 
     public static Group getCommonGroup(List<User> users) {
@@ -175,7 +191,7 @@ public class Group implements Serializable {
     public DatabaseReference sendMessage(Message message) {
         DatabaseReference tmpRef = dbRef.child(uid).child("messages").push();
 
-        tmpRef.setValue(message.encrypt("TEMP PASSPHRASE"));
+        tmpRef.setValue(encryptedMessage(message));
 
         return tmpRef;
     }
@@ -185,7 +201,7 @@ public class Group implements Serializable {
 
         OnlineStorage.uploadImage(imageBitmap, message.getContent());
 
-        tmpRef.setValue(message.encrypt("TEMP PASSPHRASE"));
+        tmpRef.setValue(encryptedMessage(message));
 
         return tmpRef;
     }
@@ -199,7 +215,7 @@ public class Group implements Serializable {
             @Override
             public void onChildAdded(DataSnapshot dataSnapshot, String s) {
                 EncryptedMessage encryptedMessage = dataSnapshot.getValue(EncryptedMessage.class);
-                Message message = encryptedMessage.decrypt("TEMP PASSPHRASE"); // TODO: use a real passphrase
+                Message message = decryptMessage(encryptedMessage);
 
                 EventBus.post(new MessageChildAddedEvent(Group.this, message));
             }
@@ -207,7 +223,7 @@ public class Group implements Serializable {
             @Override
             public void onChildChanged(DataSnapshot dataSnapshot, String s) {
                 EncryptedMessage encryptedMessage = dataSnapshot.getValue(EncryptedMessage.class);
-                Message message = encryptedMessage.decrypt("TEMP PASSPHRASE"); // TODO: use a real passphrase
+                Message message = decryptMessage(encryptedMessage);
 
                 Log.d(TAG, "onChildChanged: " + message.getSentAt());
             }

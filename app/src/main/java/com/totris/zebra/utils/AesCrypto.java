@@ -146,7 +146,7 @@ public class AesCrypto {
     public static class Data {
         protected String value;
         protected String salt;
-        private boolean isEncrypted;
+        private boolean isEncrypted = true;
 
         public Data() {
 
