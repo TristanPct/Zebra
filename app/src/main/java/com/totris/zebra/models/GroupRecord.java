@@ -26,7 +26,7 @@ public class GroupRecord extends SugarRecord {
     private String uid;
     private Date createdAt;
     private String usersIdsJson;
-    private String messagesJson; // FIXME: saved messages must be encrypted
+    private String messagesJson;
 
     @Ignore
     private List<UserRecord> users = new ArrayList<>();
@@ -88,6 +88,20 @@ public class GroupRecord extends SugarRecord {
         return users;
     }
 
+    public void setUsersIds(List<String> usersIds) {
+        users.clear();
+
+        for (String userId : usersIds) {
+            users.add(UserRecord.findByUid(userId));
+        }
+
+        try {
+            usersIdsJson = mapper.writeValueAsString(usersIds);
+        } catch (JsonProcessingException e) {
+            usersIdsJson = "";
+        }
+    }
+
     public void setUsers(List<UserRecord> users) {
         this.users = users;
 
@@ -139,7 +153,7 @@ public class GroupRecord extends SugarRecord {
         }
 
         try {
-            messagesJson = mapper.writeValueAsString(messages);
+            messagesJson = mapper.writeValueAsString(this.messages);
         } catch (JsonProcessingException e) {
             messagesJson = "";
         }
@@ -175,6 +189,7 @@ public class GroupRecord extends SugarRecord {
 
     public static long save(Group group) {
         GroupRecord record = new GroupRecord(group.getUid(), group.getCreatedAt());
+        record.setUsersIds(group.getUsersIds());
         record.setMessages(group.getMessages());
 
         return record.save();

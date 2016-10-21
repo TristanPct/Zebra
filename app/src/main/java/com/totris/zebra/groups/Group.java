@@ -35,6 +35,7 @@ public class Group implements Serializable {
     private Date createdAt;
     private List<String> usersIds = new ArrayList<>();
     private List<Message> messages = new ArrayList<>();
+    private List<EncryptedMessage> encryptedMessages = new ArrayList<>();
     private boolean messagesLoaded = false;
 
     public Group() {
