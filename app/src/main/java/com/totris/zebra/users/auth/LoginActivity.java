@@ -55,7 +55,7 @@ public class LoginActivity extends ZebraActivity implements LoginFragment.LoginL
 
     @Subscribe
     public void onUserSignInEvent(User user) {
-        user.updatePublicKey(getApplicationContext()).commit();
+        user.updatePublicKey().commit();
         Intent intent = new Intent(this, ConversationsListActivity.class);
         startActivity(intent);
     }
