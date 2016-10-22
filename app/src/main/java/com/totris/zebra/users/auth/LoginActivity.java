@@ -10,7 +10,6 @@ import com.totris.zebra.conversations.ConversationsListActivity;
 import com.totris.zebra.R;
 import com.totris.zebra.users.User;
 import com.totris.zebra.utils.Authentication;
-import com.totris.zebra.utils.RsaCrypto;
 import com.totris.zebra.utils.WithErrorView;
 
 public class LoginActivity extends AppCompatActivity implements Authentication.AuthenticationListener, LoginFragment.LoginListener, RegisterFragment.RegisterListener {
@@ -52,7 +51,6 @@ public class LoginActivity extends AppCompatActivity implements Authentication.A
 
     @Override
     public void onUserSignedIn(FirebaseUser user) {
-        User.getCurrent().updatePublicKey(getApplicationContext()).commit();
         Intent intent = new Intent(this, ConversationsListActivity.class);
         startActivity(intent);
     }

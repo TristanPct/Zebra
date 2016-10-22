@@ -5,6 +5,7 @@ import android.util.Log;
 
 import com.orm.SugarApp;
 import com.orm.SugarDb;
+import com.totris.zebra.utils.RsaCrypto;
 
 public class ZebraApplication extends SugarApp {
 
@@ -23,6 +24,6 @@ public class ZebraApplication extends SugarApp {
     }
 
     protected void initialize() {
-
+        RsaCrypto.getInstance().setContext(getApplicationContext());
     }
 }

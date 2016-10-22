@@ -1,9 +1,13 @@
 package com.totris.zebra.messages;
 
 
+import android.util.Log;
+
 import com.totris.zebra.utils.AesCrypto;
 
 public class EncryptedMessage extends AesCrypto.Data {
+
+    private static final String TAG = "EncryptedMessage";
 
     public EncryptedMessage() {
 
@@ -14,6 +18,7 @@ public class EncryptedMessage extends AesCrypto.Data {
     }
 
     public Message decrypt(String passphrase) {
+        Log.d(TAG, "decrypt: " + passphrase);
         return Message.decrypt(getValue(), passphrase, getSalt());
     }
 

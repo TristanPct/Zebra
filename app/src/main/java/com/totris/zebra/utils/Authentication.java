@@ -107,7 +107,7 @@ public class Authentication {
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         Log.d(TAG, "register:onComplete:" + task.isSuccessful());
                         if (task.isSuccessful()) {
-                            getCurrentUser().updatePublicKey(context).updateUsername(username).commit();
+                            getCurrentUser().updatePublicKey().updateUsername(username).commit(); // TODO: check if username is well saved
                         } else if (listener != null) {
                             listener.onUserRegistrationFailed(((FirebaseAuthException) task.getException()).getErrorCode());
                         }

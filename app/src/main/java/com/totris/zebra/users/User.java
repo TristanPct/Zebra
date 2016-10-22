@@ -3,14 +3,12 @@ package com.totris.zebra.users;
 
 import android.content.Context;
 import android.support.annotation.NonNull;
-import android.util.Base64;
 import android.util.Log;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.UserProfileChangeRequest;
-import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -53,7 +51,7 @@ public class User {
     private String username;
     private String mail;
     private String password;
-    private PublicKey publicKey;
+    private PublicKey publicKey = null;
 
     private List<GroupUser> groups = new ArrayList<>();
     private int instantiatedGroups = 0;
@@ -173,14 +171,20 @@ public class User {
 
     @Exclude
     public PublicKey getPublicKey() {
-        return publicKey;
+        if(getCurrent().getUid().equals(getUid())) {
+            return RsaCrypto.getInstance().getPublicKey();
+        } else {
+            return publicKey;
+        }
     }
 
     public String getBase64PublicKey() {
-        try {
-            return RsaEcb.getPublicKeyString(publicKey);
-        } catch (IOException e) {
-            e.printStackTrace();
+        if(getPublicKey() != null) {
+            try {
+                return RsaEcb.getPublicKeyString(getPublicKey());
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
 
         return null;
@@ -188,14 +192,15 @@ public class User {
 
     public void setBase64PublicKey(String publicKey) {
         try {
+            Log.d(TAG, "setBase64PublicKey of " + getUsername());
             this.publicKey = RsaEcb.getRSAPublicKeyFromString(publicKey);
         } catch (GeneralSecurityException | UnsupportedEncodingException e) {
             e.printStackTrace();
         }
     }
 
-    public User updatePublicKey(Context context) {
-        publicKey = RsaCrypto.InitRsaKeys(context);
+    public User updatePublicKey() {
+        publicKey = RsaCrypto.getInstance().InitRsaKeys();
         Log.d(TAG, "updatePublicKey: " + this.publicKey.toString());
         isPublicKeyUpdated = true;
         return this;
@@ -337,11 +342,20 @@ public class User {
 
     public void commit(final OnCommitListener listener) {
         valuesToCommit = 0;
+        valuesToCommit += isPublicKeyUpdated ? 1 : 0;
         valuesToCommit += isUsernameUpdated ? 1 : 0;
         valuesToCommit += isMailUpdated ? 1 : 0;
         valuesToCommit += isPasswordUpdated ? 1 : 0;
 
         final List<String> errors = new ArrayList<>();
+
+        if(isPublicKeyUpdated) {
+            valuesToCommit--;
+
+            if (valuesToCommit == 0) {
+                persist();
+            }
+        }
 
         if (isUsernameUpdated) {
             UserProfileChangeRequest updates = new UserProfileChangeRequest.Builder()
@@ -408,14 +422,6 @@ public class User {
                     });
         }
 
-        if(isPublicKeyUpdated) {
-            valuesToCommit--;
-
-            if (valuesToCommit == 0) {
-                persist();
-            }
-        }
-
         // update database linked model
 
 //        if (isUsernameUpdated || isMailUpdated) {
@@ -424,6 +430,7 @@ public class User {
     }
 
     public void persist() {
+        Log.d(TAG, "persist user " + getUsername() + " : " + getUid());
         dbRef.child(getUid()).setValue(this);
     }
 
