@@ -4,10 +4,10 @@ import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
+import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 
 import com.squareup.otto.Subscribe;
-import com.totris.zebra.base.ZebraActivity;
 import com.totris.zebra.conversations.ConversationsListActivity;
 import com.totris.zebra.groups.Group;
 import com.totris.zebra.users.User;
@@ -18,7 +18,7 @@ import com.totris.zebra.utils.EventBus;
 
 import java.util.Date;
 
-public class SplashActivity extends ZebraActivity {
+public class SplashActivity extends AppCompatActivity {
 
     private static final String TAG = "SplashActivity";
 
