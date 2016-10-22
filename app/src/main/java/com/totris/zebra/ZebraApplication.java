@@ -3,6 +3,7 @@ package com.totris.zebra;
 
 import android.util.Log;
 
+import com.google.firebase.FirebaseApp;
 import com.orm.SugarApp;
 import com.orm.SugarDb;
 import com.totris.zebra.utils.RsaCrypto;
@@ -21,6 +22,7 @@ public class ZebraApplication extends SugarApp {
 
         //new SugarDb(this).getDB().close();
 
+        FirebaseApp.initializeApp(getApplicationContext());
         RsaCrypto.getInstance().setContext(getApplicationContext());
         Authentication.getInstance();
         Database.getInstance();
