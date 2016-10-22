@@ -20,7 +20,7 @@
             android:layout_marginTop="@dimen/margin_large"
             android:adjustViewBounds="false"
             android:cropToPadding="false"
-            app:srcCompat="@android:drawable/sym_def_app_icon" />
+            app:srcCompat="@drawable/ic_zebra" />
 
         <TextView
             android:id="@+id/usernameView"

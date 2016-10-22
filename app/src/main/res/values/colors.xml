@@ -11,4 +11,5 @@
     <color name="colorBlackTranslucent">#000000</color>
     <color name="colorBackground">#EEEEEE</color>
     <color name="colorBackgroundMedium">#AAAAAA</color>
+    <color name="colorFullscreenStatusBar">#33000000</color>
 </resources>

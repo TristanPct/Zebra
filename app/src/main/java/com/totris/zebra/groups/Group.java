@@ -381,43 +381,4 @@ public class Group implements Serializable {
 
         return tmpRef;
     }
-
-//    public void initialize() {
-//        addChildEventListener();
-//    }
-
-//    public void addChildEventListener() {
-//        dbRef.child(uid).child("messages").addChildEventListener(new ChildEventListener() {
-//            @Override
-//            public void onChildAdded(DataSnapshot dataSnapshot, String s) {
-//                EncryptedMessage encryptMessage = dataSnapshot.getValue(EncryptedMessage.class);
-//                Message message = decryptMessage(encryptMessage);
-//
-//                EventBus.post(new MessageChildAddedEvent(Group.this, message));
-//            }
-//
-//            @Override
-//            public void onChildChanged(DataSnapshot dataSnapshot, String s) {
-//                EncryptedMessage encryptMessage = dataSnapshot.getValue(EncryptedMessage.class);
-//                Message message = decryptMessage(encryptMessage);
-//
-//                Log.d(TAG, "onChildChanged: " + message.getSentAt());
-//            }
-//
-//            @Override
-//            public void onChildRemoved(DataSnapshot dataSnapshot) {
-//
-//            }
-//
-//            @Override
-//            public void onChildMoved(DataSnapshot dataSnapshot, String s) {
-//
-//            }
-//
-//            @Override
-//            public void onCancelled(DatabaseError databaseError) {
-//
-//            }
-//        });
-//    }
 }

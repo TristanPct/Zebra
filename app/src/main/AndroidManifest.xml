@@ -3,28 +3,24 @@
     package="com.totris.zebra">
 
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
-
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.CAMERA" />
+
     <uses-feature android:name="android.hardware.camera" />
     <uses-feature android:name="android.hardware.camera.autofocus" />
 
     <application
         android:name=".ZebraApplication"
         android:allowBackup="true"
+        android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity
             android:name=".DrawerMenuActivity"
-            android:label="@string/title_activity_drawer_menu"
-            android:theme="@style/AppTheme.NoActionBar">
-            <intent-filter>
-                <action android:name="android.intent.action.RUN" />
-            </intent-filter>
-        </activity>
+            android:theme="@style/AppTheme.NoActionBar" />
         <activity
-            android:name=".users.auth.LoginActivity"
+            android:name=".SplashActivity"
             android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -32,12 +28,21 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".conversations.ConversationsListActivity"
-            android:theme="@style/AppTheme.CustomActionBar"/>
+        <activity
+            android:name=".users.auth.LoginActivity"
+            android:theme="@style/AppTheme.NoActionBar">
+            <intent-filter>
+                <action android:name="android.intent.action.RUN" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name=".conversations.ConversationsListActivity"
+            android:theme="@style/AppTheme.CustomActionBar" />
         <activity android:name=".conversations.ConversationActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".conversations.ConversationsListActivity" />
+
             <intent-filter>
                 <action android:name="android.intent.action.RUN" />
             </intent-filter>
@@ -47,10 +52,12 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".conversations.ConversationsListActivity" />
         </activity>
-        <activity android:name=".users.contacts.ContactsListActivity"
-            android:theme="@style/AppTheme.CustomActionBar"/>
-        <activity android:name=".users.profile.UserProfileActivity"
-            android:theme="@style/AppTheme.NoActionBar"/>
+        <activity
+            android:name=".users.contacts.ContactsListActivity"
+            android:theme="@style/AppTheme.CustomActionBar" />
+        <activity
+            android:name=".users.profile.UserProfileActivity"
+            android:theme="@style/AppTheme.NoActionBar" />
         <activity android:name=".users.profile.EditProfileItemActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"

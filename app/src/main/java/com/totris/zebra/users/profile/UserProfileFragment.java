@@ -65,22 +65,17 @@ public class UserProfileFragment extends Fragment {
                         .commit();
             }
 
-            User.getById(userId).done(new DoneCallback() {
-                @Override
-                public void onDone(Object result) {
-                    if (result != null) {
-                        User user = (User)result;
-                        username = user.getUsername();
-                        mail = user.getMail();
-                        refreshHeader();
-                    }
-                }
-            });
+            User user = User.getByUid(userId);
+            if (user != null) {
+                username = user.getUsername();
+                mail = user.getMail();
+            }
         } else {
             username = savedInstanceState.getString("username");
             mail = savedInstanceState.getString("mail");
-            refreshHeader();
         }
+
+        refreshHeader();
 
         return view;
     }

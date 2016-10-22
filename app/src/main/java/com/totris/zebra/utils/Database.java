@@ -167,6 +167,8 @@ public class Database {
     }
 
     private void stopUserListener() {
+        if (userListener == null) return;
+
         getReference("users").removeEventListener(userListener);
     }
 
@@ -236,6 +238,8 @@ public class Database {
     }
 
     private void stopGroupListener() {
+        if (groupListener == null) return;
+
         getReference("groups").removeEventListener(groupListener);
     }
 

@@ -101,24 +101,19 @@ public class UserProfileActivity extends DrawerMenuActivity implements EditProfi
 
     @Override
     public void onContactSendMessageClick() {
-        User.getById(userId).done(new DoneCallback() {
-            @Override
-            public void onDone(Object result) {
-                User user = (User) result;
+        User user = User.getByUid(userId);
 
-                ArrayList<User> users = new ArrayList<>();
-                users.add(user);
+        ArrayList<User> users = new ArrayList<>();
+        users.add(user);
 
-                Group group = Group.getCommonGroup(users);
+        Group group = Group.getCommonGroup(users);
 
-                users.add(User.getCurrent());
-                GroupUser conversation = new GroupUser(users, group);
+        users.add(User.getCurrent());
+        GroupUser conversation = new GroupUser(users, group);
 
-                Intent intent = new Intent(UserProfileActivity.this, ConversationActivity.class);
-                intent.putExtra("group", group);
-                intent.putExtra("title", conversation.getTitle());
-                startActivity(intent);
-            }
-        });
+        Intent intent = new Intent(UserProfileActivity.this, ConversationActivity.class);
+        intent.putExtra("group", group);
+        intent.putExtra("title", conversation.getTitle());
+        startActivity(intent);
     }
 }

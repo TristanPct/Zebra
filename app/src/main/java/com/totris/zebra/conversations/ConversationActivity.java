@@ -10,15 +10,12 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.provider.MediaStore;
-import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.ActionBar;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.Manifest;
-import android.view.MotionEvent;
 import android.view.View;
 import android.widget.ToggleButton;
 
@@ -30,6 +27,7 @@ import com.google.android.gms.vision.Tracker;
 import com.google.android.gms.vision.face.Face;
 import com.google.android.gms.vision.face.FaceDetector;
 import com.google.android.gms.vision.face.Landmark;
+import com.totris.zebra.base.ZebraActivity;
 import com.totris.zebra.groups.Group;
 import com.totris.zebra.messages.Message;
 import com.totris.zebra.messages.MessageType;
@@ -44,7 +42,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-public class ConversationActivity extends AppCompatActivity implements ConversationFragment.ConversationListener {
+public class ConversationActivity extends ZebraActivity implements ConversationFragment.ConversationListener {
     private static final String TAG = "ConversationActivity";
 
     private static final int RESULT_LOAD_IMAGE_FROM_GALLERY = 1;

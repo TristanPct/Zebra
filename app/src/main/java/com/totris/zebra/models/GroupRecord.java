@@ -142,7 +142,28 @@ public class GroupRecord extends SugarRecord {
         return messages;
     }
 
-    public <T> void setMessages(List<T> messages) {
+//    public void setMessages(List<EncryptedMessage> encryptedMessages, String passphrase) {
+//        this.messages.clear();
+//
+//        if (messages == null) {
+//            messagesJson = "";
+//            return;
+//        }
+//
+//        if (messages.size() != 0) {
+//            for (EncryptedMessage em : encryptedMessages) {
+//                this.messages.add(em.decrypt(passphrase));
+//            }
+//        }
+//
+//        try {
+//            messagesJson = mapper.writeValueAsString(this.messages);
+//        } catch (JsonProcessingException e) {
+//            messagesJson = "";
+//        }
+//    }
+
+    public void setMessages(List<Message> messages) {
         this.messages.clear();
 
         if (messages == null) {
@@ -150,16 +171,7 @@ public class GroupRecord extends SugarRecord {
             return;
         }
 
-        if (messages.size() != 0) {
-            if (messages.get(0) instanceof Message) {
-                this.messages = (List<Message>) messages;
-            } else if (messages.get(0) instanceof EncryptedMessage) {
-                List<EncryptedMessage> encryptedMessages = (List<EncryptedMessage>) messages;
-                for (EncryptedMessage em : encryptedMessages) {
-                    this.messages.add(em.decrypt("TEMP PASSPHRASE")); // TODO: use a real passphrase
-                }
-            }
-        }
+        this.messages = messages;
 
         try {
             messagesJson = mapper.writeValueAsString(this.messages);
