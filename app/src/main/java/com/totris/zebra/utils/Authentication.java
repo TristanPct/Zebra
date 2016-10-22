@@ -43,6 +43,7 @@ public class Authentication {
 
                         flag = false;
                         Log.d(TAG, "onAuthStateChanged:signed_in:" + user.getEmail() + ":" + user.getDisplayName());
+                        Database.getInstance().initListeners(true);
                         listener.onUserSignedIn(user);
                     } else {
                         if(flag) return;
@@ -50,6 +51,7 @@ public class Authentication {
                         flag = true;
                         Log.d(TAG, "onAuthStateChanged:signed_out");
                         listener.onUserSignedOut();
+                        Database.getInstance().stopListeners();
                     }
                 } else {
                     Log.d(TAG, "onAuthStateChanged:no_listener");
