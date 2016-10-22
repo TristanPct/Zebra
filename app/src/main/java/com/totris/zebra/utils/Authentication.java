@@ -91,7 +91,7 @@ public class Authentication {
                             return;
                         }
 
-                        getCurrentUser().updatePublicKey(context).commit();
+                        //getCurrentUser().updatePublicKey(context).commit();
                     }
                 });
     }

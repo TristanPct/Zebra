@@ -34,16 +34,8 @@ public class RsaCrypto {
         return keyPair.getPublic();
     }
 
-    public static String encrypt(String data) {
-        KeyPair keyPair = getKeyPair();
-
-        //////////////////////
-        // On sender side
-        /////////////////////
-
-        // Retrieve public key of recipient
-        // In this example with use our own public key
-        PublicKey publicKey = keyPair.getPublic();
+    public static String encrypt(String data, PublicKey key) {
+        PublicKey publicKey = key;
 
         // Encrypt!
         String encrypted = null;

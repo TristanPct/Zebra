@@ -1,6 +1,7 @@
 package com.totris.zebra.groups;
 
 
+import android.content.Context;
 import android.util.Log;
 
 import com.google.firebase.database.ChildEventListener;
@@ -15,12 +16,20 @@ import com.totris.zebra.users.User;
 import com.totris.zebra.utils.Database;
 import com.totris.zebra.utils.EventBus;
 import com.totris.zebra.utils.OnlineStorage;
+import com.totris.zebra.utils.RsaCrypto;
+
+import org.jdeferred.Promise;
 
 import java.io.Serializable;
+import java.security.NoSuchAlgorithmException;
+import java.security.PublicKey;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+
+import javax.crypto.KeyGenerator;
+import javax.crypto.SecretKey;
 
 public class Group implements Serializable {
     private final static String TAG = "Group";
@@ -29,10 +38,12 @@ public class Group implements Serializable {
 
     private static DatabaseReference dbRef = Database.getInstance().getReference("groups");
 
-    private String passphrase = "TEMP PASSPHRASE"; // TODO: use a real passphrase
+    private Context context;
+    private String passphrase;
 
     private String uid;
     private Date createdAt;
+    private List<User> users = new ArrayList<>();
     private List<String> usersIds = new ArrayList<>();
     private List<Message> messages = new ArrayList<>();
     private List<EncryptedMessage> encryptedMessages = new ArrayList<>();
@@ -40,10 +51,22 @@ public class Group implements Serializable {
 
     public Group() {
         createdAt = new Date();
+
+        KeyGenerator keyGen = null;
+        try {
+            keyGen = KeyGenerator.getInstance("AES");
+            keyGen.init(256);
+            passphrase = keyGen.generateKey().toString();
+            Log.d(TAG, "Group passphrase: " + passphrase);
+        } catch (NoSuchAlgorithmException e) {
+            e.printStackTrace();
+        }
     }
 
     public Group(List<User> users) {
         this();
+        this.users = users;
+
         for (User u : users) {
             usersIds.add(u.getUid());
         }
@@ -52,6 +75,15 @@ public class Group implements Serializable {
     public Group(String uid) {
         this();
         this.uid = uid;
+    }
+
+    @Exclude
+    public String getEncryptedPassphrase(User user) { // TODO: only works for two users conversation
+        return RsaCrypto.encrypt(passphrase, user.getPublicKey());
+    }
+
+    public void setPassphrase(String passphrase) {
+        this.passphrase = RsaCrypto.decrypt(context, passphrase);
     }
 
     public String getUid() {
@@ -179,7 +211,14 @@ public class Group implements Serializable {
         Log.d(TAG, "persist: ");
 
         if (isDefined()) {
-            dbRef.child(uid).setValue(this);
+            DatabaseReference tmpRef = dbRef.child(uid);
+
+            tmpRef.setValue(this);
+
+            for (User u: users) {
+                tmpRef.child("encryptedPassphrase_" + u.getUid());
+            }
+
             Log.d(TAG, "persisted  exisitng: " + uid);
         } else {
             DatabaseReference groupRef = dbRef.push();

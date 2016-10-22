@@ -413,7 +413,12 @@ public class User {
         });
     }
 
-    public String getPublicKey() {
+    @Exclude
+    public PublicKey getPublicKey() {
+        return publicKey;
+    }
+
+    public String getBase64PublicKey() {
         try {
             return RsaEcb.getPublicKeyString(publicKey);
         } catch (IOException e) {
@@ -423,7 +428,7 @@ public class User {
         return null;
     }
 
-    public void setPublicKey(String publicKey) {
+    public void setBase64PublicKey(String publicKey) {
         try {
             this.publicKey = RsaEcb.getRSAPublicKeyFromString(publicKey);
         } catch (GeneralSecurityException | UnsupportedEncodingException e) {
