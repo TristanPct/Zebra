@@ -131,7 +131,9 @@ public class ConversationActivity extends ZebraActivity implements ConversationF
         super.onDestroy();
 
         if (mCameraSource != null) {
+            mCameraSource.stop();
             mCameraSource.release();
+            mCameraSource = null;
         }
     }
 

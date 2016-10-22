@@ -22,7 +22,6 @@ public class ZebraApplication extends SugarApp {
 
         //new SugarDb(this).getDB().close();
 
-        FirebaseApp.initializeApp(getApplicationContext());
         RsaCrypto.getInstance().setContext(getApplicationContext());
         Authentication.getInstance();
         Database.getInstance();

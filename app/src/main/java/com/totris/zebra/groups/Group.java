@@ -44,8 +44,7 @@ public class Group implements Serializable {
 
     private String uid;
     private Date createdAt;
-    @Exclude
-    private List<User> users = new ArrayList<>();
+    private Map<String, String> encryptedPassphrase = new HashMap<>();
     private List<String> usersIds = new ArrayList<>();
     private List<Message> messages = new ArrayList<>();
     @Exclude
@@ -71,7 +70,13 @@ public class Group implements Serializable {
 
     public Group(List<User> users) {
         this();
-        this.users = users;
+
+        for (User u: users) {
+            if(!u.getUid().equals(User.getCurrent().getUid())) { // TODO: see if we let the encryptedPassphrase in DB
+                Log.d(TAG, "getEncryptedPassphrase: " + u.getUid() + " -- " + getEncryptedPassphrase(u));
+                encryptedPassphrase.put(u.getUid() , getEncryptedPassphrase(u));
+            }
+        }
 
         for (User u : users) {
             usersIds.add(u.getUid());
@@ -84,15 +89,6 @@ public class Group implements Serializable {
     }
 
     public Map<String, String> getEncryptedPassphrase() {
-        Map<String, String> encryptedPassphrase = new HashMap<>();
-
-        for (User u: users) {
-            if(!u.getUid().equals(User.getCurrent().getUid())) { // TODO: see if we let the encryptedPassphrase in DB
-                Log.d(TAG, "getEncryptedPassphrase: " + u.getUid() + " -- " + getEncryptedPassphrase(u));
-                encryptedPassphrase.put(u.getUid() , getEncryptedPassphrase(u));
-            }
-        }
-
         return encryptedPassphrase;
     }
 

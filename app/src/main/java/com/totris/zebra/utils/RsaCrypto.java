@@ -112,13 +112,13 @@ public class RsaCrypto {
 
     @NonNull
     public PublicKey getPublicKey() {
-        String privateKeyString = context.getSharedPreferences("Crypto", Context.MODE_PRIVATE)
+        String publicKeyString = context.getSharedPreferences("Crypto", Context.MODE_PRIVATE)
                 .getString("public key", "");
 
-        Log.d(TAG, privateKeyString);
+        Log.d(TAG, publicKeyString);
         PublicKey publicKey = null;
         try {
-            publicKey = RsaEcb.getRSAPublicKeyFromString(privateKeyString);
+            publicKey = RsaEcb.getRSAPublicKeyFromString(publicKeyString);
         } catch (GeneralSecurityException | UnsupportedEncodingException e) {
             e.printStackTrace();
         }

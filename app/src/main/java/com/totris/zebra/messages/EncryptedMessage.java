@@ -5,7 +5,9 @@ import android.util.Log;
 
 import com.totris.zebra.utils.AesCrypto;
 
-public class EncryptedMessage extends AesCrypto.Data {
+import java.io.Serializable;
+
+public class EncryptedMessage extends AesCrypto.Data implements Serializable {
 
     private static final String TAG = "EncryptedMessage";
 
