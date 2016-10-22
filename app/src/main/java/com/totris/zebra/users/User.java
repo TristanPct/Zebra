@@ -45,7 +45,7 @@ public class User {
     private String username;
     private String mail;
     private String password;
-    private PublicKey publicKey;
+    private String publicKey;
 
     private List<GroupUser> groups = new ArrayList<>();
     private int instantiatedGroups = 0;
@@ -153,7 +153,7 @@ public class User {
         return this;
     }
 
-    public User updatePublicKey(PublicKey publicKey) {
+    public User updatePublicKey(String publicKey) {
         this.publicKey = publicKey;
         isPublicKeyUpdated = true;
         return this;
@@ -405,11 +405,11 @@ public class User {
         });
     }
 
-    public PublicKey getPublicKey() {
+    public String getPublicKey() {
         return publicKey;
     }
 
-    public void setPublicKey(PublicKey publicKey) {
+    public void setPublicKey(String publicKey) {
         this.publicKey = publicKey;
     }
 

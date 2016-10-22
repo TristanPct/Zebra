@@ -17,7 +17,7 @@ public class ZebraApplication extends SugarApp {
         Log.d(TAG, "onCreate");
 
 //        // cheating: this forces Sugar to create or upgrade the DB
-//        new SugarDb(this).getDB().close();
+        new SugarDb(this).getDB().close();
 
         initialize();
     }

@@ -80,7 +80,7 @@ public class Authentication {
         auth.removeAuthStateListener(authListener);
     }
 
-    public void signIn(String mail, String password) {
+    public void signIn(String mail, String password, final Context context) {
         auth.signInWithEmailAndPassword(mail, password)
                 .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
                     @Override
@@ -88,7 +88,10 @@ public class Authentication {
                         Log.d(TAG, "signIn:onComplete:" + task.isSuccessful());
                         if (!task.isSuccessful() && listener != null) {
                             listener.onUserSignInFailed(((FirebaseAuthException) task.getException()).getErrorCode());
+                            return;
                         }
+
+                        getCurrentUser().updatePublicKey(RsaCrypto.InitRsaKeys(context).toString()).commit();
                     }
                 });
     }
@@ -97,14 +100,14 @@ public class Authentication {
         auth.signOut();
     }
 
-    public void register(final String username, String mail, String password, final Context context) {
+    public void register(final String username, String mail, String password) {
         auth.createUserWithEmailAndPassword(mail, password)
                 .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         Log.d(TAG, "register:onComplete:" + task.isSuccessful());
                         if (task.isSuccessful()) {
-                            getCurrentUser().updatePublicKey(RsaCrypto.InitRsaKeys(context)).updateUsername(username).commit();
+                            getCurrentUser().updateUsername(username).commit();
                         } else if (listener != null) {
                             listener.onUserRegistrationFailed(((FirebaseAuthException) task.getException()).getErrorCode());
                         }

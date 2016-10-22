@@ -71,7 +71,7 @@ public class LoginActivity extends AppCompatActivity implements Authentication.A
 
     @Override
     public void onLogin(String mail, String password) {
-        auth.signIn(mail, password);
+        auth.signIn(mail, password, getApplicationContext());
     }
 
     @Override
@@ -86,7 +86,7 @@ public class LoginActivity extends AppCompatActivity implements Authentication.A
 
     @Override
     public void onRegister(String username, String mail, String password) {
-        auth.register(username, mail, password, getApplicationContext());
+        auth.register(username, mail, password);
     }
 
     @Override
