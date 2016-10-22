@@ -96,7 +96,7 @@ public class Message implements Serializable {
     }
 
     public static Message decrypt(String message, String passphrase, String salt) {
-        Log.d(TAG, "decrypt");
+        Log.d(TAG, "decrypt" + passphrase);
         return AesCrypto.decrypt(message, passphrase, salt, Message.class);
     }
 

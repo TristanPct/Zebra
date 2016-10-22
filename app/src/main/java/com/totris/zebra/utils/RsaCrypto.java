@@ -1,9 +1,5 @@
 package com.totris.zebra.utils;
 
-/**
- * Created by thomaslecoeur on 19/10/2016.
- */
-
 import android.content.Context;
 import android.support.annotation.NonNull;
 import android.util.Base64;
@@ -16,10 +12,23 @@ import java.security.KeyPair;
 import java.security.PrivateKey;
 import java.security.PublicKey;
 
+/**
+ * Created by thomaslecoeur on 22/10/2016.
+ */
 public class RsaCrypto {
-    private static final String TAG = "RsaCryptoTest";
+    private static final String TAG = "RsaCrypto";
+    private Context context;
 
-    public static PublicKey InitRsaKeys(Context context) {
+    private static RsaCrypto ourInstance = new RsaCrypto();
+
+    public static RsaCrypto getInstance() {
+        return ourInstance;
+    }
+
+    private RsaCrypto() {
+    }
+
+    public PublicKey InitRsaKeys() {
 
         //////////////////////
         // On both sides
@@ -29,12 +38,12 @@ public class RsaCrypto {
         KeyPair keyPair = getKeyPair();
 
         // Store keys in shared preferences
-        storeKeys(context, keyPair);
+        storeKeys(keyPair);
 
         return keyPair.getPublic();
     }
 
-    public static String encrypt(String data, PublicKey key) {
+    public String encrypt(String data, PublicKey key) {
         PublicKey publicKey = key;
 
         // Encrypt!
@@ -53,13 +62,13 @@ public class RsaCrypto {
         return encrypted;
     }
 
-    public static String decrypt(Context context, String encrypted) {
+    public String decrypt(String encrypted) {
         //////////////////////
         // On recipient side
         /////////////////////
 
         // Retrieve our private key
-        PrivateKey privateKey = getPrivateKey(context);
+        PrivateKey privateKey = getPrivateKey();
 
         // Decrypt!
         String decrypted = null;
@@ -83,7 +92,7 @@ public class RsaCrypto {
     }
 
     @NonNull
-    private static PrivateKey getPrivateKey(Context context) {
+    private PrivateKey getPrivateKey() {
         String privateKeyString = context.getSharedPreferences("Crypto", Context.MODE_PRIVATE)
                 .getString("private key", "");
 
@@ -101,13 +110,33 @@ public class RsaCrypto {
         return privateKey;
     }
 
-    private static void storeKeys(Context context, KeyPair keyPair) {
+    @NonNull
+    public PublicKey getPublicKey() {
+        String privateKeyString = context.getSharedPreferences("Crypto", Context.MODE_PRIVATE)
+                .getString("public key", "");
+
+        Log.d(TAG, privateKeyString);
+        PublicKey publicKey = null;
+        try {
+            publicKey = RsaEcb.getRSAPublicKeyFromString(privateKeyString);
+        } catch (GeneralSecurityException | UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
+
+        if (publicKey == null) throw new AssertionError();
+
+        Log.d(TAG, publicKey.toString());
+        return publicKey;
+    }
+
+    private void storeKeys(KeyPair keyPair) {
         // Do the same for public key
         try {
             Log.d(TAG, RsaEcb.getPrivateKeyString(keyPair.getPrivate()));
             context.getSharedPreferences("Crypto", Context.MODE_PRIVATE)
                     .edit()
                     .putString("private key", RsaEcb.getPrivateKeyString(keyPair.getPrivate()))
+                    .putString("public key", RsaEcb.getPublicKeyString(keyPair.getPublic()))
                     .apply();
         } catch (IOException e) {
             e.printStackTrace();
@@ -115,7 +144,7 @@ public class RsaCrypto {
     }
 
     @NonNull
-    private static KeyPair getKeyPair() {
+    private KeyPair getKeyPair() {
         KeyPair keyPair = null;
         try {
             keyPair = RsaEcb.generateKeys();
@@ -135,7 +164,11 @@ public class RsaCrypto {
         return keyPair;
     }
 
-    public static String getBase64PublicKey(PublicKey key) {
+    public String getBase64PublicKey(PublicKey key) {
         return Base64.encodeToString(key.toString().getBytes(), Base64.DEFAULT);
+    }
+
+    public void setContext(Context context) {
+        this.context = context;
     }
 }

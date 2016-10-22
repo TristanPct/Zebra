@@ -2,8 +2,11 @@ package com.totris.zebra.groups;
 
 
 import android.content.Context;
+import android.support.annotation.NonNull;
 import android.util.Log;
 
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.Exclude;
 import com.totris.zebra.messages.EncryptedMessage;
@@ -13,19 +16,20 @@ import com.totris.zebra.users.User;
 import com.totris.zebra.utils.Database;
 import com.totris.zebra.utils.OnlineStorage;
 import com.totris.zebra.utils.RsaCrypto;
+import com.totris.zebra.utils.RsaEcb;
 
-import org.jdeferred.Promise;
-
+import java.io.IOException;
 import java.io.Serializable;
+import java.math.BigInteger;
 import java.security.NoSuchAlgorithmException;
-import java.security.PublicKey;
+import java.security.SecureRandom;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import javax.crypto.KeyGenerator;
-import javax.crypto.SecretKey;
 
 public class Group implements Serializable {
     private final static String TAG = "Group";
@@ -34,11 +38,13 @@ public class Group implements Serializable {
 
     private static DatabaseReference dbRef = Database.getInstance().getReference("groups");
 
-    private Context context;
-    private String passphrase;
+    @Exclude
+    private transient Context context;
+    private String passphrase = null;
 
     private String uid;
     private Date createdAt;
+    @Exclude
     private List<User> users = new ArrayList<>();
     private List<String> usersIds = new ArrayList<>();
     private List<Message> messages = new ArrayList<>();
@@ -55,7 +61,8 @@ public class Group implements Serializable {
         try {
             keyGen = KeyGenerator.getInstance("AES");
             keyGen.init(256);
-            passphrase = keyGen.generateKey().toString();
+            passphrase = "ThisIsThePassphrase";
+//            passphrase = new BigInteger(130, new SecureRandom()).toString(32);
             Log.d(TAG, "Group passphrase: " + passphrase);
         } catch (NoSuchAlgorithmException e) {
             e.printStackTrace();
@@ -76,13 +83,45 @@ public class Group implements Serializable {
         this.uid = uid;
     }
 
-    @Exclude
-    public String getEncryptedPassphrase(User user) { // TODO: only works for two users conversation
-        return RsaCrypto.encrypt(passphrase, user.getPublicKey());
+    public Map<String, String> getEncryptedPassphrase() {
+        Map<String, String> encryptedPassphrase = new HashMap<>();
+
+        for (User u: users) {
+            if(!u.getUid().equals(User.getCurrent().getUid())) { // TODO: see if we let the encryptedPassphrase in DB
+                Log.d(TAG, "getEncryptedPassphrase: " + u.getUid() + " -- " + getEncryptedPassphrase(u));
+                encryptedPassphrase.put(u.getUid() , getEncryptedPassphrase(u));
+            }
+        }
+
+        return encryptedPassphrase;
     }
 
+    public void setEncryptedPassphrase(Map<String, String> passphrases) {
+        if(passphrase == null) {
+            setPassphrase(passphrases.get(User.getCurrent().getUid()));
+        }
+    }
+
+    @Exclude
+    public String getEncryptedPassphrase(User user) {
+        try {
+            Log.d(TAG, "getEncryptedPassphrase: publicKey of " + user.getUsername() + " - " + RsaEcb.getPublicKeyString(user.getPublicKey()));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        return RsaCrypto.getInstance().encrypt(passphrase, user.getPublicKey());
+    }
+
+    @Exclude
+    public String setEncryptedPassphrase(String data) {
+        return RsaCrypto.getInstance().decrypt(passphrase);
+    }
+
+    @Exclude
     public void setPassphrase(String passphrase) {
-        this.passphrase = RsaCrypto.decrypt(context, passphrase);
+        this.passphrase = RsaCrypto.getInstance().decrypt(passphrase);
+        Log.d(TAG, this.passphrase);
     }
 
     public String getUid() {
@@ -197,10 +236,12 @@ public class Group implements Serializable {
      * Cache list
      */
 
+    @Exclude
     public static List<Group> getAll() {
         return getAll(false);
     }
 
+    @Exclude
     public static List<Group> getAll(boolean refresh) {
         Log.d(TAG, "getAll: refresh: " + (refresh || groups.size() == 0));
 
@@ -253,6 +294,7 @@ public class Group implements Serializable {
         groups.remove(group);
     }
 
+    @Exclude
     public static Group getCommonGroup(List<User> users) {
         String commonGroupId = null;
 
@@ -276,6 +318,8 @@ public class Group implements Serializable {
 
             for (User u : users) {
                 u.registerGroup(group);
+                Log.d(TAG, "getCommonGroup of " + u.getUsername() + ": " + u.getGroups().toString());
+                Log.d(TAG, "getCommonGroup of " + u.getUsername() + ": " + u.getBase64PublicKey());
                 u.persist();
             }
         }
@@ -290,20 +334,32 @@ public class Group implements Serializable {
     public void persist() {
         Log.d(TAG, "persist: ");
 
+        DatabaseReference groupRef;
+
         if (isDefined()) {
-            DatabaseReference tmpRef = dbRef.child(uid);
-
-            tmpRef.setValue(this);
-
-            for (User u: users) {
-                tmpRef.child("encryptedPassphrase_" + u.getUid());
-            }
-
+            Log.d(TAG, "persist: isDefined");
+            groupRef = dbRef.child(uid);
+            groupRef.setValue(this);
             Log.d(TAG, "persisted  exisitng: " + uid);
         } else {
-            DatabaseReference groupRef = dbRef.push();
-            groupRef.setValue(this);
+            Log.d(TAG, "persist: isNotDefined");
+            groupRef = dbRef.push();
+            Log.d(TAG, "persist: isNotDefined afterPush");
+            groupRef.setValue(this).addOnCompleteListener(new OnCompleteListener<Void>() {
+                @Override
+                public void onComplete(@NonNull Task<Void> task) {
+                    Log.d(TAG, "PersistonComplete");
+                    if (task.isSuccessful()) {
+                        Log.d(TAG, "persist success");
+                    } else {
+                        Exception e = task.getException();
+                        Log.d(TAG, "persist failed, exception: " + e.getMessage());
+                    }
+                }
+            });
+            Log.d(TAG, "persist: isNotDefined afterSetValue");
             uid = groupRef.getKey();
+            Log.d(TAG, "persist: isNotDefined afterGetKey");
             Log.d(TAG, "persisted: " + uid);
         }
     }

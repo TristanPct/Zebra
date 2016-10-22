@@ -5,6 +5,7 @@ import android.util.Log;
 
 import com.orm.SugarApp;
 import com.orm.SugarDb;
+import com.totris.zebra.utils.RsaCrypto;
 import com.totris.zebra.utils.Authentication;
 import com.totris.zebra.utils.Database;
 
@@ -18,6 +19,9 @@ public class ZebraApplication extends SugarApp {
 
         Log.d(TAG, "onCreate");
 
+        //new SugarDb(this).getDB().close();
+
+        RsaCrypto.getInstance().setContext(getApplicationContext());
         Authentication.getInstance();
         Database.getInstance();
     }
