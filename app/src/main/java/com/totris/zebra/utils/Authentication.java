@@ -1,7 +1,6 @@
 package com.totris.zebra.utils;
 
 
-import android.app.Application;
 import android.content.Context;
 import android.support.annotation.NonNull;
 import android.util.Log;
@@ -14,48 +13,59 @@ import com.google.firebase.auth.EmailAuthProvider;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseAuthException;
 import com.google.firebase.auth.FirebaseUser;
+import com.squareup.otto.Subscribe;
+import com.totris.zebra.base.events.ApplicationEnterBackgroundEvent;
+import com.totris.zebra.base.events.ApplicationEnterForegroundEvent;
 import com.totris.zebra.users.User;
-
-import butterknife.OnClick;
+import com.totris.zebra.users.events.UserRegistrationFailedEvent;
+import com.totris.zebra.users.events.UserSignInEvent;
+import com.totris.zebra.users.events.UserSignInFailedEvent;
+import com.totris.zebra.users.events.UserSignOutEvent;
 
 public class Authentication {
     private static final String TAG = "Authentication";
 
     private static Authentication instance = new Authentication();
 
-    private AuthenticationListener listener;
-
     private FirebaseAuth auth;
     private FirebaseAuth.AuthStateListener authListener;
     private FirebaseUser user;
 
+    private boolean initialized = false;
     private boolean flag = true;
 
+
     private Authentication() {
+        Log.d(TAG, "initialize");
         auth = FirebaseAuth.getInstance();
+
+        EventBus.register(this);
+
         authListener = new FirebaseAuth.AuthStateListener() {
             @Override
             public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
-                if (listener != null) {
-                    user = firebaseAuth.getCurrentUser();
-                    if (user != null) {
-                        if(!flag) return;
+                user = firebaseAuth.getCurrentUser();
+                Log.d(TAG, "onAuthStateChanged: " + user);
 
-                        flag = false;
-                        Log.d(TAG, "onAuthStateChanged:signed_in:" + user.getEmail() + ":" + user.getDisplayName());
-                        Database.getInstance().initListeners(true);
-                        listener.onUserSignedIn(user);
-                    } else {
-                        if(flag) return;
+                if (user != null) {
+                    if (!flag) return;
 
-                        flag = true;
-                        Log.d(TAG, "onAuthStateChanged:signed_out");
-                        listener.onUserSignedOut();
-                        Database.getInstance().stopListeners();
-                    }
+                    flag = false;
+                    Log.d(TAG, "onAuthStateChanged:signed_in:" + user.getEmail() + ":" + user.getDisplayName());
+                    User.setCurrent(new User(user));
+                    Database.getInstance().initListeners(true);
+                    EventBus.post(new UserSignInEvent(User.getCurrent()));
                 } else {
-                    Log.d(TAG, "onAuthStateChanged:no_listener");
+                    if (flag && initialized) return;
+
+                    flag = true;
+                    Log.d(TAG, "onAuthStateChanged:signed_out");
+                    EventBus.post(new UserSignOutEvent());
+                    Database.getInstance().stopListeners();
+                    User.setCurrent(null);
                 }
+
+                initialized = true;
             }
         };
     }
@@ -65,18 +75,16 @@ public class Authentication {
     }
 
     public User getCurrentUser() {
-        return User.from(user);
-    }
-
-    public void setListener(AuthenticationListener listener) {
-        this.listener = listener;
+        return new User(user);
     }
 
     public void start() {
+        Log.d(TAG, "start");
         auth.addAuthStateListener(authListener);
     }
 
     public void stop() {
+        Log.d(TAG, "stop");
         auth.removeAuthStateListener(authListener);
     }
 
@@ -86,9 +94,9 @@ public class Authentication {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         Log.d(TAG, "signIn:onComplete:" + task.isSuccessful());
-                        if (!task.isSuccessful() && listener != null) {
-                            listener.onUserSignInFailed(((FirebaseAuthException) task.getException()).getErrorCode());
-                            return;
+
+                        if (!task.isSuccessful()) {
+                            EventBus.post(new UserSignInFailedEvent(((FirebaseAuthException) task.getException()).getErrorCode()));
                         }
 
                         //getCurrentUser().updatePublicKey(context).commit();
@@ -108,8 +116,8 @@ public class Authentication {
                         Log.d(TAG, "register:onComplete:" + task.isSuccessful());
                         if (task.isSuccessful()) {
                             getCurrentUser().updatePublicKey(context).updateUsername(username).commit();
-                        } else if (listener != null) {
-                            listener.onUserRegistrationFailed(((FirebaseAuthException) task.getException()).getErrorCode());
+                        } else {
+                            EventBus.post(new UserRegistrationFailedEvent(((FirebaseAuthException) task.getException()).getErrorCode()));
                         }
                     }
                 });
@@ -121,13 +129,13 @@ public class Authentication {
         user.reauthenticate(credential).addOnCompleteListener(listener);
     }
 
-    public interface AuthenticationListener {
-        void onUserSignedIn(FirebaseUser user);
+    @Subscribe
+    public void onApplicationEnterForegroundEvent(ApplicationEnterForegroundEvent event) {
+        start();
+    }
 
-        void onUserSignedOut();
-
-        void onUserSignInFailed(String message);
-
-        void onUserRegistrationFailed(String message);
+    @Subscribe
+    public void onApplicationEnterBackgroundEvent(ApplicationEnterBackgroundEvent event) {
+        stop();
     }
 }

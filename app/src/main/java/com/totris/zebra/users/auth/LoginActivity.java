@@ -2,18 +2,20 @@ package com.totris.zebra.users.auth;
 
 import android.content.Intent;
 import android.support.v4.app.Fragment;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 
-import com.google.firebase.auth.FirebaseUser;
+import com.squareup.otto.Subscribe;
+import com.totris.zebra.base.ZebraActivity;
 import com.totris.zebra.conversations.ConversationsListActivity;
 import com.totris.zebra.R;
 import com.totris.zebra.users.User;
+import com.totris.zebra.users.events.UserRegistrationFailedEvent;
+import com.totris.zebra.users.events.UserSignInFailedEvent;
 import com.totris.zebra.utils.Authentication;
-import com.totris.zebra.utils.RsaCrypto;
+import com.totris.zebra.utils.EventBus;
 import com.totris.zebra.utils.WithErrorView;
 
-public class LoginActivity extends AppCompatActivity implements Authentication.AuthenticationListener, LoginFragment.LoginListener, RegisterFragment.RegisterListener {
+public class LoginActivity extends ZebraActivity implements LoginFragment.LoginListener, RegisterFragment.RegisterListener {
     private static final String TAG = "LoginActivity";
 
     private Authentication auth;
@@ -26,7 +28,8 @@ public class LoginActivity extends AppCompatActivity implements Authentication.A
         setContentView(R.layout.activity_main);
 
         auth = Authentication.getInstance();
-        auth.setListener(this);
+
+        EventBus.register(this);
 
         currentFragment = new LoginFragment();
 
@@ -50,27 +53,44 @@ public class LoginActivity extends AppCompatActivity implements Authentication.A
         auth.stop();
     }
 
-    @Override
-    public void onUserSignedIn(FirebaseUser user) {
-        User.getCurrent().updatePublicKey(getApplicationContext()).commit();
+    @Subscribe
+    public void onUserSignInEvent(User user) {
+        user.updatePublicKey(getApplicationContext()).commit();
         Intent intent = new Intent(this, ConversationsListActivity.class);
         startActivity(intent);
     }
 
-    @Override
-    public void onUserSignedOut() {
-
+    @Subscribe
+    public void onUserSignInFailedEvent(UserSignInFailedEvent event) {
+        ((WithErrorView) currentFragment).setError(event.getMessage());
     }
 
-    @Override
-    public void onUserSignInFailed(String error) {
-        ((WithErrorView)currentFragment).setError(error);
+    @Subscribe
+    public void onUserRegistrationFailedEvent(UserRegistrationFailedEvent event) {
+        ((WithErrorView) currentFragment).setError(event.getMessage());
     }
 
-    @Override
-    public void onUserRegistrationFailed(String error) {
-        ((WithErrorView)currentFragment).setError(error);
-    }
+//    @Override
+//    public void onUserSignedIn(FirebaseUser user) {
+//        User.getCurrent().updatePublicKey(getApplicationContext()).commit();
+//        Intent intent = new Intent(this, ConversationsListActivity.class);
+//        startActivity(intent);
+//    }
+//
+//    @Override
+//    public void onUserSignedOut() {
+//
+//    }
+//
+//    @Override
+//    public void onUserSignInFailed(String error) {
+//        ((WithErrorView)currentFragment).setError(error);
+//    }
+//
+//    @Override
+//    public void onUserRegistrationFailed(String error) {
+//        ((WithErrorView)currentFragment).setError(error);
+//    }
 
     @Override
     public void onLogin(String mail, String password) {

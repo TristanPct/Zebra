@@ -5,6 +5,8 @@ import android.util.Log;
 
 import com.orm.SugarApp;
 import com.orm.SugarDb;
+import com.totris.zebra.utils.Authentication;
+import com.totris.zebra.utils.Database;
 
 public class ZebraApplication extends SugarApp {
 
@@ -16,13 +18,7 @@ public class ZebraApplication extends SugarApp {
 
         Log.d(TAG, "onCreate");
 
-//        // cheating: this forces Sugar to create or upgrade the DB
-        new SugarDb(this).getDB().close();
-
-        initialize();
-    }
-
-    protected void initialize() {
-
+        Authentication.getInstance();
+        Database.getInstance();
     }
 }

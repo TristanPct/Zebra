@@ -70,11 +70,7 @@ public class ContactsListFragment extends Fragment {
 
         contactsListRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
 
-        List<User> contacts = new ArrayList<>();
-
-        Promise contactsPromise = User.getList();
-
-        adapter = new ContactsAdapter(contacts);
+        adapter = new ContactsAdapter(User.getAll());
         adapter.setMode(mode);
 
         try {
@@ -83,22 +79,8 @@ public class ContactsListFragment extends Fragment {
             throw new ClassCastException(getActivity().toString() + " must implement ContactItemListener");
         }
 
-        contactsPromise.done(new DoneCallback() {
-            @Override
-            public void onDone(Object result) {
-                adapter.clear();
-
-                for (User user : (List<User>) result) {
-                    adapter.addContact(user);
-                }
-
-                adapter.notifyDataSetChanged();
-            }
-        });
-
         contactsListRecyclerView.setAdapter(adapter);
         // FastScroller
-
         fastScroller.setRecyclerView(contactsListRecyclerView);
 
         return view;

@@ -1,19 +1,15 @@
 package com.totris.zebra.users.profile;
 
-import android.animation.Animator;
-import android.animation.AnimatorListenerAdapter;
-import android.content.Context;
 import android.content.Intent;
 import android.support.v4.app.Fragment;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.inputmethod.InputMethodManager;
 
+import com.totris.zebra.base.ZebraActivity;
 import com.totris.zebra.users.User;
 import com.totris.zebra.R;
 import com.totris.zebra.users.auth.ReauthenticateDialogFragment;
@@ -24,7 +20,7 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-public class EditProfileItemActivity extends AppCompatActivity implements ReauthenticateDialogFragment.ReauthenticateDialogListener {
+public class EditProfileItemActivity extends ZebraActivity implements ReauthenticateDialogFragment.ReauthenticateDialogListener {
 
     private static final String TAG = "EditProfileItemActivity";
 

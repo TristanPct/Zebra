@@ -3,22 +3,21 @@ package com.totris.zebra.users;
 
 import android.content.Context;
 import android.support.annotation.NonNull;
-import android.util.Base64;
+import android.support.annotation.Nullable;
 import android.util.Log;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.UserProfileChangeRequest;
-import com.google.firebase.database.ChildEventListener;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.Exclude;
-import com.google.firebase.database.ValueEventListener;
+import com.squareup.otto.Subscribe;
 import com.totris.zebra.groups.Group;
 import com.totris.zebra.groups.GroupUser;
 import com.totris.zebra.models.UserRecord;
+import com.totris.zebra.users.events.UserSignInEvent;
+import com.totris.zebra.users.events.UserSignOutEvent;
 import com.totris.zebra.utils.Authentication;
 import com.totris.zebra.utils.Database;
 import com.totris.zebra.utils.EventBus;
@@ -38,14 +37,12 @@ import java.util.List;
 
 /**
  * {@link User} model.
- * Built over {@link FirebaseUser}.
- * To instantiate a new {@link User} use {@link User#from} with the original {@link FirebaseUser} object.
  * To update user data use update methods (can be chained) and then use {@link User#commit} to push modifications to the database.
  */
 public class User {
     private final static String TAG = "User";
 
-    private static User currentUser = Authentication.getInstance().getCurrentUser();
+    private static User currentUser /*= Authentication.getInstance().getCurrentUser()*/;
     private static DatabaseReference dbRef = Database.getInstance().getReference("users");
 
     private FirebaseUser firebaseUser;
@@ -56,8 +53,6 @@ public class User {
     private PublicKey publicKey;
 
     private List<GroupUser> groups = new ArrayList<>();
-    private int instantiatedGroups = 0;
-    private boolean requestGroupUsersInstantiation = false;
 
     private boolean isUsernameUpdated = false;
     private boolean isMailUpdated = false;
@@ -78,43 +73,29 @@ public class User {
         this.oldUsername = username;
     }
 
-    public static User from(FirebaseUser firebaseUser) {
-        User user = new User();
-
-        user.firebaseUser = firebaseUser;
-
-//        user.initialize();
-
-        user.oldUsername = user.username;
-        user.oldMail = user.mail;
-
-        return user;
+    public User(FirebaseUser firebaseUser) {
+        this.firebaseUser = firebaseUser;
+        this.oldUsername = getUsername();
+        this.oldMail = getMail();
     }
 
-    public static Promise getById(String uid) {
-        final DeferredObject deferred = new DeferredObject();
-
-        if (uid == null || uid.trim().equals("") || getCurrent().getUid().equals(uid)) {
-            deferred.resolve(getCurrent());
-        } else {
-            dbRef.child(uid).addListenerForSingleValueEvent(new ValueEventListener() {
-                @Override
-                public void onDataChange(DataSnapshot dataSnapshot) {
-                    deferred.resolve(dataSnapshot.getValue(User.class));
-                }
-
-                @Override
-                public void onCancelled(DatabaseError databaseError) {
-                    deferred.resolve(null);
-                }
-            });
+    @Nullable
+    public static User getByUid(String uid) {
+        for (User user : getAll()) {
+            if (user.getUid().equals(uid)) {
+                return user;
+            }
         }
 
-        return deferred.promise();
+        return null;
     }
 
     public static User getCurrent() {
         return currentUser;
+    }
+
+    public static void setCurrent(User user) {
+        currentUser = user;
     }
 
     public String getUid() {
@@ -205,10 +186,6 @@ public class User {
         return groups;
     }
 
-    public void requestGroupUserInstantiation(boolean requested) {
-        requestGroupUsersInstantiation = requested;
-    }
-
     /**
      * Cache list
      */
@@ -267,53 +244,6 @@ public class User {
 
     public static void remove(User user) {
         users.remove(user);
-    }
-
-    @Exclude
-    public Promise getInstantiatedGroupUsers() {
-        Log.d(TAG, "getInstantiatedGroupUsers: " + instantiatedGroups + " / " + groups.size());
-
-        final DeferredObject deferred = new DeferredObject();
-
-        if (instantiatedGroups == groups.size()) {
-            deferred.resolve(groups);
-            return deferred.promise();
-        }
-
-        instantiatedGroups = 0;
-
-        requestGroupUserInstantiation(true);
-
-        for (final GroupUser groupUser : groups) {
-            Log.d(TAG, "getInstantiatedGroupUsers: group: " + groupUser.getGroupId());
-            getInstantiatedGroupUser(groupUser).done(new DoneCallback() {
-                @Override
-                public void onDone(Object result) {
-                    instantiatedGroups++;
-                    if (instantiatedGroups == groups.size()) {
-                        deferred.resolve(groups);
-                    }
-                }
-            });
-        }
-
-        return deferred.promise();
-    }
-
-    @Exclude
-    private Promise getInstantiatedGroupUser(final GroupUser groupUser) {
-        final DeferredObject deferred = new DeferredObject();
-
-        Log.d(TAG, "getInstantiatedGroupUsers: group: " + groupUser.getGroupId());
-        groupUser.getInstantiatedGroupUsers().done(new DoneCallback() {
-            @Override
-            public void onDone(Object result) {
-                Log.d(TAG, "getInstantiatedGroupUsers: done" + groupUser.getGroupId());
-                deferred.resolve(groups);
-            }
-        });
-
-        return deferred.promise();
     }
 
     public void registerGroup(GroupUser group) {
@@ -427,32 +357,6 @@ public class User {
         dbRef.child(getUid()).setValue(this);
     }
 
-    public static Promise getList() {
-        final DeferredObject deferred = new DeferredObject();
-
-        dbRef.addListenerForSingleValueEvent(new ValueEventListener() {
-            List<User> list = new ArrayList<>();
-
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                for (DataSnapshot postSnapshot : dataSnapshot.getChildren()) {
-                    User user = postSnapshot.getValue(User.class);
-
-                    list.add(user);
-                }
-
-                deferred.resolve(list);
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-                deferred.resolve(list);
-            }
-        });
-
-        return deferred.promise();
-    }
-
     public Promise fetchGroupsIds() {
         return Database.getInstance().get(dbRef.child(getUid()).child("groupsIds"), String.class);
     }
@@ -470,42 +374,6 @@ public class User {
 
         return deferred.promise();
     }
-
-//    public void initialize() {
-//        if (dbRef == null) {
-//            dbRef = Database.getInstance().getReference("users");
-//        }
-//
-//        Log.d(TAG, "initialize: " + getUid());
-//
-//        dbRef.child(getUid()).child("groups").addChildEventListener(new ChildEventListener() {
-//            @Override
-//            public void onChildAdded(DataSnapshot dataSnapshot, String s) {
-//                Log.d(TAG, "onChildAdded: group added : " + dataSnapshot.getValue(GroupUser.class));
-//                registerGroup(dataSnapshot.getValue(GroupUser.class));
-//            }
-//
-//            @Override
-//            public void onChildChanged(DataSnapshot dataSnapshot, String s) {
-//
-//            }
-//
-//            @Override
-//            public void onChildRemoved(DataSnapshot dataSnapshot) {
-//
-//            }
-//
-//            @Override
-//            public void onChildMoved(DataSnapshot dataSnapshot, String s) {
-//
-//            }
-//
-//            @Override
-//            public void onCancelled(DatabaseError databaseError) {
-//
-//            }
-//        });
-//    }
 
     public interface OnCommitListener {
         void onComplete(boolean success, List<String> errors);
