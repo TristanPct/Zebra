@@ -4,17 +4,13 @@ package com.totris.zebra.groups;
 import android.content.Context;
 import android.util.Log;
 
-import com.google.firebase.database.ChildEventListener;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.Exclude;
-import com.totris.zebra.messages.MessageChildAddedEvent;
 import com.totris.zebra.messages.EncryptedMessage;
 import com.totris.zebra.messages.Message;
+import com.totris.zebra.models.GroupRecord;
 import com.totris.zebra.users.User;
 import com.totris.zebra.utils.Database;
-import com.totris.zebra.utils.EventBus;
 import com.totris.zebra.utils.OnlineStorage;
 import com.totris.zebra.utils.RsaCrypto;
 
@@ -46,8 +42,11 @@ public class Group implements Serializable {
     private List<User> users = new ArrayList<>();
     private List<String> usersIds = new ArrayList<>();
     private List<Message> messages = new ArrayList<>();
+    @Exclude
     private List<EncryptedMessage> encryptedMessages = new ArrayList<>();
     private boolean messagesLoaded = false;
+
+    private static List<Group> groups = new ArrayList<>();
 
     public Group() {
         createdAt = new Date();
@@ -119,6 +118,10 @@ public class Group implements Serializable {
         return messages;
     }
 
+    public List<EncryptedMessage> getEncryptedMessages() {
+        return encryptedMessages;
+    }
+
     public void setMessages(Map<String, EncryptedMessage> messages) {
         setMessages(new ArrayList<>(messages.values()));
     }
@@ -127,6 +130,7 @@ public class Group implements Serializable {
     public <T> void setMessages(List<T> messages) {
         messagesLoaded = false;
         this.messages.clear();
+        encryptedMessages.clear();
 
         if (messages == null) {
             Log.d(TAG, "setMessages: null");
@@ -139,7 +143,7 @@ public class Group implements Serializable {
                 this.messages = (List<Message>) messages;
             } else if (messages.get(0) instanceof EncryptedMessage) {
                 Log.d(TAG, "setMessages: encrypted messages");
-                List<EncryptedMessage> encryptedMessages = (List<EncryptedMessage>) messages;
+                encryptedMessages = (List<EncryptedMessage>) messages;
                 for (EncryptedMessage em : encryptedMessages) {
                     this.messages.add(decryptMessage(em));
                 }
@@ -165,12 +169,87 @@ public class Group implements Serializable {
         messages.add(message);
     }
 
-    public EncryptedMessage encryptedMessage(Message message) {
+    public EncryptedMessage encryptMessage(Message message) {
         return message.encrypt(passphrase);
     }
 
     public Message decryptMessage(EncryptedMessage encryptedMessage) {
         return encryptedMessage.decrypt(passphrase);
+    }
+
+    public String getTitle() {
+        String title = "";
+
+        for (User u : User.getAll()) {
+            if (getUsersIds().contains(u.getUid()) && !User.getCurrent().getUid().equals(u.getUid())) {
+                title += u.getUsername() + ", ";
+            }
+        }
+        if (title.length() != 0) {
+            title = title.substring(0, title.length() - 2);
+        }
+
+        return title;
+    }
+
+    /**
+     * Cache list
+     */
+
+    public static List<Group> getAll() {
+        return getAll(false);
+    }
+
+    public static List<Group> getAll(boolean refresh) {
+        Log.d(TAG, "getAll: refresh: " + (refresh || groups.size() == 0));
+
+        if (refresh || groups.size() == 0) {
+            groups.clear();
+            List<GroupRecord> groupRecords = GroupRecord.findAllByUserId(User.getCurrent().getUid());
+
+            Group group;
+            for (GroupRecord record : groupRecords) {
+                group = new Group();
+                group.setUid(record.getUid());
+                group.setCreatedAt(record.getCreatedAt());
+                group.setUsersIds(record.getUsersIds());
+                group.setMessages(record.getMessages());
+                groups.add(group);
+            }
+        }
+
+        return groups;
+    }
+
+    public static void add(Group group) {
+        boolean added = false;
+
+        for (Group g : groups) {
+            if (g.getUid().equals(group.getUid())) {
+                groups.remove(g);
+                groups.add(group);
+                added = true;
+                break;
+            }
+        }
+
+        if (!added) {
+            groups.add(group);
+        }
+    }
+
+    public static void update(Group group) {
+        for (Group g : groups) {
+            if (g.getUid().equals(group.getUid())) {
+                groups.remove(g);
+                groups.add(group);
+                break;
+            }
+        }
+    }
+
+    public static void remove(Group group) {
+        groups.remove(group);
     }
 
     public static Group getCommonGroup(List<User> users) {
@@ -231,7 +310,7 @@ public class Group implements Serializable {
     public DatabaseReference sendMessage(Message message) {
         DatabaseReference tmpRef = dbRef.child(uid).child("messages").push();
 
-        tmpRef.setValue(encryptedMessage(message));
+        tmpRef.setValue(encryptMessage(message));
 
         return tmpRef;
     }
@@ -241,47 +320,47 @@ public class Group implements Serializable {
 
         OnlineStorage.uploadImage(imageBitmap, message.getContent());
 
-        tmpRef.setValue(encryptedMessage(message));
+        tmpRef.setValue(encryptMessage(message));
 
         return tmpRef;
     }
 
-    public void initialize() {
-        addChildEventListener();
-    }
+//    public void initialize() {
+//        addChildEventListener();
+//    }
 
-    public void addChildEventListener() {
-        dbRef.child(uid).child("messages").addChildEventListener(new ChildEventListener() {
-            @Override
-            public void onChildAdded(DataSnapshot dataSnapshot, String s) {
-                EncryptedMessage encryptedMessage = dataSnapshot.getValue(EncryptedMessage.class);
-                Message message = decryptMessage(encryptedMessage);
-
-                EventBus.post(new MessageChildAddedEvent(Group.this, message));
-            }
-
-            @Override
-            public void onChildChanged(DataSnapshot dataSnapshot, String s) {
-                EncryptedMessage encryptedMessage = dataSnapshot.getValue(EncryptedMessage.class);
-                Message message = decryptMessage(encryptedMessage);
-
-                Log.d(TAG, "onChildChanged: " + message.getSentAt());
-            }
-
-            @Override
-            public void onChildRemoved(DataSnapshot dataSnapshot) {
-
-            }
-
-            @Override
-            public void onChildMoved(DataSnapshot dataSnapshot, String s) {
-
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-
-            }
-        });
-    }
+//    public void addChildEventListener() {
+//        dbRef.child(uid).child("messages").addChildEventListener(new ChildEventListener() {
+//            @Override
+//            public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+//                EncryptedMessage encryptMessage = dataSnapshot.getValue(EncryptedMessage.class);
+//                Message message = decryptMessage(encryptMessage);
+//
+//                EventBus.post(new MessageChildAddedEvent(Group.this, message));
+//            }
+//
+//            @Override
+//            public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+//                EncryptedMessage encryptMessage = dataSnapshot.getValue(EncryptedMessage.class);
+//                Message message = decryptMessage(encryptMessage);
+//
+//                Log.d(TAG, "onChildChanged: " + message.getSentAt());
+//            }
+//
+//            @Override
+//            public void onChildRemoved(DataSnapshot dataSnapshot) {
+//
+//            }
+//
+//            @Override
+//            public void onChildMoved(DataSnapshot dataSnapshot, String s) {
+//
+//            }
+//
+//            @Override
+//            public void onCancelled(DatabaseError databaseError) {
+//
+//            }
+//        });
+//    }
 }

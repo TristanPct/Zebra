@@ -11,6 +11,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 
 import com.totris.zebra.DrawerMenuActivity;
+import com.totris.zebra.groups.Group;
 import com.totris.zebra.groups.GroupUser;
 import com.totris.zebra.R;
 
@@ -63,12 +64,12 @@ public class ConversationsListActivity extends DrawerMenuActivity implements Con
     }
 
     @Override
-    public void onConversationItemClick(GroupUser conversation) {
-        Log.d(TAG, "onConversationItemClick: " + conversation.getTitle());
+    public void onConversationItemClick(Group group) {
+        Log.d(TAG, "onConversationItemClick: " + group.getTitle());
 
         Intent intent = new Intent(this, ConversationActivity.class);
-        intent.putExtra("group", conversation.getGroup());
-        intent.putExtra("title", conversation.getTitle());
+        intent.putExtra("group", group);
+        intent.putExtra("title", group.getTitle());
         startActivity(intent);
     }
 }

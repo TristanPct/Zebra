@@ -9,6 +9,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.orm.SugarRecord;
 import com.orm.dsl.Ignore;
 import com.orm.dsl.Unique;
+import com.orm.query.Condition;
+import com.orm.query.Select;
 import com.totris.zebra.groups.Group;
 import com.totris.zebra.messages.EncryptedMessage;
 import com.totris.zebra.messages.Message;
@@ -29,9 +31,11 @@ public class GroupRecord extends SugarRecord {
     private String messagesJson;
 
     @Ignore
+    private List<String> usersIds = new ArrayList<>();
+    @Ignore
     private List<UserRecord> users = new ArrayList<>();
     @Ignore
-    private List<EncryptedMessage> messages = new ArrayList<>();
+    private List<Message> messages = new ArrayList<>();
 
     public GroupRecord() {
 
@@ -67,16 +71,15 @@ public class GroupRecord extends SugarRecord {
     public void setUsersIdsJson(String usersIdsJson) {
         this.usersIdsJson = usersIdsJson;
 
-        List<String> ids;
         try {
-            ids = mapper.readValue(usersIdsJson, new TypeReference<List<String>>() {
+            usersIds = mapper.readValue(usersIdsJson, new TypeReference<List<String>>() {
             });
         } catch (IOException e) {
-            ids = new ArrayList<>();
+            usersIds = new ArrayList<>();
         }
 
         UserRecord user;
-        for (String id : ids) {
+        for (String id : usersIds) {
             user = UserRecord.findByUid(id);
             if (user != null) {
                 users.add(user);
@@ -84,11 +87,13 @@ public class GroupRecord extends SugarRecord {
         }
     }
 
-    public List<UserRecord> getUsers() {
-        return users;
+    public List<String> getUsersIds() {
+        return usersIds;
     }
 
     public void setUsersIds(List<String> usersIds) {
+        this.usersIds = usersIds;
+
         users.clear();
 
         for (String userId : usersIds) {
@@ -102,10 +107,14 @@ public class GroupRecord extends SugarRecord {
         }
     }
 
+    public List<UserRecord> getUsers() {
+        return users;
+    }
+
     public void setUsers(List<UserRecord> users) {
         this.users = users;
 
-        List<String> usersIds = new ArrayList<>();
+        usersIds.clear();
 
         for (UserRecord user : users) {
             usersIds.add(user.getUid());
@@ -129,7 +138,7 @@ public class GroupRecord extends SugarRecord {
         }
     }
 
-    public List<EncryptedMessage> getMessages() {
+    public List<Message> getMessages() {
         return messages;
     }
 
@@ -142,12 +151,12 @@ public class GroupRecord extends SugarRecord {
         }
 
         if (messages.size() != 0) {
-            if (messages.get(0) instanceof EncryptedMessage) {
-                this.messages = (List<EncryptedMessage>) messages;
-            } else if (messages.get(0) instanceof Message) {
-                List<Message> decryptedMessages = (List<Message>) messages;
-                for (Message dm : decryptedMessages) {
-                    this.messages.add(dm.encrypt("TEMP PASSPHRASE")); // TODO: use a real passphrase
+            if (messages.get(0) instanceof Message) {
+                this.messages = (List<Message>) messages;
+            } else if (messages.get(0) instanceof EncryptedMessage) {
+                List<EncryptedMessage> encryptedMessages = (List<EncryptedMessage>) messages;
+                for (EncryptedMessage em : encryptedMessages) {
+                    this.messages.add(em.decrypt("TEMP PASSPHRASE")); // TODO: use a real passphrase
                 }
             }
         }
@@ -162,6 +171,10 @@ public class GroupRecord extends SugarRecord {
     public static GroupRecord findByUid(String uid) {
         List<GroupRecord> results = GroupRecord.find(GroupRecord.class, "uid = ?", uid);
         return results.size() != 0 ? results.get(0) : null;
+    }
+
+    public static List<GroupRecord> findAllByUserId(String userId) {
+        return Select.from(GroupRecord.class).where(Condition.prop("users_ids_json").like("%\"" + userId + "\"%")).list();
     }
 
     @Override

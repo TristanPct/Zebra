@@ -7,6 +7,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import com.totris.zebra.groups.Group;
 import com.totris.zebra.groups.GroupUser;
 import com.totris.zebra.messages.Message;
 import com.totris.zebra.R;
@@ -20,12 +21,17 @@ import butterknife.ButterKnife;
 
 public class ConversationsAdapter extends RecyclerView.Adapter<ConversationsAdapter.ViewHolder> {
     private static List<GroupUser> conversations = new ArrayList<>();
+    private static List<Group> groups = new ArrayList<>();
     private static ConversationItemListener listener;
 
     private static DateFormat lastDateFormat = DateFormat.getDateTimeInstance(DateFormat.SHORT, DateFormat.SHORT);
 
     public ConversationsAdapter() {
 
+    }
+
+    public ConversationsAdapter(List<Group> groups) {
+        ConversationsAdapter.groups = groups;
     }
 
     public void setOnConversationItemListener(ConversationItemListener listener) {
@@ -41,12 +47,18 @@ public class ConversationsAdapter extends RecyclerView.Adapter<ConversationsAdap
 
     @Override
     public void onBindViewHolder(ConversationsAdapter.ViewHolder holder, int position) {
-        GroupUser conversation = conversations.get(position);
+//        GroupUser conversation = conversations.get(position);
 
-        holder.usernames.setText(conversation.getTitle());
+//        holder.usernames.setText(conversation.getTitle());
 
         // unused:
-        Message lastMessage = conversation.getGroup().getLastMessage();
+//        Message lastMessage = conversation.getGroup().getLastMessage();
+
+        Group group = groups.get(position);
+
+        holder.usernames.setText(group.getTitle());
+
+        Message lastMessage = group.getLastMessage();
 
         if (lastMessage != null) {
             String lastMessageString = lastMessage.getContent();
@@ -70,13 +82,9 @@ public class ConversationsAdapter extends RecyclerView.Adapter<ConversationsAdap
         }
     }
 
-    public GroupUser getItem(int position) {
-        return conversations.get(position);
-    }
-
     @Override
     public int getItemCount() {
-        return conversations.size();
+        return groups.size();
     }
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
@@ -98,22 +106,19 @@ public class ConversationsAdapter extends RecyclerView.Adapter<ConversationsAdap
                 @Override
                 public void onClick(View v) {
                     if(listener != null) {
-                        listener.onConversationItemClick(conversations.get(getAdapterPosition()));
+                        listener.onConversationItemClick(groups.get(getAdapterPosition()));
                     }
                 }
             });
         }
     }
 
-    public void clear() {
-        conversations.clear();
-    }
-
-    public void addConversation(GroupUser conversation) {
-        conversations.add(conversation);
+    public void refresh() {
+        groups = Group.getAll();
+        notifyDataSetChanged();
     }
 
     public interface ConversationItemListener {
-        void onConversationItemClick(GroupUser conversation);
+        void onConversationItemClick(Group group);
     }
 }

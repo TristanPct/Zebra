@@ -11,7 +11,10 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.squareup.otto.Subscribe;
+import com.totris.zebra.groups.Group;
 import com.totris.zebra.groups.GroupUserInstantiateEvent;
+import com.totris.zebra.groups.events.GroupAddedEvent;
+import com.totris.zebra.groups.events.GroupRemovedEvent;
 import com.totris.zebra.users.UserRegisterGroupEvent;
 import com.totris.zebra.groups.GroupUser;
 import com.totris.zebra.users.User;
@@ -70,7 +73,7 @@ public class ConversationsListFragment extends Fragment {
 
         conversationsListRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
 
-        adapter = new ConversationsAdapter();
+        adapter = new ConversationsAdapter(Group.getAll());
 
         try {
             adapter.setOnConversationItemListener((ConversationsAdapter.ConversationItemListener) getActivity());
@@ -92,23 +95,33 @@ public class ConversationsListFragment extends Fragment {
     @Subscribe
     public void onUserRegisterGroupEvent(UserRegisterGroupEvent event) {
         Log.d(TAG, "onUserRegisterGroupEvent");
-        event.getGroupUser().getInstantiatedGroupUsers();
+//        event.getGroupUser().getInstantiatedGroupUsers();
+    }
+
+//    @Subscribe
+//    public void onGroupUserInstantiateEvent(GroupUserInstantiateEvent event) {
+//        String uid = event.getGroupUser().getUid();
+//
+//        if (conversationsIds.contains(uid)) {
+//            Log.d(TAG, "onGroupUserInstantiateEvent: already added");
+//            return;
+//        }
+//
+//        conversationsIds.add(uid);
+//
+//        Log.d(TAG, "onGroupUserInstantiateEvent");
+//        adapter.addConversation(event.getGroupUser());
+//
+//        adapter.notifyDataSetChanged();
+//    }
+
+    @Subscribe
+    public void onGroupAddedEvent(GroupAddedEvent event) {
+        adapter.refresh();
     }
 
     @Subscribe
-    public void onGroupUserInstantiateEvent(GroupUserInstantiateEvent event) {
-        String uid = event.getGroupUser().getUid();
-
-        if (conversationsIds.contains(uid)) {
-            Log.d(TAG, "onGroupUserInstantiateEvent: already added");
-            return;
-        }
-
-        conversationsIds.add(uid);
-
-        Log.d(TAG, "onGroupUserInstantiateEvent");
-        adapter.addConversation(event.getGroupUser());
-
-        adapter.notifyDataSetChanged();
+    public void onGroupRemovedEvent(GroupRemovedEvent event) {
+        adapter.refresh();
     }
 }

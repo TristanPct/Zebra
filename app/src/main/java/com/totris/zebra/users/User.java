@@ -18,6 +18,7 @@ import com.google.firebase.database.Exclude;
 import com.google.firebase.database.ValueEventListener;
 import com.totris.zebra.groups.Group;
 import com.totris.zebra.groups.GroupUser;
+import com.totris.zebra.models.UserRecord;
 import com.totris.zebra.utils.Authentication;
 import com.totris.zebra.utils.Database;
 import com.totris.zebra.utils.EventBus;
@@ -66,6 +67,8 @@ public class User {
     private int valuesToCommit = 0;
     private boolean isPublicKeyUpdated;
 
+    private static List<User> users = new ArrayList<>();
+
     public User() {
 
     }
@@ -80,7 +83,7 @@ public class User {
 
         user.firebaseUser = firebaseUser;
 
-        user.initialize();
+//        user.initialize();
 
         user.oldUsername = user.username;
         user.oldMail = user.mail;
@@ -114,16 +117,16 @@ public class User {
         return currentUser;
     }
 
-    public void setUid(String uid) {
-        this.uid = uid;
-    }
-
     public String getUid() {
         if (firebaseUser != null) {
             return firebaseUser.getUid();
         } else {
             return uid;
         }
+    }
+
+    public void setUid(String uid) {
+        this.uid = uid;
     }
 
     public String getUsername() {
@@ -134,8 +137,12 @@ public class User {
         }
     }
 
-    public User updateUsername(String username) {
+    public void setUsername(String username) {
         this.username = username;
+    }
+
+    public User updateUsername(String username) {
+        setUsername(username);
         isUsernameUpdated = true;
         return this;
     }
@@ -148,8 +155,12 @@ public class User {
         }
     }
 
-    public User updateMail(String mail) {
+    public void setMail(String mail) {
         this.mail = mail;
+    }
+
+    public User updateMail(String mail) {
+        setMail(mail);
         isMailUpdated = true;
         return this;
     }
@@ -158,6 +169,29 @@ public class User {
         this.password = password;
         isPasswordUpdated = true;
         return this;
+    }
+
+    @Exclude
+    public PublicKey getPublicKey() {
+        return publicKey;
+    }
+
+    public String getBase64PublicKey() {
+        try {
+            return RsaEcb.getPublicKeyString(publicKey);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        return null;
+    }
+
+    public void setBase64PublicKey(String publicKey) {
+        try {
+            this.publicKey = RsaEcb.getRSAPublicKeyFromString(publicKey);
+        } catch (GeneralSecurityException | UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
     }
 
     public User updatePublicKey(Context context) {
@@ -173,6 +207,66 @@ public class User {
 
     public void requestGroupUserInstantiation(boolean requested) {
         requestGroupUsersInstantiation = requested;
+    }
+
+    /**
+     * Cache list
+     */
+
+    public static List<User> getAll() {
+        return getAll(false);
+    }
+
+    public static List<User> getAll(boolean refresh) {
+        Log.d(TAG, "getAll: refresh: " + (refresh || users.size() == 0));
+
+        if (refresh || users.size() == 0) {
+            users.clear();
+            List<UserRecord> userRecords = UserRecord.find(UserRecord.class, "");
+
+            User user;
+            for (UserRecord record : userRecords) {
+                user = new User();
+                user.setUid(record.getUid());
+                user.setUsername(record.getUsername());
+                user.setMail(record.getMail());
+                user.setBase64PublicKey(record.getBase64PublicKey());
+                users.add(user);
+            }
+        }
+
+        return users;
+    }
+
+    public static void add(User user) {
+        boolean added = false;
+
+        for (User u : users) {
+            if (u.getUid().equals(user.getUid())) {
+                users.remove(u);
+                users.add(user);
+                added = true;
+                break;
+            }
+        }
+
+        if (!added) {
+            users.add(user);
+        }
+    }
+
+    public static void update(User user) {
+        for (User u : users) {
+            if (u.getUid().equals(user.getUid())) {
+                users.remove(u);
+                users.add(user);
+                break;
+            }
+        }
+    }
+
+    public static void remove(User user) {
+        users.remove(user);
     }
 
     @Exclude
@@ -377,64 +471,41 @@ public class User {
         return deferred.promise();
     }
 
-    public void initialize() {
-        if (dbRef == null) {
-            dbRef = Database.getInstance().getReference("users");
-        }
-
-        Log.d(TAG, "initialize: " + getUid());
-
-        dbRef.child(getUid()).child("groups").addChildEventListener(new ChildEventListener() {
-            @Override
-            public void onChildAdded(DataSnapshot dataSnapshot, String s) {
-                Log.d(TAG, "onChildAdded: group added : " + dataSnapshot.getValue(GroupUser.class));
-                registerGroup(dataSnapshot.getValue(GroupUser.class));
-            }
-
-            @Override
-            public void onChildChanged(DataSnapshot dataSnapshot, String s) {
-
-            }
-
-            @Override
-            public void onChildRemoved(DataSnapshot dataSnapshot) {
-
-            }
-
-            @Override
-            public void onChildMoved(DataSnapshot dataSnapshot, String s) {
-
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-
-            }
-        });
-    }
-
-    @Exclude
-    public PublicKey getPublicKey() {
-        return publicKey;
-    }
-
-    public String getBase64PublicKey() {
-        try {
-            return RsaEcb.getPublicKeyString(publicKey);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        return null;
-    }
-
-    public void setBase64PublicKey(String publicKey) {
-        try {
-            this.publicKey = RsaEcb.getRSAPublicKeyFromString(publicKey);
-        } catch (GeneralSecurityException | UnsupportedEncodingException e) {
-            e.printStackTrace();
-        }
-    }
+//    public void initialize() {
+//        if (dbRef == null) {
+//            dbRef = Database.getInstance().getReference("users");
+//        }
+//
+//        Log.d(TAG, "initialize: " + getUid());
+//
+//        dbRef.child(getUid()).child("groups").addChildEventListener(new ChildEventListener() {
+//            @Override
+//            public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+//                Log.d(TAG, "onChildAdded: group added : " + dataSnapshot.getValue(GroupUser.class));
+//                registerGroup(dataSnapshot.getValue(GroupUser.class));
+//            }
+//
+//            @Override
+//            public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+//
+//            }
+//
+//            @Override
+//            public void onChildRemoved(DataSnapshot dataSnapshot) {
+//
+//            }
+//
+//            @Override
+//            public void onChildMoved(DataSnapshot dataSnapshot, String s) {
+//
+//            }
+//
+//            @Override
+//            public void onCancelled(DatabaseError databaseError) {
+//
+//            }
+//        });
+//    }
 
     public interface OnCommitListener {
         void onComplete(boolean success, List<String> errors);

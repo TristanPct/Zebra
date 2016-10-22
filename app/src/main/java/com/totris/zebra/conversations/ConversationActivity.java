@@ -78,9 +78,11 @@ public class ConversationActivity extends AppCompatActivity implements Conversat
         group = (Group) getIntent().getSerializableExtra("group");
         title = getIntent().getStringExtra("title");
 
-        if (group != null) {
-            group.addChildEventListener();
-        }
+//        if (group != null) {
+//            group.addChildEventListener();
+//        }
+
+        Log.d(TAG, "onCreate: group: " + group + " uid: " + (group != null ? group.getUid() : ""));
 
         currentFragment = new ConversationFragment();
 

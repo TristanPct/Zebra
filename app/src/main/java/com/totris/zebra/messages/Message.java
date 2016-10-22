@@ -1,5 +1,7 @@
 package com.totris.zebra.messages;
 
+import android.util.Log;
+
 import com.google.firebase.database.DatabaseReference;
 import com.totris.zebra.utils.AesCrypto;
 import com.totris.zebra.utils.Database;
@@ -10,6 +12,8 @@ import java.util.Date;
 
 public class Message implements Serializable {
     private static final long serialVersionUID = 199509525759554827L;
+
+    private static final String TAG = "Message";
 
     private static DatabaseReference dbRef = Database.getInstance().getReference("messages");
 
@@ -87,10 +91,12 @@ public class Message implements Serializable {
     }
 
     public EncryptedMessage encrypt(String passphrase) {
+        Log.d(TAG, "encrypt");
         return new EncryptedMessage(AesCrypto.encrypt(this, passphrase));
     }
 
     public static Message decrypt(String message, String passphrase, String salt) {
+        Log.d(TAG, "decrypt");
         return AesCrypto.decrypt(message, passphrase, salt, Message.class);
     }
 

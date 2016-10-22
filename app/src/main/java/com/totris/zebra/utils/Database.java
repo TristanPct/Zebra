@@ -127,6 +127,7 @@ public class Database {
             public void onChildAdded(DataSnapshot dataSnapshot, String s) {
                 User user = dataSnapshot.getValue(User.class);
                 UserRecord.save(user);
+                User.add(user);
 
                 EventBus.post(new UserAddedEvent(user));
             }
@@ -135,6 +136,7 @@ public class Database {
             public void onChildChanged(DataSnapshot dataSnapshot, String s) {
                 User user = dataSnapshot.getValue(User.class);
                 UserRecord.save(user);
+                User.update(user);
 
                 EventBus.post(new UserChangedEvent(user));
             }
@@ -143,6 +145,7 @@ public class Database {
             public void onChildRemoved(DataSnapshot dataSnapshot) {
                 User user = dataSnapshot.getValue(User.class);
                 UserRecord.delete(user);
+                User.remove(user);
 
                 EventBus.post(new UserRemovedEvent(user));
             }
@@ -184,6 +187,7 @@ public class Database {
                 startGroupMessagesListener(group, dataSnapshot.child("messages"));
 
                 GroupRecord.save(group);
+                Group.add(group);
                 EventBus.post(new GroupAddedEvent(group));
             }
 
@@ -196,6 +200,7 @@ public class Database {
                 group.setUid(dataSnapshot.getKey());
 
                 GroupRecord.save(group);
+                Group.update(group);
                 EventBus.post(new GroupChangedEvent(group));
             }
 
@@ -210,6 +215,7 @@ public class Database {
                 stopGroupMessagesListener(group, dataSnapshot.child("messages"));
 
                 GroupRecord.delete(group);
+                Group.remove(group);
                 EventBus.post(new GroupRemovedEvent(group));
             }
 
@@ -242,6 +248,8 @@ public class Database {
             @Override
             public void onChildAdded(DataSnapshot dataSnapshot, String s) {
                 EncryptedMessage message = dataSnapshot.getValue(EncryptedMessage.class);
+
+                if (group.getEncryptedMessages().contains(message)) return;
 
                 EventBus.post(new MessageAddedEvent(group, group.decryptMessage(message)));
             }

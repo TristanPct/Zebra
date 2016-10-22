@@ -15,16 +15,17 @@ public class UserRecord extends SugarRecord {
     private String uid;
     private String username;
     private String mail;
-    // TODO: add missing fields
+    private String base64PublicKey;
 
     public UserRecord() {
 
     }
 
-    public UserRecord(String uid, String username, String mail) {
+    public UserRecord(String uid, String username, String mail, String base64PublicKey) {
         this.uid = uid;
         this.username = username;
         this.mail = mail;
+        this.base64PublicKey = base64PublicKey;
     }
 
     public String getUid() {
@@ -49,6 +50,14 @@ public class UserRecord extends SugarRecord {
 
     public void setMail(String mail) {
         this.mail = mail;
+    }
+
+    public String getBase64PublicKey() {
+        return base64PublicKey;
+    }
+
+    public void setBase64PublicKey(String base64PublicKey) {
+        this.base64PublicKey = base64PublicKey;
     }
 
     @Nullable
@@ -80,13 +89,13 @@ public class UserRecord extends SugarRecord {
     }
 
     public static long save(User user) {
-        UserRecord record = new UserRecord(user.getUid(), user.getUsername(), user.getMail());
+        UserRecord record = new UserRecord(user.getUid(), user.getUsername(), user.getMail(), user.getBase64PublicKey());
 
         return record.save();
     }
 
     public static boolean delete(User user) {
-        UserRecord record = new UserRecord(user.getUid(), user.getUsername(), user.getMail());
+        UserRecord record = new UserRecord(user.getUid(), user.getUsername(), user.getMail(), user.getBase64PublicKey());
 
         return record.delete();
     }

@@ -2,7 +2,6 @@ package com.totris.zebra.conversations;
 
 
 import android.content.Context;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
@@ -11,15 +10,15 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.inputmethod.InputMethodManager;
 import android.widget.ImageButton;
 import android.widget.TextView;
 
 import com.google.android.flexbox.FlexboxLayout;
 import com.squareup.otto.Subscribe;
-import com.totris.zebra.messages.MessageChildAddedEvent;
+import com.totris.zebra.groups.Group;
 import com.totris.zebra.messages.Message;
 import com.totris.zebra.R;
+import com.totris.zebra.messages.events.MessageAddedEvent;
 import com.totris.zebra.utils.ViewUtils;
 
 import java.util.ArrayList;
@@ -38,7 +37,7 @@ public class ConversationFragment extends Fragment {
 
     private ConversationListener listener;
 
-    private MessagesAdapter adapter = new MessagesAdapter(new ArrayList<Message>());
+    private MessagesAdapter adapter;
 
     @BindView(R.id.activity_conversation)
     ViewGroup conversationFragmentWrapper;
@@ -89,6 +88,7 @@ public class ConversationFragment extends Fragment {
 
         messagesListRecyclerView.setLayoutManager(layout);
 
+        adapter = new MessagesAdapter(listener.getGroup().getMessages());
 
         adapter.setOnMessageItemListener(new MessagesAdapter.MessageItemListener() {
             @Override
@@ -145,8 +145,11 @@ public class ConversationFragment extends Fragment {
     }
 
     @Subscribe
-    public void onMessageChildAddedEvent(MessageChildAddedEvent event) {
+    public void onMessageAddedEvent(MessageAddedEvent event) {
         Log.d(TAG, "onChildAdded: new message");
+
+        if (!event.getGroup().getUid().equals(listener.getGroup().getUid()))
+            return;
 
         addMessage(event.getMessage());
     }
@@ -189,6 +192,8 @@ public class ConversationFragment extends Fragment {
         void onSubmitMessage(String message);
         void onTakePictureFromCameraClick();
         void onTakePictureFromGalleryClick();
+
+        Group getGroup();
     }
 
 }
