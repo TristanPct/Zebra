@@ -91,7 +91,7 @@ public class Authentication {
                             return;
                         }
 
-                        getCurrentUser().updatePublicKey(RsaCrypto.InitRsaKeys(context).toString()).commit();
+                        getCurrentUser().updatePublicKey(context).commit();
                     }
                 });
     }
@@ -100,14 +100,14 @@ public class Authentication {
         auth.signOut();
     }
 
-    public void register(final String username, String mail, String password) {
+    public void register(final String username, String mail, String password, final Context context) {
         auth.createUserWithEmailAndPassword(mail, password)
                 .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         Log.d(TAG, "register:onComplete:" + task.isSuccessful());
                         if (task.isSuccessful()) {
-                            getCurrentUser().updateUsername(username).commit();
+                            getCurrentUser().updatePublicKey(context).updateUsername(username).commit();
                         } else if (listener != null) {
                             listener.onUserRegistrationFailed(((FirebaseAuthException) task.getException()).getErrorCode());
                         }

@@ -6,6 +6,7 @@ package com.totris.zebra.utils;
 
 import android.content.Context;
 import android.support.annotation.NonNull;
+import android.util.Base64;
 import android.util.Log;
 
 import java.io.IOException;
@@ -140,5 +141,9 @@ public class RsaCrypto {
         }
 
         return keyPair;
+    }
+
+    public static String getBase64PublicKey(PublicKey key) {
+        return Base64.encodeToString(key.toString().getBytes(), Base64.DEFAULT);
     }
 }

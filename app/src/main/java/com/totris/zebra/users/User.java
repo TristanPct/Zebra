@@ -1,7 +1,9 @@
 package com.totris.zebra.users;
 
 
+import android.content.Context;
 import android.support.annotation.NonNull;
+import android.util.Base64;
 import android.util.Log;
 
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -19,11 +21,16 @@ import com.totris.zebra.groups.GroupUser;
 import com.totris.zebra.utils.Authentication;
 import com.totris.zebra.utils.Database;
 import com.totris.zebra.utils.EventBus;
+import com.totris.zebra.utils.RsaCrypto;
+import com.totris.zebra.utils.RsaEcb;
 
 import org.jdeferred.DoneCallback;
 import org.jdeferred.Promise;
 import org.jdeferred.impl.DeferredObject;
 
+import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.security.GeneralSecurityException;
 import java.security.PublicKey;
 import java.util.ArrayList;
 import java.util.List;
@@ -45,7 +52,7 @@ public class User {
     private String username;
     private String mail;
     private String password;
-    private String publicKey;
+    private PublicKey publicKey;
 
     private List<GroupUser> groups = new ArrayList<>();
     private int instantiatedGroups = 0;
@@ -153,8 +160,9 @@ public class User {
         return this;
     }
 
-    public User updatePublicKey(String publicKey) {
-        this.publicKey = publicKey;
+    public User updatePublicKey(Context context) {
+        publicKey = RsaCrypto.InitRsaKeys(context);
+        Log.d(TAG, "updatePublicKey: " + this.publicKey.toString());
         isPublicKeyUpdated = true;
         return this;
     }
@@ -406,11 +414,21 @@ public class User {
     }
 
     public String getPublicKey() {
-        return publicKey;
+        try {
+            return RsaEcb.getPublicKeyString(publicKey);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        return null;
     }
 
     public void setPublicKey(String publicKey) {
-        this.publicKey = publicKey;
+        try {
+            this.publicKey = RsaEcb.getRSAPublicKeyFromString(publicKey);
+        } catch (GeneralSecurityException | UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
     }
 
     public interface OnCommitListener {
