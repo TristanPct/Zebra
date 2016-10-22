@@ -33,6 +33,7 @@ public class Authentication {
 
     private boolean initialized = false;
     private boolean flag = true;
+    private boolean running = false;
 
 
     private Authentication() {
@@ -45,7 +46,6 @@ public class Authentication {
             @Override
             public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
                 user = firebaseAuth.getCurrentUser();
-                Log.d(TAG, "onAuthStateChanged: " + user);
 
                 if (user != null) {
                     if (!flag) return;
@@ -79,13 +79,19 @@ public class Authentication {
     }
 
     public void start() {
-        Log.d(TAG, "start");
-        auth.addAuthStateListener(authListener);
+        if (!running) {
+            Log.d(TAG, "start");
+            auth.addAuthStateListener(authListener);
+            running = true;
+        }
     }
 
     public void stop() {
-        Log.d(TAG, "stop");
-        auth.removeAuthStateListener(authListener);
+        if (running) {
+            Log.d(TAG, "stop");
+            auth.removeAuthStateListener(authListener);
+            running = false;
+        }
     }
 
     public void signIn(String mail, String password, final Context context) {

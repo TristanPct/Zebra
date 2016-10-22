@@ -31,20 +31,6 @@ public abstract class ZebraActivity extends AppCompatActivity {
     }
 
     @Override
-    protected void onResume() {
-        super.onResume();
-
-        Log.d(TAG, "onResume");
-    }
-
-    @Override
-    protected void onPause() {
-        super.onPause();
-
-        Log.d(TAG, "onPause");
-    }
-
-    @Override
     protected void onStop() {
         super.onStop();
 
