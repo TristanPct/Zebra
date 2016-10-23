@@ -19,6 +19,8 @@ import org.jdeferred.DoneCallback;
 import org.jdeferred.Promise;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 import butterknife.BindView;
@@ -70,7 +72,15 @@ public class ContactsListFragment extends Fragment {
 
         contactsListRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
 
-        adapter = new ContactsAdapter(User.getAll());
+        List<User> contacts = User.getAll();
+        Collections.sort(contacts, new Comparator<User>() {
+            @Override
+            public int compare(User u1, User u2) {
+                return u1.getUsername().compareTo(u2.getUsername());
+            }
+        });
+
+        adapter = new ContactsAdapter(contacts);
         adapter.setMode(mode);
 
         try {
