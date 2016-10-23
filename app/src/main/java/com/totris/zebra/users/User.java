@@ -140,11 +140,19 @@ public class User {
     }
 
     public String getUsername() {
+        String tmpName;
+
         if (firebaseUser != null) {
-            return firebaseUser.getDisplayName();
+            tmpName = firebaseUser.getDisplayName();
         } else {
-            return username;
+            tmpName = username;
         }
+
+        if(tmpName == null || tmpName.equals("")) {
+            tmpName = getMail();
+        }
+
+        return tmpName;
     }
 
     public void setUsername(String username) {
