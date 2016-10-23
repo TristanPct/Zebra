@@ -22,6 +22,10 @@ import com.totris.zebra.messages.events.MessageAddedEvent;
 import com.totris.zebra.utils.ViewUtils;
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -87,6 +91,15 @@ public class ConversationFragment extends Fragment {
         layout.setStackFromEnd(true);
 
         messagesListRecyclerView.setLayoutManager(layout);
+
+        List<Message> messages = listener.getGroup().getMessages();
+        Collections.sort(messages, new Comparator<Message>() {
+            @Override
+            public int compare(Message m1, Message m2) {
+                Log.d(TAG, "compare: " + m1.getCreatedAt() + " to " + m2.getCreatedAt());
+                return m1.getCreatedAt().compareTo(m2.getCreatedAt());
+            }
+        });
 
         adapter = new MessagesAdapter(listener.getGroup().getMessages());
 
