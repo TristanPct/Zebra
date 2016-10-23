@@ -122,7 +122,7 @@ public class ContactsAdapter extends RecyclerView.Adapter<ContactsAdapter.ViewHo
             this.selected = selected;
 
             if (mode == ContactsListMode.SELECTABLE) {
-                if (selected) {
+                if (selected && selection.size() == 0) {
                     if (!selection.contains(uid)) selection.add(uid);
                     contactImageAdd.setVisibility(View.GONE);
                     contactImageRemove.setVisibility(View.VISIBLE);
@@ -130,7 +130,10 @@ public class ContactsAdapter extends RecyclerView.Adapter<ContactsAdapter.ViewHo
                         contactItem.setBackground(contactItem.getResources().getDrawable(R.drawable.list_item_selected_bg));
                     }
                 } else {
-                    selection.remove(uid);
+                    if(selection.contains(uid)) {
+                        selection.remove(uid);
+                    }
+
                     contactImageAdd.setVisibility(View.VISIBLE);
                     contactImageRemove.setVisibility(View.GONE);
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
