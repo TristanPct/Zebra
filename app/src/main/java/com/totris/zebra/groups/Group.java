@@ -22,6 +22,7 @@ import java.io.IOException;
 import java.io.Serializable;
 import java.math.BigInteger;
 import java.security.NoSuchAlgorithmException;
+import java.security.PublicKey;
 import java.security.SecureRandom;
 import java.util.ArrayList;
 import java.util.Date;
@@ -60,8 +61,8 @@ public class Group implements Serializable {
         try {
             keyGen = KeyGenerator.getInstance("AES");
             keyGen.init(256);
-            passphrase = "ThisIsThePassphrase";
-//            passphrase = new BigInteger(130, new SecureRandom()).toString(32);
+//            passphrase = "ThisIsThePassphrase";
+            passphrase = new BigInteger(130, new SecureRandom()).toString(32);
             Log.d(TAG, "Group passphrase: " + passphrase);
         } catch (NoSuchAlgorithmException e) {
             e.printStackTrace();
@@ -70,6 +71,8 @@ public class Group implements Serializable {
 
     public Group(List<User> users) {
         this();
+
+        encryptedPassphrase.put(User.getCurrent().getUid() , getEncryptedPassphrase(RsaCrypto.getInstance().getPublicKey()));
 
         for (User u: users) {
             if(!u.getUid().equals(User.getCurrent().getUid())) { // TODO: see if we let the encryptedPassphrase in DB
@@ -107,6 +110,11 @@ public class Group implements Serializable {
         }
 
         return RsaCrypto.getInstance().encrypt(passphrase, user.getPublicKey());
+    }
+
+    @Exclude
+    public String getEncryptedPassphrase(PublicKey publicKey) {
+        return RsaCrypto.getInstance().encrypt(passphrase, publicKey);
     }
 
     @Exclude
