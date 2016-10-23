@@ -72,23 +72,11 @@ public class StringUtils {
         //winner -> winnar
         str = str.replace(" winner ", " winnar ");
 
-        if (Math.random()<0.5) {
-            str = str.replace("a", "/-\\");
-        } else {
-            str = str.replace("a", "4");
-        }
+        str = str.replace("a", "4");
 
-        if (Math.random()<0.5) {
-            str = str.replace("b", "|3");
-        } else {
-            str = str.replace("b", "8");
-        }
+        str = str.replace("b", "8");
 
-        if (Math.random()<0.5) {
-            str = str.replace("e", "€");
-        } else {
-            str = str.replace("e", "3");
-        }
+        str = str.replace("e", "3");
 
         str = str.replace("g", "9");
 
@@ -108,7 +96,7 @@ public class StringUtils {
 
         str = str.replace("c", "(");
 
-        str = str.replace("d", "|)");
+//        str = str.replace("d", "|)");
 
         if (Math.random()<0.5) {
             str = str.replace("f", "|=");
@@ -122,13 +110,9 @@ public class StringUtils {
             str = str.replace("h", "#");
         }
 
-        str = str.replace("j", "_|");
+//        str = str.replace("j", "_|");
 
-        if (Math.random()<0.5) {
-            str = str.replace("k", "|<");
-        } else {
-            str = str.replace("k", "|(");
-        }
+        str = str.replace("k", "|<");
 
         str = str.replace("l", "|_");
 
@@ -142,9 +126,9 @@ public class StringUtils {
 
         str = str.replace("p", "|°");
 
-        str = str.replace("q", "0,");
+//        str = str.replace("q", "0,");
 
-        str = str.replace("r", "|2");
+//        str = str.replace("r", "|2");
 
         str = str.replace("u", "|_|");
 
@@ -158,7 +142,7 @@ public class StringUtils {
 
         str = str.replace("x", "><");
 
-        str = str.replace("y", "°/");
+//        str = str.replace("y", "°/");
 
         return str;
     }
