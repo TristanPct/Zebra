@@ -86,20 +86,9 @@ public class User {
 
         UserRecord local = UserRecord.findByUid(getUid());
         if (local != null) {
-            this.setBase64PublicKey(local.getBase64PublicKey());
+            setBase64PublicKey(local.getBase64PublicKey());
         } else {
-            dbRef.child(getUid()).addListenerForSingleValueEvent(new ValueEventListener() {
-                @Override
-                public void onDataChange(DataSnapshot dataSnapshot) {
-                    User user = dataSnapshot.getValue(User.class);
-                    User.this.setBase64PublicKey(user.base64PublicKey); //FIXME: (registration) NullPointerException: Attempt to read from field 'java.lang.String com.totris.zebra.users.User.base64PublicKey' on a null object reference
-                }
-
-                @Override
-                public void onCancelled(DatabaseError databaseError) {
-
-                }
-            });
+            Log.d(TAG, "User: no local publicKey");
         }
     }
 
@@ -120,11 +109,6 @@ public class User {
 
     public static void setCurrent(User user) {
         currentUser = user;
-        if (user == null) {
-            Log.d(TAG, "setCurrent: " + user);
-        } else {
-            Log.d(TAG, "setCurrent: " + user.getUid() + " | " + user.getUsername());
-        }
     }
 
     public String getUid() {
@@ -228,6 +212,7 @@ public class User {
 
     public User updatePublicKey() {
         publicKey = RsaCrypto.getInstance().InitRsaKeys();
+        base64PublicKey = getBase64PublicKey();
         Log.d(TAG, "updatePublicKey: " + this.publicKey.toString());
         isPublicKeyUpdated = true;
         return this;
@@ -311,7 +296,9 @@ public class User {
         commit(new OnCommitListener() {
             @Override
             public void onComplete(boolean success, List<String> errors) {
-
+                Log.d(TAG, "commit:onComplete:" + success + ":" + errors);
+                persist();
+//                UserRecord.save(User.this);
             }
         });
     }
@@ -343,7 +330,6 @@ public class User {
                             }
 
                             if (valuesToCommit == 0) {
-                                persist();
                                 listener.onComplete(errors.size() == 0, errors);
                             }
                         }
@@ -364,7 +350,6 @@ public class User {
                             }
 
                             if (valuesToCommit == 0) {
-                                persist();
                                 listener.onComplete(errors.size() == 0, errors);
                             }
                         }
@@ -384,7 +369,6 @@ public class User {
                             }
 
                             if (valuesToCommit == 0) {
-                                persist();
                                 listener.onComplete(errors.size() == 0, errors);
                             }
                         }
@@ -396,7 +380,6 @@ public class User {
             valuesToCommit--;
 
             if (valuesToCommit == 0) {
-                persist();
                 listener.onComplete(errors.size() == 0, errors);
             }
         }

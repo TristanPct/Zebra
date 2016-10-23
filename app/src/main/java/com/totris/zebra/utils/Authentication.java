@@ -74,9 +74,9 @@ public class Authentication {
         return instance;
     }
 
-    public User getCurrentUser() {
-        return new User(user);
-    }
+//    public User getCurrentUser() {
+//        return new User(user);
+//    }
 
     public void start() {
         if (!running) {
@@ -121,7 +121,7 @@ public class Authentication {
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         Log.d(TAG, "register:onComplete:" + task.isSuccessful());
                         if (task.isSuccessful()) {
-                            getCurrentUser().updatePublicKey().updateUsername(username).commit();
+                            User.getCurrent().updatePublicKey().updateUsername(username).commit();
                         } else {
                             EventBus.post(new UserRegistrationFailedEvent(((FirebaseAuthException) task.getException()).getErrorCode()));
                         }
