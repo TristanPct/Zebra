@@ -13,6 +13,7 @@
     app:justifyContent="flex_end">
 
     <FrameLayout
+        android:id="@+id/messagesListWrapper"
         android:layout_alignParentTop="true"
         android:layout_above="@+id/conversationForm"
         android:layout_width="match_parent"

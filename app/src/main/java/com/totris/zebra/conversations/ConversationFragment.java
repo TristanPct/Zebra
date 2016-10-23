@@ -120,7 +120,9 @@ public class ConversationFragment extends Fragment {
 
             toggleTouchEvents(true);
 
-            Blurry.delete(conversationFragmentWrapper);
+            conversationFragmentWrapper.setVisibility(View.VISIBLE);
+
+//            Blurry.delete(conversationFragmentWrapper);
         }
     }
 
@@ -130,10 +132,12 @@ public class ConversationFragment extends Fragment {
 
             toggleTouchEvents(false);
 
-            Blurry.with(getActivity())
+            conversationFragmentWrapper.setVisibility(View.INVISIBLE);
+
+            /*Blurry.with(getContext())
                     .radius(25)
                     .animate(400)
-                    .onto(conversationFragmentWrapper);
+                    .onto(conversationFragmentWrapper);*/
         }
     }
 
