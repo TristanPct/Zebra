@@ -13,9 +13,10 @@ Réalisation d'une application Android d'échange de messages chiffrés.
 - Envoie de message chiffrés (à 1 seul contact à la fois)
     - Chiffrement symétrique AES pour les messages
     - Chiffrement asymétrique RSA pour les passphrases des messages
-- Envoie de message au format l33t
+- Envoie de messages au format lien (URL)
+- Envoie de messages au format l33t
 - Envoie d'images (depuis l'appareil photo ou la galerie)
-- Disparition des messages lorsque l'utilisateur n'est plus en face du téléphone
+- Disparition des messages lorsque le nombre de personnes en face du téléphone est différent de 1
 - Sauvegarde local SQLite
 
 ## Vues
@@ -30,9 +31,9 @@ Réalisation d'une application Android d'échange de messages chiffrés.
 - Fiche d'un contact
 - Mon compte
 
-## Améliorations possible
+## Améliorations possibles
 
 - Rendre les vues Connexion et Inscription responsive
 - Améliorer les temps de chargement ou les loaders (mieux informer l'utilisateur)
 - Possibilité d'ajouter ou supprimer des contacts
-- Possibilité d'avoir des conversations à plusieurs
+- Possibilité d'avoir des conversations à plusieurs (infrastructure en place, manque légères corrections)
