@@ -1,4 +1,4 @@
-package com.totris.zebra.base.events;
+package com.totris.zebra.app.events;
 
 
 public class ApplicationEnterBackgroundEvent {

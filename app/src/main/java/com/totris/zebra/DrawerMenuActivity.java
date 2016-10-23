@@ -6,6 +6,7 @@ import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -13,13 +14,12 @@ import android.view.View;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import com.totris.zebra.base.ZebraActivity;
 import com.totris.zebra.conversations.ConversationsListActivity;
 import com.totris.zebra.users.User;
 import com.totris.zebra.users.contacts.ContactsListActivity;
 import com.totris.zebra.users.profile.UserProfileActivity;
 
-public class DrawerMenuActivity extends ZebraActivity
+public class DrawerMenuActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
     protected DrawerLayout drawer;

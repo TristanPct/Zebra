@@ -2,11 +2,11 @@ package com.totris.zebra.conversations;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 
-import com.totris.zebra.base.ZebraActivity;
 import com.totris.zebra.groups.Group;
 import com.totris.zebra.groups.GroupUser;
 import com.totris.zebra.users.contacts.ContactsAdapter;
@@ -17,7 +17,7 @@ import com.totris.zebra.R;
 
 import java.util.ArrayList;
 
-public class NewConversationActivity extends ZebraActivity implements ContactsAdapter.ContactItemListener {
+public class NewConversationActivity extends AppCompatActivity implements ContactsAdapter.ContactItemListener {
     private static final String TAG = "NewConversationActivity";
 
     @Override
