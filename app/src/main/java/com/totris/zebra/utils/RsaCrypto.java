@@ -115,6 +115,8 @@ public class RsaCrypto {
         String publicKeyString = context.getSharedPreferences("Crypto", Context.MODE_PRIVATE)
                 .getString("public key", "");
 
+        Log.d(TAG, "getPublicKey: " + publicKeyString.length());
+
         Log.d(TAG, publicKeyString);
         PublicKey publicKey = null;
         try {

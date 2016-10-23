@@ -15,6 +15,7 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.Exclude;
+import com.google.firebase.database.ValueEventListener;
 import com.squareup.otto.Subscribe;
 import com.totris.zebra.groups.Group;
 import com.totris.zebra.groups.GroupUser;
@@ -53,6 +54,7 @@ public class User {
     private String username;
     private String mail;
     private String password;
+    private String base64PublicKey;
     private PublicKey publicKey = null;
 
     private List<GroupUser> groups = new ArrayList<>();
@@ -78,8 +80,27 @@ public class User {
 
     public User(FirebaseUser firebaseUser) {
         this.firebaseUser = firebaseUser;
+
         this.oldUsername = getUsername();
         this.oldMail = getMail();
+
+        UserRecord local = UserRecord.findByUid(getUid());
+        if (local != null) {
+            this.setBase64PublicKey(local.getBase64PublicKey());
+        } else {
+            dbRef.child(getUid()).addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
+                    User user = dataSnapshot.getValue(User.class);
+                    User.this.setBase64PublicKey(user.base64PublicKey); //FIXME: (registration) NullPointerException: Attempt to read from field 'java.lang.String com.totris.zebra.users.User.base64PublicKey' on a null object reference
+                }
+
+                @Override
+                public void onCancelled(DatabaseError databaseError) {
+
+                }
+            });
+        }
     }
 
     @Nullable
@@ -99,6 +120,11 @@ public class User {
 
     public static void setCurrent(User user) {
         currentUser = user;
+        if (user == null) {
+            Log.d(TAG, "setCurrent: " + user);
+        } else {
+            Log.d(TAG, "setCurrent: " + user.getUid() + " | " + user.getUsername());
+        }
     }
 
     public String getUid() {
@@ -157,11 +183,13 @@ public class User {
 
     @Exclude
     public PublicKey getPublicKey() {
-        if(getCurrent().getUid().equals(getUid())) {
-            return RsaCrypto.getInstance().getPublicKey();
-        } else {
-            return publicKey;
-        }
+        Log.d(TAG, "getPublicKey of " + getUsername() + " (" + getUid() + "): " + publicKey.getEncoded().length);
+//        if(getCurrent().getUid().equals(getUid())) {
+//            return RsaCrypto.getInstance().getPublicKey();
+//        } else {
+//            return publicKey;
+//        }
+        return publicKey;
     }
 
     public String getBase64PublicKey() {
@@ -178,7 +206,8 @@ public class User {
 
     public void setBase64PublicKey(String publicKey) {
         try {
-            Log.d(TAG, "setBase64PublicKey of " + getUsername());
+            Log.d(TAG, "setBase64PublicKey of " + getUsername() + " (" + getUid() + "): " + publicKey.length());
+            base64PublicKey = publicKey;
             this.publicKey = RsaEcb.getRSAPublicKeyFromString(publicKey);
         } catch (GeneralSecurityException | UnsupportedEncodingException e) {
             e.printStackTrace();
@@ -284,14 +313,6 @@ public class User {
 
         final List<String> errors = new ArrayList<>();
 
-        if(isPublicKeyUpdated) {
-            valuesToCommit--;
-
-            if (valuesToCommit == 0) {
-                persist();
-            }
-        }
-
         if (isUsernameUpdated) {
             UserProfileChangeRequest updates = new UserProfileChangeRequest.Builder()
                     .setDisplayName(username)
@@ -351,17 +372,22 @@ public class User {
                             }
 
                             if (valuesToCommit == 0) {
+                                persist();
                                 listener.onComplete(errors.size() == 0, errors);
                             }
                         }
                     });
         }
 
-        // update database linked model
+        if (isPublicKeyUpdated) {
+            isPublicKeyUpdated = false;
+            valuesToCommit--;
 
-//        if (isUsernameUpdated || isMailUpdated) {
-//            persist();
-//        }
+            if (valuesToCommit == 0) {
+                persist();
+                listener.onComplete(errors.size() == 0, errors);
+            }
+        }
     }
 
     public void persist() {
