@@ -96,9 +96,7 @@ public class Group implements Serializable {
     }
 
     public void setEncryptedPassphrase(Map<String, String> passphrases) {
-        if(passphrase == null) {
-            setPassphrase(passphrases.get(User.getCurrent().getUid()));
-        }
+        setPassphrase(passphrases.get(User.getCurrent().getUid()));
     }
 
     @Exclude
