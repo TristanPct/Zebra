@@ -186,7 +186,9 @@ public class Group implements Serializable {
                 Log.d(TAG, "setMessages: encrypted messages");
                 encryptedMessages = (List<EncryptedMessage>) messages;
                 for (EncryptedMessage em : encryptedMessages) {
-                    this.messages.add(decryptMessage(em));
+                    Message m = decryptMessage(em);
+                    Log.d(TAG, "setMessages: add: " + m.getCreatedAt() + " | " + m.getContent());
+                    this.messages.add(m);
                 }
             }
         }

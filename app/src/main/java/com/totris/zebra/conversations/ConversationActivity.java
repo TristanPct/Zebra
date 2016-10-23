@@ -379,6 +379,7 @@ public class ConversationActivity extends AppCompatActivity implements Conversat
         byte[] byteArrayImage = baos.toByteArray();
 
         Message messageObj = new Message(OnlineStorage.RandomIdGenerator() + ".jpg", MessageType.IMAGE);
+        messageObj.setCreatedAt(new Date());
 
         group.sendImageMessage(messageObj, byteArrayImage);
     }
