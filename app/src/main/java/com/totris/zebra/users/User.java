@@ -152,6 +152,10 @@ public class User {
             tmpName = getMail();
         }
 
+        if(tmpName == null) {
+            tmpName = "undefined";
+        }
+
         return tmpName;
     }
 
