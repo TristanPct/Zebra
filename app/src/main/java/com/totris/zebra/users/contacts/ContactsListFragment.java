@@ -76,7 +76,7 @@ public class ContactsListFragment extends Fragment {
         Collections.sort(contacts, new Comparator<User>() {
             @Override
             public int compare(User u1, User u2) {
-                return u1.getUsername().compareTo(u2.getUsername());
+                return u1.getUsername().toLowerCase().compareTo(u2.getUsername().toLowerCase());
             }
         });
 

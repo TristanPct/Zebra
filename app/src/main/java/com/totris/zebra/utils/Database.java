@@ -5,8 +5,10 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.GenericTypeIndicator;
 import com.google.firebase.database.ValueEventListener;
 import com.totris.zebra.groups.Group;
+import com.totris.zebra.groups.GroupUser;
 import com.totris.zebra.models.GroupRecord;
 import com.totris.zebra.groups.events.GroupAddedEvent;
 import com.totris.zebra.groups.events.GroupChangedEvent;
@@ -172,6 +174,68 @@ public class Database {
         getReference("users").removeEventListener(userListener);
     }
 
+//    /**
+//     * GroupUser listener
+//     */
+//
+//    private ChildEventListener createGroupUserListener(final GroupUser groupUser) {
+//        return new ChildEventListener() {
+//            @Override
+//            public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+//                EncryptedMessage message = dataSnapshot.getValue(EncryptedMessage.class);
+//
+//                if (group.getEncryptedMessages().contains(message)) return;
+//
+//                EventBus.post(new MessageAddedEvent(group, group.decryptMessage(message)));
+//            }
+//
+//            @Override
+//            public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+//                EncryptedMessage message = dataSnapshot.getValue(EncryptedMessage.class);
+//
+//                EventBus.post(new MessageChangedEvent(group, group.decryptMessage(message)));
+//            }
+//
+//            @Override
+//            public void onChildRemoved(DataSnapshot dataSnapshot) {
+//                EncryptedMessage message = dataSnapshot.getValue(EncryptedMessage.class);
+//
+//                EventBus.post(new MessageRemovedEvent(group, group.decryptMessage(message)));
+//            }
+//
+//            @Override
+//            public void onChildMoved(DataSnapshot dataSnapshot, String s) {
+//
+//            }
+//
+//            @Override
+//            public void onCancelled(DatabaseError databaseError) {
+//
+//            }
+//        };
+//    }
+//
+//    private void startGroupUserListener(GroupUser groupUser, DataSnapshot dataSnapshot) {
+//        ChildEventListener listener;
+//
+//        if (!groupMessagesListeners.containsKey(groupUser.getUid())) {
+//            listener = createGroupMessagesListener(groupUser);
+//            groupMessagesListeners.put(groupUser.getUid(), listener);
+//        } else {
+//            listener = groupMessagesListeners.get(groupUser.getUid());
+//        }
+//
+//        dataSnapshot.getRef().addChildEventListener(listener);
+//    }
+//
+//    private void stopGroupUserListener(GroupUser groupUser, DataSnapshot dataSnapshot) {
+//        ChildEventListener listener = groupMessagesListeners.get(groupUser.getUid());
+//
+//        if (listener != null) {
+//            dataSnapshot.getRef().removeEventListener(listener);
+//        }
+//    }
+
     /**
      * Group listener
      */
@@ -180,9 +244,13 @@ public class Database {
         groupListener = new ChildEventListener() {
             @Override
             public void onChildAdded(DataSnapshot dataSnapshot, String s) {
-                Group group = dataSnapshot.getValue(Group.class);
+                GenericTypeIndicator<List<String>> usersIdsT = new GenericTypeIndicator<List<String>>() {
+                };
+                List<String> usersIds = dataSnapshot.child("usersIds").getValue(usersIdsT);
 
-                if (!group.getUsersIds().contains(User.getCurrent().getUid())) return;
+                if (!usersIds.contains(User.getCurrent().getUid())) return;
+
+                Group group = dataSnapshot.getValue(Group.class);
 
                 group.setUid(dataSnapshot.getKey());
 
