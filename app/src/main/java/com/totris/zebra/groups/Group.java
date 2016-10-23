@@ -96,7 +96,9 @@ public class Group implements Serializable {
     }
 
     public void setEncryptedPassphrase(Map<String, String> passphrases) {
-        setPassphrase(passphrases.get(User.getCurrent().getUid()));
+        if(passphrases.get(User.getCurrent().getUid()) != null) {
+            setPassphrase(passphrases.get(User.getCurrent().getUid()));
+        }
     }
 
     @Exclude
@@ -164,7 +166,9 @@ public class Group implements Serializable {
     }
 
     public void setMessages(Map<String, EncryptedMessage> messages) {
-        setMessages(new ArrayList<>(messages.values()));
+        if(getUsersIds().contains(User.getCurrent().getUid())) {
+            setMessages(new ArrayList<>(messages.values()));
+        }
     }
 
     @Exclude
