@@ -73,7 +73,7 @@ public class AesCrypto {
         AesCbcWithIntegrity.CipherTextIvMac dataToDecrypt = new AesCbcWithIntegrity.CipherTextIvMac(value);
 
         // Decrypt!
-        String decrypted = null;
+        String decrypted = "Cannot decrypt message...";
         try {
             decrypted = AesCbcWithIntegrity.decryptString(dataToDecrypt, keysDecrypt);
         } catch (UnsupportedEncodingException | GeneralSecurityException e) {
